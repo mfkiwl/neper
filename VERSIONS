@@ -1,7 +1,7 @@
-New in 4.6.1-8-devel (26 Jun 2023):
+New in 4.6.1-9-doc-dev (27 Jun 2023):
 - module -T: fixed -domain cylinder and circle.
 - module -M: fixed -statelset group -elt hex, fixed -statnode col_stdtriangle.
-- general: made minor compilation fix.
+- general: made minor compilation fix, added developer documentation.
 
 New in 4.6.0 (06 Apr 2023):
 - module -T: fixed truncated statistical distributions (from and to), improved
