@@ -471,7 +471,9 @@ Crystal Orientation Options
 
   Specify the type of crystal orientation distribution. It can be:
 
-  - :data:`random`: randomly-distributed orientations in 3D space;
+  - :data:`random`: randomly-distributed orientations in 3D space (no or "random" texture, ODF = 1);
+
+  - :data:`odf(mesh=file(<mesh_file>),val=file(<value_file>))`: randomly-distributed orientations in 3D space following the ODF described by :data:`<mesh_file>` (a mesh of the fundamental region of orientation space) and :data:`<value_file>` (a :ref:`data_file` containing the ODF values at the mesh elements);
 
   - :data:`uniform`: uniformly-distributed orientations in 3D space [#uniform-crysym]_;
 

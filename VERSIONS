@@ -1,5 +1,5 @@
-New in 4.6.2-8-devel (25 Sep 2023):
-- module -T: improve -domain rodrigues.
+New in 4.6.2-9-devel (25 Sep 2023):
+- module -T: added -ori odf, improved -domain rodrigues.
 - module -S: fixed -res... '\<result>` (result overwriting).
 - general: added developer documentation.
 

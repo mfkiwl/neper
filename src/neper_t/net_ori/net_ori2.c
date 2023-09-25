@@ -234,6 +234,95 @@ net_ori_file (char *filename_in, struct OL_SET *pOSet)
 }
 
 void
+net_ori_odf (long random, char *odf, struct OL_SET *pOSet)
+{
+  int i;
+  double *e = ol_e_alloc ();
+  gsl_rng *r = NULL;
+  gsl_rng *r2 = NULL;
+  double n1, n2, n3;
+  int qty, tmp, elt, status;
+  char *fct = NULL, **vars = NULL, **vals = NULL;
+  struct NODES Nodes;
+  struct MESH Mesh;
+  double *f = NULL, fmax, t;
+  double *R = ol_R_alloc ();
+
+  neut_mesh_set_zero (&Mesh);
+  neut_nodes_set_zero (&Nodes);
+
+  ut_string_function (odf, &fct, &vars, &vals, &qty);
+
+  ut_print_message (0, 3, "Reading odf...\n");
+
+  for (i = 0; i < qty; i++)
+  {
+    if (!strcmp (vars[i], "mesh"))
+      neut_mesh_fnscanf_msh (vals[i], &Nodes, NULL, NULL, NULL, &Mesh, NULL, 0, "R");
+    else if (!strcmp (vars[i], "val"))
+    {
+      tmp = ut_file_nbwords (vals[i]);
+      if (tmp != Mesh.EltQty)
+        ut_print_message (2, 0, "Number of data and elements do not match.\n");
+
+      f = ut_alloc_1d (Mesh.EltQty + 1);
+      ut_array_1d_fnscanf (vals[i], f + 1, Mesh.EltQty, "R");
+    }
+  }
+
+  if (!strstr (Mesh.Domain, (*pOSet).crysym))
+    ut_print_message (2, 0, "Crystal symmetry (%s) and orientation space (%s) conflict.\n",
+                      (*pOSet).crysym, Mesh.Domain);
+
+  fmax = ut_array_1d_max (f + 1, Mesh.EltQty);
+
+  ut_print_message (0, 3, "Sampling odf...\n");
+
+  r = gsl_rng_alloc (gsl_rng_ranlxd2);
+  gsl_rng_set (r, random - 1);
+
+  r2 = gsl_rng_alloc (gsl_rng_ranlxd2);
+  gsl_rng_set (r2, random - 1);
+
+  for (i = 0; i < (int) (*pOSet).size; i++)
+  {
+    // keep the n1 n2 n3 stuff for backward compatibility.
+    // Calling the gsl as an argument switches n1 and n3.
+    n1 = gsl_rng_uniform (r);
+    n2 = gsl_rng_uniform (r);
+    n3 = gsl_rng_uniform (r);
+    ol_nb_e (n1, n2, n3, e);
+    ol_e_R (e, R);
+    ol_R_Rcrysym (R, (*pOSet).crysym, R);
+
+    status = neut_mesh_point_elt (Nodes, Mesh, R, &elt);
+    if (status)
+      ut_print_message (2, 0, "Failed to find element for orientation = (%f,%f,%f)\n", R[0], R[1], R[2]);
+
+    t = gsl_rng_uniform (r);
+
+    if (t < f[elt] / fmax)
+      ol_e_q (e, (*pOSet).q[i]);
+    else
+      i--;
+  }
+
+  gsl_rng_free (r);
+  ol_e_free (e);
+
+  ut_free_1d_char (&fct);
+  ut_free_2d_char (&vars, qty);
+  ut_free_2d_char (&vals, qty);
+  ut_free_1d (&f);
+  ol_R_free (R);
+
+  neut_nodes_free (&Nodes);
+  neut_mesh_free (&Mesh);
+
+  return;
+}
+
+void
 net_ori_oricrysym (struct OL_SET *pOSet)
 {
   unsigned int i;
