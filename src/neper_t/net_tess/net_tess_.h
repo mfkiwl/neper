@@ -16,7 +16,6 @@
 
 #include"neper_config.h"
 
-#include"../structIn_t.h"
 #include"net_tess_cube/net_tess_cube.h"
 #include"net_tess_lam/net_tess_lam.h"
 #include"net_tess_tocta/net_tess_tocta.h"

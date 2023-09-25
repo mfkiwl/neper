@@ -1,4 +1,4 @@
-New in 4.6.2-3-devel (25 Sep 2023):
+New in 4.6.2-4-devel (25 Sep 2023):
 - module -T: improve -domain rodrigues.
 - module -S: fixed -res... '\<result>` (result overwriting).
 
