@@ -1,7 +1,7 @@
-New in 4.6.2-9-devel (25 Sep 2023):
+New in 4.6.2-11-devel (26 Sep 2023):
 - module -T: added -ori odf, improved -domain rodrigues.
 - module -S: fixed -res... '\<result>` (result overwriting).
-- general: added developer documentation.
+- general: improved installation instructions, added developer documentation.
 
 New in 4.6.1 (12 Sep 2023):
 - module -T: fixed -domain cylinder and circle, fixed tesr reading, made minor
