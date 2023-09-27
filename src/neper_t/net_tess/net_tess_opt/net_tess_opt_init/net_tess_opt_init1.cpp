@@ -20,14 +20,10 @@ net_tess_opt_init (struct IN_T In, int level, char *morpho,
   net_tess_opt_init_domain (In, Tess[dtess], dcell, pTOpt);
 
   // sset (must come after target)
-  if (!strcmp ((*pTOpt).optitype, "seeds"))
-    net_tess_opt_init_sset (In, level, MTess, Tess, dtess, dcell, SSet,
-                            pTOpt);
+  if (!strcmp ((*pTOpt).optitype, "morpho") ||!strcmp ((*pTOpt).optitype, "ori"))
+    net_tess_opt_init_sset (In, level, MTess, Tess, dtess, dcell, SSet, pTOpt);
   else if (!strcmp ((*pTOpt).optitype, "crystal"))
     net_tess_opt_init_crystal (In, level, pTOpt);
-  else if (!strcmp ((*pTOpt).optitype, "domain"))
-  {
-  }
   else
     abort ();
 

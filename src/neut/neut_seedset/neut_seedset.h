@@ -25,8 +25,8 @@ extern void neut_seedset_init_seedslave (struct SEEDSET *pSSet);
 extern int neut_seedset_seedcoo0toseedcoo (struct SEEDSET *pSSet);
 extern int neut_seedset_seedcootoseedcoo0 (struct SEEDSET *pSSet);
 
-extern int neut_seedset_seed_update_fromseedcoo0 (struct SEEDSET *pSSet,
-						  int id);
+extern int neut_seedset_seed_update_fromseedcoo0 (struct SEEDSET *pSSet, int id);
+extern int neut_seedset_seed_update_fromseedorir (struct SEEDSET *pSSet, int id);
 extern void neut_seedset_seed_updateslaves (struct SEEDSET *pSSet, int id);
 
 extern double neut_seedset_voidcell_distance (struct SEEDSET, int seed);

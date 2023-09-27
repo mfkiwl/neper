@@ -453,6 +453,43 @@ net_tess_opt_init_bounds_seeds (struct TOPT *pTOpt)
   return;
 }
 
+void
+net_tess_opt_init_bounds_ori (struct TOPT *pTOpt)
+{
+  int i, j, k, seed, dim, PartQty;
+  char **parts = NULL;
+
+  ut_list_break ((*pTOpt).dof, NEUT_SEP_NODEP, &parts, &PartQty);
+
+  (*pTOpt).boundl = ut_alloc_1d (PartQty * (*pTOpt).seedoptiqty + 1);
+  (*pTOpt).boundu = ut_alloc_1d (PartQty * (*pTOpt).seedoptiqty + 1);
+
+  k = 0;
+  for (j = 0; j < (*pTOpt).seedoptiqty; j++)
+  {
+    seed = (*pTOpt).seedopti[j];
+    for (i = 0; i < PartQty; i++)
+    {
+      if (!strcmp (parts[i], "r1") || !strcmp (parts[i], "r2")
+          || !strcmp (parts[i], "r3"))
+      {
+        dim = parts[i][1] - '1';
+        (*pTOpt).boundl[k] =
+          ((*pTOpt).SSet).SeedCoo0[seed][dim] - (*pTOpt).dist;
+        (*pTOpt).boundu[k] =
+          ((*pTOpt).SSet).SeedCoo0[seed][dim] + (*pTOpt).dist;
+        k++;
+      }
+      else
+        abort ();
+    }
+  }
+
+  ut_free_2d_char (&parts, PartQty);
+
+  return;
+}
+
 // FIXME/EMMC
 void
 net_tess_opt_init_bounds_crystal (struct TOPT *pTOpt)
@@ -470,28 +507,6 @@ net_tess_opt_init_bounds_crystal (struct TOPT *pTOpt)
     (*pTOpt).boundl[i] =
       ut_num_max ((*pTOpt).Crys.C[i] - (*pTOpt).dist, 1e-6);
     (*pTOpt).boundu[i] = (*pTOpt).Crys.C[i] + (*pTOpt).dist;
-  }
-
-  ut_free_2d_char (&parts, PartQty);
-
-  return;
-}
-
-void
-net_tess_opt_init_bounds_domain (struct TOPT *pTOpt)
-{
-  int i, PartQty;
-  char **parts = NULL;
-
-  ut_list_break ((*pTOpt).dof, NEUT_SEP_NODEP, &parts, &PartQty);
-
-  (*pTOpt).boundl = ut_alloc_1d (PartQty);
-  (*pTOpt).boundu = ut_alloc_1d (PartQty);
-
-  for (i = 0; i < PartQty; i++)
-  {
-    (*pTOpt).boundl[i] = 1e-6;
-    (*pTOpt).boundu[i] = DBL_MAX;
   }
 
   ut_free_2d_char (&parts, PartQty);

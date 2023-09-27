@@ -9,6 +9,9 @@ net_tess_opt_init_sset_post (struct IN_T In, int level, struct TESS PTess,
                              int cell, struct SEEDSET SSet,
                              struct TOPT *pTOpt)
 {
+  (void) SSet;
+
+  /*
   int i, j, scell;
 
   // orientations
@@ -28,6 +31,7 @@ net_tess_opt_init_sset_post (struct IN_T In, int level, struct TESS PTess,
       scell = (*pTOpt).CellSCellList[i][j];
       ut_string_string (SSet.SeedOriDistrib[i], (*pTOpt).SSet.SeedOriDistrib + scell);
     }
+    */
 
   // periodicity
   net_tess_opt_init_sset_post_per (In.periodic, PTess.Level, (*pTOpt).Dom,

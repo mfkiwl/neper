@@ -9,9 +9,19 @@ net_tess_opt_post (struct MTESS *pMTess, struct TESS *Tess, int dtess,
                    int dcell, int tessid, struct POLY *Poly, struct TOPT TOpt,
                    struct SEEDSET *SSet)
 {
-  if (!strcmp (TOpt.optitype, "seeds"))
+  if (!strcmp (TOpt.optitype, "morpho"))
     net_tess_opt_post_tess (pMTess, Tess, dtess, dcell, tessid, Poly, TOpt,
                             SSet);
+
+  else if (!strcmp (TOpt.optitype, "ori"))
+  {
+    neut_seedset_memcpy (TOpt.SSet, SSet + tessid);
+
+    Tess[tessid].CellQty = SSet[tessid].N;
+    Tess[tessid].CellOri = ut_alloc_2d (Tess[tessid].CellQty + 1, 4);
+    ut_array_2d_memcpy (SSet[tessid].SeedOri + 1, Tess[tessid].CellQty, 4,
+                        Tess[tessid].CellOri + 1);
+  }
 
   return;
 }

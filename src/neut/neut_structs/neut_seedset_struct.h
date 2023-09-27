@@ -61,6 +61,8 @@ extern "C"
 
     /// Orientations (quaternion)
     double **SeedOri;
+    /// Orientations (Rodrigues vector)
+    double **SeedOriR;
 
     char **SeedOriDistrib;
 

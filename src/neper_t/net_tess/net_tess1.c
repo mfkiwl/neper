@@ -14,7 +14,8 @@ net_tess (struct IN_T In, int level, struct TESS *Tess, int dtess, int dcell,
    char *mid = NULL;
    char *morpho = NULL;
 
-   if (neut_tess_isreg (Tess[dtess])) {
+   if (neut_tess_isreg (Tess[dtess]))
+   {
       printf ("\n");
       ut_print_message (2, 2, "Parent tessellation is regularized.\n");
    }
@@ -28,7 +29,8 @@ net_tess (struct IN_T In, int level, struct TESS *Tess, int dtess, int dcell,
       return 0;
 
    if (ut_string_isfilename (In.morpho[level])
-       && !ut_file_testformat (In.morpho[level], "tess")) {
+       && !ut_file_testformat (In.morpho[level], "tess"))
+   {
       neut_mtess_tess_poly_mid (*pMTess, Tess[dtess], dcell, &mid);
 
       morpho = ut_alloc_1d_char (1000);
@@ -48,37 +50,28 @@ net_tess (struct IN_T In, int level, struct TESS *Tess, int dtess, int dcell,
 
    // regular tessellations: cube and square
    if (!strncmp (morpho, "cube", 4) || !strncmp (morpho, "square", 6))
-      status =
-         net_tess_cube (In, level, morpho, pMTess, Tess, dtess, dcell, TessId,
-                        SSet);
+      status = net_tess_cube (In, level, morpho, pMTess, Tess, dtess, dcell, TessId, SSet);
 
    // standard Voronoi/Laguerre tessellation
    else if (!strncmp (morpho, "lamellar", 8))
-      status =
-         net_tess_lam (In, level, morpho, pMTess, Tess, dtess, dcell, TessId,
-                       SSet);
+      status = net_tess_lam (In, level, morpho, pMTess, Tess, dtess, dcell, TessId, SSet);
 
-   // standard Voronoi/Laguerre tessellation
    else if (!strncmp (morpho, "tocta", 5))
-      status =
-         net_tess_tocta (In, level, morpho, pMTess, Tess, dtess, dcell,
-                         TessId, SSet);
+   // standard Voronoi/Laguerre tessellation
+      status = net_tess_tocta (In, level, morpho, pMTess, Tess, dtess, dcell, TessId, SSet);
 
    // standard Voronoi/Laguerre tessellation
    else if (ut_string_isfilename (morpho)
             && ut_file_testformat (morpho, "tess"))
-      status =
-         net_tess_file (level, morpho, pMTess, Tess, dtess, dcell, TessId,
-                        SSet);
+      status = net_tess_file (level, morpho, pMTess, Tess, dtess, dcell, TessId, SSet);
 
    // other tessellations
    else
-      status =
-         net_tess_opt (In, level, morpho, Tess, dtess, dcell, TessId, pMTess,
-                       SSet);
+      status = net_tess_opt (In, level, morpho, Tess, dtess, dcell, TessId, pMTess, SSet);
 
    // finalizing
-   if (!status) {
+   if (!status)
+   {
       if (dim == 2 && Tess[TessId].Dim == 3)
          net_tess_3dto2d (Tess + TessId);
 

@@ -263,7 +263,7 @@ net_ori_odf (long random, char *odf, struct OL_SET *pOSet)
     {
       tmp = ut_file_nbwords (vals[i]);
       if (tmp != Mesh.EltQty)
-        ut_print_message (2, 0, "Number of data and elements do not match.\n");
+        ut_print_message (2, 0, "Number of data and elements do not match (%d != %d, file = %s).\n", tmp, Mesh.EltQty, vals[i]);
 
       f = ut_alloc_1d (Mesh.EltQty + 1);
       ut_array_1d_fnscanf (vals[i], f + 1, Mesh.EltQty, "R");

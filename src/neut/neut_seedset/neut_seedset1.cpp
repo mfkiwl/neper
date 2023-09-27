@@ -37,6 +37,7 @@ neut_seedset_set_zero (struct SEEDSET *pSSet)
   (*pSSet).LamWidthId = NULL;
 
   (*pSSet).SeedOri = NULL;
+  (*pSSet).SeedOriR = NULL;
   (*pSSet).SeedOriDistrib = NULL;
   (*pSSet).crysym = NULL;
 
@@ -70,6 +71,7 @@ neut_seedset_free (struct SEEDSET *pSSet)
   ut_free_1d (&(*pSSet).LamWidth);
   ut_free_1d_int (&(*pSSet).LamWidthId);
   ut_free_2d (&(*pSSet).SeedOri, (*pSSet).N + 1);
+  ut_free_2d (&(*pSSet).SeedOriR, (*pSSet).N + 1);
   ut_free_2d_char (&(*pSSet).SeedOriDistrib, (*pSSet).N + 1);
   ut_free_1d_char (&(*pSSet).crysym);
   ut_free_1d_char (&(*pSSet).Type);
@@ -283,6 +285,14 @@ neut_seedset_seed_update_fromseedcoo0 (struct SEEDSET *pSSet, int id)
 
   if (!strncmp ((*pSSet).Type, "periodic", 8))
     neut_seedset_seed_updateslaves (pSSet, id);
+
+  return 0;
+}
+
+int
+neut_seedset_seed_update_fromseedorir (struct SEEDSET *pSSet, int id)
+{
+  ol_R_q ((*pSSet).SeedOriR[id], (*pSSet).SeedOri[id]);
 
   return 0;
 }

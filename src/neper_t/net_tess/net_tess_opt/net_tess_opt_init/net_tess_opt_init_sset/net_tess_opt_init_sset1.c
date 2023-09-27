@@ -31,7 +31,7 @@ net_tess_opt_init_sset (struct IN_T In, int level, struct MTESS MTess,
                               cooexpr, rad, qty);
 
   net_tess_opt_init_sset_ori (In, level, MTess, Tess, dtess, dcell, SSet,
-                              &(*pTOpt).SSet);
+                              &(*pTOpt).SSet, pTOpt);
 
   net_tess_opt_init_sset_post (In, level, Tess[dtess], dcell, (*pTOpt).SSet,
                                pTOpt);
