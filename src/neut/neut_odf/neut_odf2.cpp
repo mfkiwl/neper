@@ -17,7 +17,7 @@ neut_odf_comp_elts (char *neigh, struct OL_SET *pOSet, QCLOUD nano_cloud,
                     my_kd_tree_t *nano_index, struct ODF *pOdf)
 {
   int i, dim = neut_mesh_array_dim ((*pOdf).Mesh);
-  double *vol = ut_alloc_1d ((*pOdf).odfqty);
+  double *vol = ut_alloc_1d ((*pOdf).odfqty + 1);
   double avradeq;
   neut_ori_n_avradeq (NULL, (*pOSet).size, (*pOSet).crysym, &avradeq);
 

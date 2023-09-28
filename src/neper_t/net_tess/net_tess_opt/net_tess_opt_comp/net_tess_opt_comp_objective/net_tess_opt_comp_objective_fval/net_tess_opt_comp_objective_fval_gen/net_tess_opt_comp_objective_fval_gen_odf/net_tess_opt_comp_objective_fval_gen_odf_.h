@@ -29,8 +29,7 @@ extern void net_tess_opt_comp_objective_fval_gen_odf_smoothed_update (struct TOP
 extern void net_tess_opt_comp_objective_fval_gen_odf_unsmoothed_comp (struct TOPT *pTOpt, int var);
 extern void net_tess_opt_comp_objective_fval_gen_odf_smoothed_update_cell (struct TOPT *pTOpt, int var, int cell);
 
-extern void net_tess_opt_comp_objective_fval_gen_odf_evaluate (struct TOPT *pTOpt, int var);
-extern void net_tess_opt_comp_objective_fval_gen_odf_evaluate_chi2 (struct TOPT *pTOpt, int var);
+extern void net_tess_opt_comp_objective_fval_gen_odf_evaluate (struct TOPT *pTOpt, struct ODF Odf, int var);
 
 #ifdef __cplusplus
 }

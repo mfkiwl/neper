@@ -12,6 +12,9 @@ neut_odf_comp_elts_all (struct OL_SET *pOSet, double *q, struct ODF *pOdf, int i
   int i, j, n = ol_crysym_qty ((*pOSet).crysym);
   double theta, *qs = ol_q_alloc ();
 
+  if (!(*pOdf).odf)
+    (*pOdf).odf = ut_alloc_1d ((*pOdf).odfqty);
+
   for (i = 0; i < (int) (*pOSet).size; i++)
     for (j = 1; j <= n; j++)
     {
