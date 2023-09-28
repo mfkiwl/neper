@@ -457,6 +457,8 @@ nes_pproc_entity_builtin_cells_odf (struct SIM *pSim, struct TESS *pTess, struct
     ut_print_progress (stdout, step + 1, (*pSim).StepQty + 1, "%3.0f%%", prev);
   }
 
+  nes_pproc_entity_builtin_odf_writeconfig (pSimRes, fct, Odf);
+
   ol_set_free (OSet);
 
   neut_sim_setstep (pSim, 0);
@@ -683,6 +685,8 @@ nes_pproc_entity_builtin_elsets_odf (struct SIM *pSim, struct TESS *pTess,
 
     ut_print_progress (stdout, step + 1, (*pSim).StepQty + 1, "%3.0f%%", prev);
   }
+
+  nes_pproc_entity_builtin_odf_writeconfig (pSimRes, fct, Odf);
 
   neut_sim_setstep (pSim, 0);
   neut_sim_addres (pSim, entity, res, NULL);

@@ -83,3 +83,5 @@ extern void nes_pproc_entity_builtin_elsets_gos (struct SIM *pSim, struct TESS T
                                      struct NODES *pNodes, struct MESH *Mesh,
                                      char *entity, char *res, int **elsets,
                                      int elsetqty, struct SIMRES *pSimRes);
+
+extern void nes_pproc_entity_builtin_odf_writeconfig (struct SIMRES *pSimRes, char *name, struct ODF Odf);
