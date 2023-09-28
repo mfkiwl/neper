@@ -26,6 +26,8 @@ neut_odf_set_zero (struct ODF *pOdf)
   (*pOdf).odfnqty = 0;
   (*pOdf).odfn = NULL;
 
+  (*pOdf).EltWeight = NULL;
+
   (*pOdf).odfmin = 0;
   (*pOdf).odfmax = 0;
   (*pOdf).odfmean = 0;

@@ -17,9 +17,11 @@ neut_odf_comp_elts (char *neigh, struct OL_SET *pOSet, QCLOUD nano_cloud,
                     my_kd_tree_t *nano_index, struct ODF *pOdf)
 {
   int i, dim = neut_mesh_array_dim ((*pOdf).Mesh);
-  double *vol = ut_alloc_1d ((*pOdf).odfqty + 1);
   double avradeq;
   neut_ori_n_avradeq (NULL, (*pOSet).size, (*pOSet).crysym, &avradeq);
+
+  if (!(*pOdf).EltWeight)
+    (*pOdf).EltWeight = ut_alloc_1d ((*pOdf).odfqty);
 
   ut_array_1d_zero ((*pOdf).odf, (*pOdf).odfqty);
 
@@ -30,26 +32,26 @@ neut_odf_comp_elts (char *neigh, struct OL_SET *pOSet, QCLOUD nano_cloud,
     double *coo = ut_alloc_1d (3);
 
     if (dim == 3)
-      neut_mesh_elt_volume ((*pOdf).Nodes, (*pOdf).Mesh[dim], i + 1, vol + i);
+      neut_mesh_elt_volume ((*pOdf).Nodes, (*pOdf).Mesh[dim], i + 1, (*pOdf).EltWeight + i);
     else
-      neut_mesh_elt_area ((*pOdf).Nodes, (*pOdf).Mesh[dim], i + 1, vol + i);
+      neut_mesh_elt_area ((*pOdf).Nodes, (*pOdf).Mesh[dim], i + 1, (*pOdf).EltWeight + i);
     neut_mesh_elt_centre ((*pOdf).Nodes, (*pOdf).Mesh[dim], i + 1, coo);
 
     if (!strncmp ((*pOdf).gridtype, "rodrigues", 9))
     {
-      vol[i] *= pow (M_PI * (1 + ut_vector_scalprod (coo, coo)), -2);
+      (*pOdf).EltWeight[i] *= pow (M_PI * (1 + ut_vector_scalprod (coo, coo)), -2);
       ol_R_q (coo, q);
     }
     else if (!strncmp ((*pOdf).gridtype, "euler-bunge", 11))
     {
       if (!strcmp ((*pOdf).gridunit, "degree"))
       {
-        vol[i] *= sin (coo[1] * M_PI / 180);
+        (*pOdf).EltWeight[i] *= sin (coo[1] * M_PI / 180);
         ol_e_q (coo, q);
       }
       else
       {
-        vol[i] *= sin (coo[1]);
+        (*pOdf).EltWeight[i] *= sin (coo[1]);
         ol_e_q_rad (coo, q);
       }
     }
@@ -72,14 +74,14 @@ neut_odf_comp_elts (char *neigh, struct OL_SET *pOSet, QCLOUD nano_cloud,
     ut_free_1d (&coo);
   }
 
-  (*pOdf).odfmean = ut_array_1d_wmean ((*pOdf).odf, vol, (*pOdf).odfqty);
+  ut_array_1d_normalize ((*pOdf).EltWeight, (*pOdf).odfqty);
+
+  (*pOdf).odfmean = ut_array_1d_wmean ((*pOdf).odf, (*pOdf).EltWeight, (*pOdf).odfqty);
   ut_array_1d_scale ((*pOdf).odf, (*pOdf).odfqty, 1. / (*pOdf).odfmean);
   (*pOdf).odfmean = 1;
-  (*pOdf).odfsig = ut_array_1d_wstddev ((*pOdf).odf, vol, 1, (*pOdf).odfqty);
+  (*pOdf).odfsig = ut_array_1d_wstddev ((*pOdf).odf, (*pOdf).EltWeight, 1, (*pOdf).odfqty);
   (*pOdf).odfmin = ut_array_1d_min ((*pOdf).odf, (*pOdf).odfqty);
   (*pOdf).odfmax = ut_array_1d_max ((*pOdf).odf, (*pOdf).odfqty);
-
-  ut_free_1d (&vol);
 
   return 1;
 }

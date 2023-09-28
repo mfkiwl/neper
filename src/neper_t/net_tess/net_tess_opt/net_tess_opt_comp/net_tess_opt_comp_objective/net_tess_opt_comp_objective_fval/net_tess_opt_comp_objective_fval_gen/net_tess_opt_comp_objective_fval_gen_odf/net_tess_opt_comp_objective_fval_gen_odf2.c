@@ -108,8 +108,7 @@ net_tess_opt_comp_objective_fval_gen_odf_evaluate (struct TOPT *pTOpt, struct OD
 
     (*pTOpt).curval[var] = 0;
     for (i = 1; i <= (*pTOpt).Odf.Mesh[3].EltQty; i++)
-      (*pTOpt).curval[var] += pow ((*pTOpt).Odf.odf[i] - Odf.odf[i], 2);
-    (*pTOpt).curval[var] /= (*pTOpt).Odf.Mesh[3].EltQty;
+      (*pTOpt).curval[var] += Odf.EltWeight[i] * pow ((*pTOpt).Odf.odf[i] - Odf.odf[i], 2);
     (*pTOpt).curval[var] = sqrt ((*pTOpt).curval[var]);
   }
 

@@ -27,6 +27,9 @@ struct ODF
   int odfnqty;
   double *odfn;
 
+  // Weight of each element, in terms of corrected volume
+  double *EltWeight;
+
   double odfmin;
   double odfmax;
   double odfmean; // 1
