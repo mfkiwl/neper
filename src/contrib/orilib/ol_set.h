@@ -19,6 +19,7 @@ struct OL_SET
   size_t size;
   double **q;
   double *weight;
+  double *theta;
   int* id;
   char **label;
   char* crysym;
