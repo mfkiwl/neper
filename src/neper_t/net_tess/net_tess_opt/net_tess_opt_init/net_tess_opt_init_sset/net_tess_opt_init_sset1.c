@@ -22,8 +22,12 @@ net_tess_opt_init_sset (struct IN_T In, int level, struct MTESS MTess,
   net_tess_opt_init_sset_pre (In, level, MTess, Tess, dtess, dcell, &var,
                               &pos, &weightexpr, &cooexpr, pTOpt);
 
-  net_tess_opt_init_sset_weight (MTess, Tess, dtess, dcell, *pTOpt, var, pos,
-                                 weightexpr, rad);
+  if (!strcmp ((*pTOpt).optitype, "morpho"))
+    net_tess_opt_init_sset_weight (MTess, Tess, dtess, dcell, *pTOpt, var, pos,
+                                   weightexpr, rad);
+  else if (!strcmp ((*pTOpt).optitype, "ori"))
+    net_tess_opt_init_sset_rweight (MTess, Tess, dtess, dcell, *pTOpt, var, pos,
+                                    weightexpr, rad);
 
   net_tess_opt_init_sset_multiseed (In, level, *pTOpt, var, rad, qty);
 

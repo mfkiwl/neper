@@ -20,6 +20,7 @@
 #include"net_tess_opt_init_sset.h"
 
 #include "net_tess_opt_init_sset_weight/net_tess_opt_init_sset_weight.h"
+#include "net_tess_opt_init_sset_rweight/net_tess_opt_init_sset_rweight.h"
 #include "net_tess_opt_init_sset_coo/net_tess_opt_init_sset_coo.h"
 #include "net_tess_opt_init_sset_multiseed/net_tess_opt_init_sset_multiseed.h"
 #include "net_tess_opt_init_sset_ori/net_tess_opt_init_sset_ori.h"

@@ -72,6 +72,7 @@ net_tess_opt_init_sset_coo (struct MTESS MTess, struct TESS *Tess, int dtess,
   else
     ut_array_1d_int_set_id (id, (*pTOpt).CellQty + 1);
 
+  (*pTOpt).SSet.N = 0;
   for (i = 1; i <= (*pTOpt).CellQty; i++)
   {
     cell = id[i];

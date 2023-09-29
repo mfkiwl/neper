@@ -475,9 +475,16 @@ net_tess_opt_init_bounds_ori (struct TOPT *pTOpt)
       {
         dim = parts[i][1] - '1';
         (*pTOpt).boundl[k] =
-          ((*pTOpt).SSet).SeedCoo0[seed][dim] - (*pTOpt).dist;
+          ((*pTOpt).SSet).SeedOriR[seed][dim] - (*pTOpt).dist;
         (*pTOpt).boundu[k] =
-          ((*pTOpt).SSet).SeedCoo0[seed][dim] + (*pTOpt).dist;
+          ((*pTOpt).SSet).SeedOriR[seed][dim] + (*pTOpt).dist;
+        k++;
+      }
+      else if (!strcmp (parts[i], "rw"))
+      {
+        (*pTOpt).boundl[k] = 0;
+        (*pTOpt).boundu[k] =
+          ((*pTOpt).SSet).SeedWeight[seed] + (*pTOpt).dist;
         k++;
       }
       else

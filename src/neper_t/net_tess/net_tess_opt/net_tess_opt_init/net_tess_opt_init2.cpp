@@ -20,13 +20,17 @@ net_tess_opt_init_general (struct IN_T In, int level, struct MTESS MTess,
                                            In.morphooptidof[level],
                                            &(*pTOpt).dof);
 
-  if (strstr ((*pTOpt).dof, "w") || strstr ((*pTOpt).dof, "x")
-      || strstr ((*pTOpt).dof, "y") || strstr ((*pTOpt).dof, "z"))
+  if (ut_list_testelt ((*pTOpt).dof, NEUT_SEP_NODEP, "w")
+   || ut_list_testelt ((*pTOpt).dof, NEUT_SEP_NODEP, "x")
+   || ut_list_testelt ((*pTOpt).dof, NEUT_SEP_NODEP, "y")
+   || ut_list_testelt ((*pTOpt).dof, NEUT_SEP_NODEP, "z"))
     ut_string_string ("morpho", &((*pTOpt).optitype));
-  else if (strstr ((*pTOpt).dof, "r1") || strstr ((*pTOpt).dof, "r2")
-           || strstr ((*pTOpt).dof, "r3") || strstr ((*pTOpt).dof, "rw"))
+  else if (ut_list_testelt ((*pTOpt).dof, NEUT_SEP_NODEP, "rw")
+   || ut_list_testelt ((*pTOpt).dof, NEUT_SEP_NODEP, "r1")
+   || ut_list_testelt ((*pTOpt).dof, NEUT_SEP_NODEP, "r2")
+   || ut_list_testelt ((*pTOpt).dof, NEUT_SEP_NODEP, "r3"))
     ut_string_string ("ori", &((*pTOpt).optitype));
-  else if (strstr ((*pTOpt).dof, "c"))
+  else if (ut_list_testelt ((*pTOpt).dof, NEUT_SEP_NODEP, "c"))
     ut_string_string ("crystal", &((*pTOpt).optitype));
   else
     abort ();

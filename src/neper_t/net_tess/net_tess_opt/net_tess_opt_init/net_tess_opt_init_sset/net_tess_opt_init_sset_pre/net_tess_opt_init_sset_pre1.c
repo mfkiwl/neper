@@ -17,6 +17,8 @@ net_tess_opt_init_sset_general (struct IN_T In, struct MTESS MTess,
 
   net_tess_opt_init_sset_pre_type (pSSet);
 
+  (*pSSet).N = (*pTOpt).CellQty;
+
   net_tess_opt_init_sset_pre_size (Tess, dtess, dcell, pTOpt, pSSet);
 
   net_ori_mtess_id (In, MTess, Tess, dtess, dcell, pSSet);
