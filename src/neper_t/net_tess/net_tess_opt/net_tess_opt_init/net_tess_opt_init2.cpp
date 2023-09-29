@@ -26,6 +26,7 @@ net_tess_opt_init_general (struct IN_T In, int level, struct MTESS MTess,
    || ut_list_testelt ((*pTOpt).dof, NEUT_SEP_NODEP, "z"))
     ut_string_string ("morpho", &((*pTOpt).optitype));
   else if (ut_list_testelt ((*pTOpt).dof, NEUT_SEP_NODEP, "rw")
+   || ut_list_testelt ((*pTOpt).dof, NEUT_SEP_NODEP, "rt")
    || ut_list_testelt ((*pTOpt).dof, NEUT_SEP_NODEP, "r1")
    || ut_list_testelt ((*pTOpt).dof, NEUT_SEP_NODEP, "r2")
    || ut_list_testelt ((*pTOpt).dof, NEUT_SEP_NODEP, "r3"))

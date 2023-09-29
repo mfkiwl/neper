@@ -22,5 +22,8 @@ net_tess_opt_init_sset_ori (struct IN_T In, int level, struct MTESS MTess,
       ol_q_R ((*pSSet).SeedOri[i], (*pSSet).SeedOriR[i]);
   }
 
+  if (ut_list_testelt ((*pTOpt).dof, NEUT_SEP_NODEP, "rt"))
+    (*pSSet).SeedOriTheta = ut_alloc_1d ((*pSSet).N + 1);
+
   return;
 }

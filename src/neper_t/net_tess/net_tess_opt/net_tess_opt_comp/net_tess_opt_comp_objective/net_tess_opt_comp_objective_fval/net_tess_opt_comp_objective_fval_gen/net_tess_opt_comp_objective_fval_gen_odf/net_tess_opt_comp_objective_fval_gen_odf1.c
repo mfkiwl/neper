@@ -16,6 +16,11 @@ net_tess_opt_comp_objective_fval_gen_odf (struct TOPT *pTOpt, int var)
   OSet = ol_set_alloc ((*pTOpt).SSet.N, (*pTOpt).SSet.crysym);
   OSet.weight = ut_alloc_1d (OSet.size);
   ut_array_1d_memcpy ((*pTOpt).SSet.SeedWeight + 1, OSet.size, OSet.weight);
+  if ((*pTOpt).SSet.SeedOriTheta)
+  {
+    OSet.theta = ut_alloc_1d (OSet.size);
+    ut_array_1d_memcpy ((*pTOpt).SSet.SeedOriTheta + 1, OSet.size, OSet.theta);
+  }
 
   ut_string_string ((*pTOpt).Odf.gridtype, &Odf.gridtype);
   ut_string_string ((*pTOpt).Odf.gridunit, &Odf.gridunit);

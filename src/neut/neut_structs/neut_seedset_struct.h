@@ -65,6 +65,7 @@ extern "C"
     double **SeedOriR;
 
     char **SeedOriDistrib;
+    double *SeedOriTheta;
 
     // Crystal symmetry
     char *crysym;

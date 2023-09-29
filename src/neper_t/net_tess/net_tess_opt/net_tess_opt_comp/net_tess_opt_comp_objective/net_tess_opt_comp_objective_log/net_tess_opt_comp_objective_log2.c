@@ -102,6 +102,8 @@ net_tess_opt_comp_objective_log_var (struct TOPT TOpt)
         fprintf (TOpt.TDyn.logvar_fp, REAL_PRINT_FORMAT, TOpt.SSet.SeedOriR[i][2]);
       else if (!strcmp (vars[j], "rw"))
         fprintf (TOpt.TDyn.logvar_fp, REAL_PRINT_FORMAT, TOpt.SSet.SeedWeight[i]);
+      else if (!strcmp (vars[j], "rt"))
+        fprintf (TOpt.TDyn.logvar_fp, REAL_PRINT_FORMAT, TOpt.SSet.SeedOriTheta[i]);
       else
         fprintf (TOpt.TDyn.logvar_fp, "-1");
 
