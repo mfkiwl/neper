@@ -1,4 +1,4 @@
-New in 4.6.2-15-fit_ori (28 Sep 2023):
+New in 4.6.2-16-fit_ori (29 Sep 2023):
 - module -T: added -ori odf, improved -domain rodrigues.
 - module -S: fixed -res... '\<result>` (result overwriting), made minor
   improvements to the simulation directory.

@@ -29,7 +29,10 @@ net_tess_opt_comp_objective_fval_gen_odf (struct TOPT *pTOpt, int var)
 
   ut_array_2d_memcpy ((*pTOpt).SSet.SeedOri + 1, (*pTOpt).SSet.N, 4, OSet.q);
 
-  neut_odf_setsigma (&Odf, "avthetaeq", (*pTOpt).SSet.N, (*pTOpt).SSet.crysym);
+  if ((*pTOpt).Odf.sigma != 0)
+    Odf.sigma = (*pTOpt).Odf.sigma;
+  else
+    neut_odf_setsigma (&Odf, "avthetaeq", (*pTOpt).SSet.N, (*pTOpt).SSet.crysym);
 
   neut_odf_comp ("m", "all", &OSet, &Odf);
 

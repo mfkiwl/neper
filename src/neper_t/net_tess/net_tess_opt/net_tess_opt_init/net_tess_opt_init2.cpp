@@ -24,7 +24,7 @@ net_tess_opt_init_general (struct IN_T In, int level, struct MTESS MTess,
       || strstr ((*pTOpt).dof, "y") || strstr ((*pTOpt).dof, "z"))
     ut_string_string ("morpho", &((*pTOpt).optitype));
   else if (strstr ((*pTOpt).dof, "r1") || strstr ((*pTOpt).dof, "r2")
-           || strstr ((*pTOpt).dof, "r3"))
+           || strstr ((*pTOpt).dof, "r3") || strstr ((*pTOpt).dof, "rw"))
     ut_string_string ("ori", &((*pTOpt).optitype));
   else if (strstr ((*pTOpt).dof, "c"))
     ut_string_string ("crystal", &((*pTOpt).optitype));
@@ -367,7 +367,9 @@ net_tess_opt_init_target (struct IN_T In, struct MTESS MTess,
       char *fct = NULL, **vars = NULL, **vals = NULL;
       int tmp2, qty;
       ut_string_function ((*pTOpt).tarexpr[i], &fct, &vars, &vals, &qty);
+
       for (k = 0; k < qty; k++)
+      {
         if (!strcmp (vars[k], "mesh"))
           neut_odf_space_fnscanf (vals[k], &((*pTOpt).Odf), (char *) "R");
         else if (!strcmp (vars[k], "val"))
@@ -379,15 +381,21 @@ net_tess_opt_init_target (struct IN_T In, struct MTESS MTess,
 
           (*pTOpt).Odf.odfqty = (*pTOpt).Odf.Mesh[3].EltQty;
 
-          (*pTOpt).Odf.odf = ut_alloc_1d ((*pTOpt).Odf.odfqty + 1);
-          ut_array_1d_fnscanf (vals[k], (*pTOpt).Odf.odf + 1, (*pTOpt).Odf.odfqty, (char *) "R");
-
-          ut_free_1d_char (&fct);
-          ut_free_2d_char (&vars, qty);
-          ut_free_2d_char (&vals, qty);
+          (*pTOpt).Odf.odf = ut_alloc_1d ((*pTOpt).Odf.odfqty);
+          ut_array_1d_fnscanf (vals[k], (*pTOpt).Odf.odf, (*pTOpt).Odf.odfqty, (char *) "R");
+        }
+        else if (!strcmp (vars[k], "sigma"))
+        {
+          sscanf (vals[k], "%lf", &(*pTOpt).Odf.sigma);
+          (*pTOpt).Odf.sigma *= M_PI / 180;
         }
         else
           ut_print_message (2, 0, "Failed to process `%s'.\n", vars[k]);
+      }
+
+      ut_free_1d_char (&fct);
+      ut_free_2d_char (&vars, qty);
+      ut_free_2d_char (&vals, qty);
     }
 
     // Recording tarcellvalqty, tarcellval or tartesr
