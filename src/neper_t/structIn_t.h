@@ -111,6 +111,9 @@ extern "C"
     char *oristring;
     char **ori;
 
+    char *orisamplingstring;            // orientation sampling
+    char **orisampling;                 //
+
     char *orioptistopstring;            // orientation opti / termination criterion
     char **orioptistop;                 //
 

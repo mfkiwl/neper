@@ -60,6 +60,7 @@ net_input_options_default (struct IN_T *pIn)
   ut_string_string ("binary16", &(*pIn).tesrformat);
 
   ut_string_string ("default", &(*pIn).oristring);
+  ut_string_string ("random", &(*pIn).orisamplingstring);
   ut_string_string ("none", &(*pIn).orispreadstring);
   ut_string_string ("default", &(*pIn).orioptistopstring);
   ut_string_string ("default", &(*pIn).orioptineighstring);
@@ -118,6 +119,8 @@ net_input_options_default (struct IN_T *pIn)
 
   (*pIn).ori = ut_alloc_1d_pchar (1);
   ut_string_string ((*pIn).oristring, (*pIn).ori);
+  (*pIn).orisampling = ut_alloc_1d_pchar (1);
+  ut_string_string ((*pIn).orisamplingstring, (*pIn).orisampling);
   (*pIn).crysym = ut_alloc_1d_pchar (1);
   ut_string_string ((*pIn).crysymstring, (*pIn).crysym);
   (*pIn).orioptistop = ut_alloc_1d_pchar (1);
@@ -150,8 +153,12 @@ net_input_options_set (struct IN_T *pIn, int argc, char **argv)
   strcpy (ArgList[++ArgQty], "-n");
   strcpy (ArgList[++ArgQty], "-id");
   strcpy (ArgList[++ArgQty], "-morpho");
+  strcpy (ArgList[++ArgQty], "-ori");
+
+  for (i = 0; i < (*pIn).optiqty; i++)
+    strcpy (ArgList[++ArgQty], ut_string_paste3 ("-", (*pIn).optitype[i], "optialgo"));
+
   strcpy (ArgList[++ArgQty], "-morphooptiini");
-  strcpy (ArgList[++ArgQty], "-morphooptialgo");
   strcpy (ArgList[++ArgQty], "-morphooptialgoini");
   strcpy (ArgList[++ArgQty], "-morphooptialgomaxiter");
   strcpy (ArgList[++ArgQty], "-morphooptiobjective");
@@ -167,6 +174,18 @@ net_input_options_set (struct IN_T *pIn, int argc, char **argv)
   strcpy (ArgList[++ArgQty], "-morphooptilogval");
   strcpy (ArgList[++ArgQty], "-morphooptidof");
   strcpy (ArgList[++ArgQty], "-morphooptimultiseed");
+
+  strcpy (ArgList[++ArgQty], "-orisampling");
+  strcpy (ArgList[++ArgQty], "-orioptistop");
+  strcpy (ArgList[++ArgQty], "-orioptineigh");
+  strcpy (ArgList[++ArgQty], "-orioptiini");
+  strcpy (ArgList[++ArgQty], "-orioptifix");
+  strcpy (ArgList[++ArgQty], "-oridescriptor");
+  strcpy (ArgList[++ArgQty], "-oricrysym");
+  strcpy (ArgList[++ArgQty], "-oriformat");
+  strcpy (ArgList[++ArgQty], "-orioptilogvar");
+  strcpy (ArgList[++ArgQty], "-orispread");
+
   strcpy (ArgList[++ArgQty], "-dim");
   strcpy (ArgList[++ArgQty], "-periodicity");
   // General options ---------------------------------------------------
@@ -189,18 +208,8 @@ net_input_options_set (struct IN_T *pIn, int argc, char **argv)
   strcpy (ArgList[++ArgQty], "-format");
   strcpy (ArgList[++ArgQty], "-tesrformat");
   strcpy (ArgList[++ArgQty], "-tesrsize");
-  strcpy (ArgList[++ArgQty], "-ori");
-  strcpy (ArgList[++ArgQty], "-orioptialgo");
-  strcpy (ArgList[++ArgQty], "-orioptistop");
-  strcpy (ArgList[++ArgQty], "-orioptineigh");
-  strcpy (ArgList[++ArgQty], "-orioptiini");
-  strcpy (ArgList[++ArgQty], "-orioptifix");
-  strcpy (ArgList[++ArgQty], "-oridescriptor");
+
   strcpy (ArgList[++ArgQty], "-crysym");
-  strcpy (ArgList[++ArgQty], "-oricrysym");
-  strcpy (ArgList[++ArgQty], "-oriformat");
-  strcpy (ArgList[++ArgQty], "-orioptilogvar");
-  strcpy (ArgList[++ArgQty], "-orispread");
   // Post-processing ---------------------------------------------------
   strcpy (ArgList[++ArgQty], "-stattess");
   strcpy (ArgList[++ArgQty], "-stattesr");
@@ -353,17 +362,20 @@ net_input_options_set (struct IN_T *pIn, int argc, char **argv)
       ut_arg_nextasint (argv, &i, Arg, 0, INT_MAX, &((*pIn).maxedgedelqty));
 
 /*----------------------------------------------------------------------
-* post-processing options */
-    else if (!strcmp (Arg, "-format"))
-      ut_arg_nextasstring (argv, &i, Arg, &((*pIn).format));
-    else if (!strcmp (Arg, "-tesrformat"))
-      ut_arg_nextasstring (argv, &i, Arg, &((*pIn).tesrformat));
-    else if (!strcmp (Arg, "-tesrsize"))
-      ut_arg_nextasstring (argv, &i, Arg, &((*pIn).tesrsizestring));
+ * orientation options */
+
     else if (!strcmp (Arg, "-ori"))
+    {
       ut_arg_nextasstring (argv, &i, Arg, &((*pIn).oristring));
+      if (strstr ((*pIn).oristring, "uniform"))
+        ut_print_message (2, 3, "`uniform' has been moved to option `-orisampling'.\n");
+    }
+
     else if (!strcmp (Arg, "-orioptialgo"))
       ut_arg_nextasstring (argv, &i, Arg, (*pIn).optialgostring + 1);
+
+    else if (!strcmp (Arg, "-orisampling"))
+      ut_arg_nextasstring (argv, &i, Arg, &((*pIn).orisamplingstring));
     else if (!strcmp (Arg, "-orioptistop"))
       ut_arg_nextasstring (argv, &i, Arg, &((*pIn).orioptistopstring));
     else if (!strcmp (Arg, "-orioptineigh"))
@@ -386,6 +398,16 @@ net_input_options_set (struct IN_T *pIn, int argc, char **argv)
       ut_arg_nextasstring (argv, &i, Arg, &((*pIn).orioptilogvarstring));
     else if (!strcmp (Arg, "-orispread"))
       ut_arg_nextasstring (argv, &i, Arg, &((*pIn).orispreadstring));
+
+/*----------------------------------------------------------------------
+* post-processing options */
+    else if (!strcmp (Arg, "-format"))
+      ut_arg_nextasstring (argv, &i, Arg, &((*pIn).format));
+    else if (!strcmp (Arg, "-tesrformat"))
+      ut_arg_nextasstring (argv, &i, Arg, &((*pIn).tesrformat));
+    else if (!strcmp (Arg, "-tesrsize"))
+      ut_arg_nextasstring (argv, &i, Arg, &((*pIn).tesrsizestring));
+
     else if (!strcmp (Arg, "-statcell"))
       ut_arg_nextasstring (argv, &i, Arg, &((*pIn).stc));
     else if (!strcmp (Arg, "-stattess"))

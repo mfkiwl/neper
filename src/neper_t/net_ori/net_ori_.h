@@ -33,7 +33,8 @@ extern void net_ori_oricrysym (struct OL_SET *pOSet);
 
 extern void net_ori_mtess_params (struct IN_T In, int level, struct MTESS MTess,
                                   struct TESS *Tess, int dtess, int dcell,
-                                  char **pori, char **porispread, char **pcrysym);
+                                  char **pori, char **porisampling,
+                                  char **porispread, char **pcrysym);
 
 extern int net_ori_mtess_randseed_rand (int *N, int *id, int *poly, int levelqty);
 

@@ -83,7 +83,9 @@ net_in_set_zero (struct IN_T *pIn)
   (*pIn).format = NULL;
   (*pIn).tesrformat = NULL;
   (*pIn).oristring = NULL;
+  (*pIn).orisamplingstring = NULL;
   (*pIn).ori = NULL;
+  (*pIn).orisampling = NULL;
   (*pIn).orides = NULL;
   (*pIn).oriformat = NULL;
   (*pIn).orispreadstring = NULL;
@@ -178,7 +180,7 @@ net_in_free (struct IN_T *pIn)
 
   ut_free_1d_char (&(*pIn).morphostring);
   ut_free_2d_char (&(*pIn).morpho, (*pIn).levelqty + 1);
-  ut_free_1d_char (&(*pIn).optialgostring);
+  ut_free_2d_char (&(*pIn).optialgostring, (*pIn).optiqty);
   // ut_free_3d_char (&(*pIn).optialgo, (*pIn).optiqty, (*pIn).levelqty + 1);
   ut_free_1d_char (&(*pIn).optiobjectivestring);
   ut_free_2d_char (&(*pIn).optiobjective, (*pIn).levelqty + 1);

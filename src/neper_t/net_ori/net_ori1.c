@@ -30,12 +30,12 @@ net_ori (struct IN_T In, int level, struct MTESS MTess, struct TESS *Tess,
          struct SEEDSET *SSet, int dtess, int dcell, struct SEEDSET *pSSet,
          int verbositylevel)
 {
-  char *ori = NULL, *orispread = NULL, *oricrysym = NULL;
+  char *ori = NULL, *orisampling = NULL, *orispread = NULL, *oricrysym = NULL;
   int i, partqty, *qty = NULL;
   char **parts = NULL;
   struct OL_SET OSet, *OSets = NULL;
 
-  net_ori_mtess_params (In, level, MTess, Tess, dtess, dcell, &ori, &orispread, &oricrysym);
+  net_ori_mtess_params (In, level, MTess, Tess, dtess, dcell, &ori, &orisampling, &orispread, &oricrysym);
 
   OSet = ol_set_alloc ((*pSSet).N, oricrysym);
 
@@ -50,14 +50,20 @@ net_ori (struct IN_T In, int level, struct MTESS MTess, struct TESS *Tess,
   for (i = 0; i < partqty; i++)
   {
     if (!strcmp (parts[i], "random"))
-      net_ori_random ((*pSSet).Random, OSets + i);
+    {
+      if (!strcmp (In.orisampling[level], "random"))
+        net_ori_random ((*pSSet).Random, OSets + i);
+
+      else if (!strcmp (In.orisampling[level], "uniform"))
+        net_ori_uniform (In, level, MTess, Tess, dtess, dcell, (*pSSet).Random,
+                         OSets + i, verbositylevel);
+
+      else
+        ut_print_message (2, 3, "Failed to process `%s'.\n", In.orisampling[level]);
+    }
 
     else if (!strncmp (parts[i], "fiber", 5))
       net_ori_fiber (SSet, dtess, dcell, (*pSSet).Random, parts[i], OSets + i);
-
-    else if (!strcmp (parts[i], "uniform"))
-      net_ori_uniform (In, level, MTess, Tess, dtess, dcell, (*pSSet).Random,
-                       OSets + i, verbositylevel);
 
     else if (!strncmp (ori, "file(", 5))
     {
@@ -93,6 +99,7 @@ net_ori (struct IN_T In, int level, struct MTESS MTess, struct TESS *Tess,
   ut_free_1d_int (&qty);
   ut_free_2d_char (&parts, partqty);
   ut_free_1d_char (&ori);
+  ut_free_1d_char (&orisampling);
   ut_free_1d_char (&orispread);
   ut_free_1d_char (&oricrysym);
   ol_set_free (OSet);

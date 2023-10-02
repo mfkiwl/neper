@@ -429,11 +429,14 @@ net_ori_mtess_id (struct IN_T In, struct MTESS MTess, struct TESS *Tess,
 void
 net_ori_mtess_params (struct IN_T In, int level, struct MTESS MTess,
                       struct TESS *Tess, int dtess, int dcell, char **pori,
-                      char **porispread, char **pcrysym)
+                      char **porisampling, char **porispread, char **pcrysym)
 {
   net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
                                            In.ori[level], pori);
   ut_string_fnrs (*pori, "fibre", "fiber", 1);
+
+  net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
+                                           In.orisampling[level], porisampling);
 
   net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
                                            In.orispread[level], porispread);

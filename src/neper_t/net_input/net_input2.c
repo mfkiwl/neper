@@ -209,6 +209,13 @@ net_input_treatargs (int fargc, char **fargv, int argc, char **argv,
       if (!strcmp ((*pIn).ori[i], "default"))
         ut_string_string ("random", (*pIn).ori + i);
 
+    // orisampling
+    net_input_treatargs_multiscale ("-orisampling", &(*pIn).orisamplingstring,
+                                    (*pIn).levelqty, &((*pIn).orisampling));
+    for (i = 1; i <= (*pIn).levelqty; i++)
+      if (!strcmp ((*pIn).orisampling[i], "default"))
+        ut_string_string ("random", (*pIn).orisampling + i);
+
     // oricrysym
     net_input_treatargs_multiscale ("-crysym", &(*pIn).crysymstring,
                                     (*pIn).levelqty, &((*pIn).crysym));

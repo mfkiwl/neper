@@ -463,27 +463,25 @@ Crystal Orientation Options
 
   Specify the :ref:`Crystal Symmetry <crystal_symmetries>`.
 
-  .. note :: It is used by option :data:`-ori uniform`, to reduce the domain of definition of the orientation descriptors and by the :ref:`neper_v`.
+  .. note :: It is used by option :data:`-orisampling uniform`, to reduce the domain of definition of the orientation descriptors and by the :ref:`neper_v`.
 
   **Default value**: :data:`triclinic`.
 
 .. option:: -ori <ori_distrib>
 
-  Specify the type of crystal orientation distribution. It can be:
+  Specify the crystal orientation distribution function (ODF).  Given the ODF, orientations are determined according to :option:`-orisampling`.  The ODF can be:
 
-  - :data:`random`: randomly-distributed orientations in 3D space (no or "random" texture, ODF = 1);
+  - :data:`random`: ODF = 1, i.e. no or "random" texture (standard case);
 
-  - :data:`odf(mesh=file(<mesh_file>),val=file(<value_file>))`: randomly-distributed orientations in 3D space following the ODF described by :data:`<mesh_file>` (a mesh of the fundamental region of orientation space) and :data:`<value_file>` (a :ref:`data_file` containing the ODF values at the mesh elements);
+  - :data:`odf(mesh=file(<mesh_file>),val=file(<value_file>))`: ODF described by :data:`<mesh_file>` (a mesh of the fundamental region of orientation space) and :data:`<value_file>` (a :ref:`data_file` containing the ODF values at the mesh elements);
 
-  - :data:`uniform`: uniformly-distributed orientations in 3D space [#uniform-crysym]_;
+  - :data:`<orientation>[:<distribution>]`: a continuous distribution about a :ref:`discrete orientation <rotations_and_orientations>` (the distribution itself is optional, see below);
 
-  - :data:`<orientation>[:<distribution>]`: a :ref:`discrete orientation <rotations_and_orientations>`, with an optional disorientation distribution (see below);
+  - :data:`fiber(<dirc_x>,<dirc_y>,<dirc_z>,<dirs_x>,<dirs_y>,<dirs_z>)[:normal(<var>=<val>)]`: orientations along a fiber (see :ref:`orientation_fibers`), with an optional continuous distribution about the fiber (see below);
 
-  - :data:`fiber(<dirc_x>,<dirc_y>,<dirc_z>,<dirs_x>,<dirs_y>,<dirs_z>)[:normal(<var>=<val>)]`: randomly-distributed orientations along the fiber, see :ref:`orientation_fibers`, with an optional disorientation distribution (see below);
+  - :data:`parent[:<distribution>]`: orientations inherited from the ones of the parent cells, with an optional continuous distribution about the nominal orientations (see below);
 
-  - :data:`parent[:normal(<var>=<val>)]`: orientations inherited from the ones of the parent cells, with an optional disorientation distribution (see below);
-
-  - :data:`file(<file_name>[,des=<descriptor>])`: orientations to be read from a :ref:`data_file` written using a specific descriptor (see :ref:`rotations_and_orientations`, default :data:`rodrigues`).
+  - :data:`file(<file_name>[,des=<descriptor>])`: discrete orientations to be read from a :ref:`data_file` written using a specific descriptor (see :ref:`rotations_and_orientations`, default :data:`rodrigues`).
 
   The optional distributions are:
 
@@ -505,15 +503,14 @@ Crystal Orientation Options
 
   **Default value**: :data:`random`.
 
-.. option:: -orispread <spread>
+.. option:: -orisampling <sampling>
 
-  Specify the type of (in-cell) orientation spreads.  It can be:
+  Specify the type of sampling of the orientation distribution.  It can be:
 
-  - :data:`normal(<thetam>)`: a 3-variate normal distribution corresponding to an average misorientation angle (with respect to the average orientation) of :data:`<thetam>` (expressed in degree), to be applied to all cells.
-  - :data:`file(<file_name>)`: different cell distributions (of the type :data:`normal...`), to load from a :ref:`data_file`.
-  - :data:`none`: none.
+  - :data:`random`: random sampling;
+  - :data:`uniform`: uniform sampling in 3D space (only for :data:`-ori random`, implementation of [JAC2018]_) [#uniform-crysym]_.
 
-  **Default value**: :data:`none`.
+  **Default value**: :data:`random`.
 
 .. option:: -orioptialgo <algorithm1>,<algorithm2>,... (secondary option)
 
@@ -559,7 +556,7 @@ Crystal Orientation Options
 
 .. option:: -orioptineigh <neighborhood_radius> (secondary option)
 
-  Specify the radius of the neighborhood of orientations to be used to compute their forces (for :data:`-ori uniform`), which can be any mathematical or logical expression based on:
+  Specify the radius of the neighborhood of orientations to be used to compute their forces (for :data:`-orisampling uniform`), which can be any mathematical or logical expression based on:
 
   - :data:`dr`: average radius of an orientation;
   - :data:`Nstar`: grand number of orientations (i.e., taking crystal symmetry into account).
@@ -573,6 +570,16 @@ Crystal Orientation Options
   **Default value**: -.
 
   **File extension**: :file:`.logorivar`.
+
+.. option:: -orispread <spread>
+
+  Specify the type of (in-cell) orientation spreads.  It can be:
+
+  - :data:`normal(<thetam>)`: a 3-variate normal distribution corresponding to an average misorientation angle (with respect to the average orientation) of :data:`<thetam>` (expressed in degree), to be applied to all cells.
+  - :data:`file(<file_name>)`: different cell distributions (of the type :data:`normal...`), to load from a :ref:`data_file`.
+  - :data:`none`: none.
+
+  **Default value**: :data:`none`.
 
 Transformation Options
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -1114,13 +1121,13 @@ Below are some examples of use of neper -T.
 
   .. code-block:: console
 
-    $ neper -T -n 100 -oricrysym cubic -ori uniform
+    $ neper -T -n 100 -crysym cubic -orisampling uniform
 
 - Generate 100 uniformly distributed crystal orientations with cubic crystal symmetry (no tessellation):
 
   .. code-block:: console
 
-    $ neper -T -n 100 -oricrysym cubic -ori uniform -for ori
+    $ neper -T -n 100 -crysym cubic -orisampling uniform -for ori
 
 References
 ----------
@@ -1145,7 +1152,7 @@ References
 
 .. [#endianness] Endianness is both written in the tesr file and tested on the system when reading the tesr file, so that the user normally does not have to care about it (even when transferring files across systems).
 
-.. [#uniform-crysym] The crystal symmetry must be specified using :option:`-oricrysym`.
+.. [#uniform-crysym] The crystal symmetry must be specified using :option:`-crysym`.
 
 .. [#rotate] Cell orientations are rotated accordingly.
 
