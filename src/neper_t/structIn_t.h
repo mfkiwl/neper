@@ -22,7 +22,8 @@ extern "C"
     char **n;				//
     char *idstring;			// id of the seed distribution
     char **id;				//
-    char *morphostring;		// morphology optimization
+
+    char *morphostring;		        // morphology input string
     char **morpho;			//
     char *morphooptialgostring;		// opti algorithm
     char **morphooptialgo;		//
@@ -58,10 +59,8 @@ extern "C"
     char *morphooptimultiseedstring;	// opti multiseed
     char **morphooptimultiseed;		//
 
-    char *oristring;		        // orientation distribution string
+    char *oristring;		        // ori input string
     char **ori;                         // orientation distribution
-    char *crysymstring;		        // orientation crystal symmetry
-    char **crysym;			//
     char *orioptistopstring;            // orientation opti / termination criterion
     char **orioptistop;                 //
     char *orioptineighstring;           // orientation opti / neighbor string
@@ -75,6 +74,9 @@ extern "C"
 
     char *orispreadstring;		// orientation spread string
     char **orispread;                   // orientation spreads
+
+    char *crysymstring;		        // crystal symmetry
+    char **crysym;			//
 
     // post-tessellation options
     int reg;				// regularization
