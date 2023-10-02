@@ -8,7 +8,8 @@ void
 net_input_treatargs (int fargc, char **fargv, int argc, char **argv,
                      struct IN_T *pIn)
 {
-  int i;
+  int i, qty = 0;
+  char **tmp = NULL;
 
   net_input_options_default (pIn);
 
@@ -62,14 +63,14 @@ net_input_treatargs (int fargc, char **fargv, int argc, char **argv,
     net_input_treatargs_multiscale ("-morphooptialgo",
                                     &(*pIn).optialgostring,
                                     (*pIn).levelqty,
-                                    &((*pIn).optialgo));
+                                    &((*pIn).optialgo[0]));
     for (i = 1; i <= (*pIn).levelqty; i++)
-      if (!strcmp ((*pIn).optialgo[i], "default"))
+      if (!strcmp ((*pIn).optialgo[0][i], "default"))
       {
         if (!strcmp ((*pIn).morpho[i], "centroid:seed"))
-          ut_string_string ("lloyd(1.9)", &((*pIn).optialgo[i]));
+          ut_string_string ("lloyd(1.9)", &((*pIn).optialgo[0][i]));
         else
-          ut_string_string ("subplex,praxis", &((*pIn).optialgo[i]));
+          ut_string_string ("subplex,praxis", &((*pIn).optialgo[0][i]));
       }
 
     // optiini
@@ -119,7 +120,7 @@ net_input_treatargs (int fargc, char **fargv, int argc, char **argv,
     for (i = 1; i <= (*pIn).levelqty; i++)
       if (!strcmp ((*pIn).optistop[i], "default"))
       {
-        if (!strncmp ((*pIn).optialgo[i], "lloyd", 5))
+        if (!strncmp ((*pIn).optialgo[0][i], "lloyd", 5))
           ut_string_string ("val=1e-4,itermax=10000",
                             (*pIn).optistop + i);
         else
@@ -361,6 +362,8 @@ net_input_treatargs (int fargc, char **fargv, int argc, char **argv,
   (*pIn).debug = ut_string_addextension ((*pIn).body, ".debug");
   (*pIn).mtess = ut_string_addextension ((*pIn).body, ".mtess");
   (*pIn).mgeo = ut_string_addextension ((*pIn).body, ".mgeo");
+
+  ut_free_2d_char (&tmp, qty);
 
   return;
 }

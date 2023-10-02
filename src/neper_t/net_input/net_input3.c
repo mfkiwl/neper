@@ -8,6 +8,8 @@
 void
 net_input_options_default (struct IN_T *pIn)
 {
+  int i;
+
   (*pIn).dim = 3;
   ut_string_string ("default", &((*pIn).domain));
   ut_string_string ("none", &((*pIn).periodicstring));
@@ -60,6 +62,8 @@ net_input_options_default (struct IN_T *pIn)
   ut_string_string (NEUT_DEFAULT_ORIDESFULL, &((*pIn).orides));
   ut_string_string ("plain", &((*pIn).oriformat));
 
+  (*pIn).optiqty = 2;
+
   // copying defaults to first line of multiscale parameters
   (*pIn).n = ut_alloc_1d_pchar (1);
   ut_string_string ((*pIn).nstring, (*pIn).n);
@@ -69,8 +73,9 @@ net_input_options_default (struct IN_T *pIn)
   ut_string_string ((*pIn).morphostring, (*pIn).morpho);
   (*pIn).optiini = ut_alloc_1d_pchar (1);
   ut_string_string ((*pIn).optiinistring, (*pIn).optiini);
-  (*pIn).optialgo = ut_alloc_1d_pchar (1);
-  ut_string_string ((*pIn).optialgostring, (*pIn).optialgo);
+  (*pIn).optialgo = ut_alloc_2d_pchar ((*pIn).optiqty, 1);
+  for (i = 0; i < (*pIn).optiqty; i++)
+    ut_string_string ((*pIn).optialgostring, (*pIn).optialgo[i]);
   (*pIn).optialgomaxiter = ut_alloc_1d_pchar (1);
   ut_string_string ((*pIn).optialgomaxiterstring,
                     (*pIn).optialgomaxiter);

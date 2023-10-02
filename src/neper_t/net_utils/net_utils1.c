@@ -179,7 +179,7 @@ net_in_free (struct IN_T *pIn)
   ut_free_1d_char (&(*pIn).morphostring);
   ut_free_2d_char (&(*pIn).morpho, (*pIn).levelqty + 1);
   ut_free_1d_char (&(*pIn).optialgostring);
-  ut_free_2d_char (&(*pIn).optialgo, (*pIn).levelqty + 1);
+  // ut_free_3d_char (&(*pIn).optialgo, (*pIn).optiqty, (*pIn).levelqty + 1);
   ut_free_1d_char (&(*pIn).optiobjectivestring);
   ut_free_2d_char (&(*pIn).optiobjective, (*pIn).levelqty + 1);
   ut_free_1d_char (&(*pIn).optismoothstring);

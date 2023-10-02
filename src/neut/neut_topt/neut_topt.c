@@ -455,3 +455,14 @@ neut_topt_iter_loop (struct TOPT TOpt, int iter, int *ploop)
 
   return 0;
 }
+
+int
+neut_topt_typepos (struct TOPT TOpt)
+{
+  if (!strcmp (TOpt.optitype, "morpho"))
+    return 0;
+  else if (!strcmp (TOpt.optitype, "ori"))
+    return 1;
+  else
+    abort ();
+}

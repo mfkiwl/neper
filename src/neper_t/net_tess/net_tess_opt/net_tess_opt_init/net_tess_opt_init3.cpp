@@ -42,7 +42,7 @@ net_tess_opt_init_parms_algo (struct IN_T In, int level, struct MTESS MTess,
   char *optialgo = NULL;
 
   net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
-                                           In.optialgo[level],
+                                           In.optialgo[neut_topt_typepos (*pTOpt)][level],
                                            &optialgo);
   ut_list_break (optialgo, NEUT_SEP_NODEP, &(*pTOpt).algoname,
                  &(*pTOpt).algoqty);
