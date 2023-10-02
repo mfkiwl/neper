@@ -8,8 +8,7 @@ void
 net_input_treatargs (int fargc, char **fargv, int argc, char **argv,
                      struct IN_T *pIn)
 {
-  int i, qty = 0;
-  char **tmp = NULL;
+  int i;
 
   net_input_options_default (pIn);
 
@@ -60,10 +59,12 @@ net_input_treatargs (int fargc, char **fargv, int argc, char **argv,
                           (*pIn).morpho[i]);
 
     // optialgo
-    net_input_treatargs_multiscale ("-morphooptialgo",
-                                    &(*pIn).optialgostring,
-                                    (*pIn).levelqty,
-                                    &((*pIn).optialgo[0]));
+    for (i = 0; i < (*pIn).optiqty; i++)
+      net_input_treatargs_multiscale (ut_string_paste3 ("-", (*pIn).optitype[i], "optialgo"),
+                                      (*pIn).optialgostring + i,
+                                      (*pIn).levelqty, (*pIn).optialgo + i);
+
+    // replacing "default" by its value, for morpho and ori
     for (i = 1; i <= (*pIn).levelqty; i++)
       if (!strcmp ((*pIn).optialgo[0][i], "default"))
       {
@@ -72,6 +73,10 @@ net_input_treatargs (int fargc, char **fargv, int argc, char **argv,
         else
           ut_string_string ("subplex,praxis", &((*pIn).optialgo[0][i]));
       }
+
+    for (i = 1; i <= (*pIn).levelqty; i++)
+      if (!strcmp ((*pIn).optialgo[1][i], "default"))
+        ut_string_string ("subplex,praxis", &((*pIn).optialgo[1][i]));
 
     // optiini
     net_input_treatargs_multiscale ("-morphooptiini",
@@ -362,8 +367,6 @@ net_input_treatargs (int fargc, char **fargv, int argc, char **argv,
   (*pIn).debug = ut_string_addextension ((*pIn).body, ".debug");
   (*pIn).mtess = ut_string_addextension ((*pIn).body, ".mtess");
   (*pIn).mgeo = ut_string_addextension ((*pIn).body, ".mgeo");
-
-  ut_free_2d_char (&tmp, qty);
 
   return;
 }

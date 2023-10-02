@@ -515,6 +515,21 @@ Crystal Orientation Options
 
   **Default value**: :data:`none`.
 
+.. option:: -orioptialgo <algorithm1>,<algorithm2>,... (secondary option)
+
+  Specify the optimization algorithm, which can be:
+
+    - :data:`subplex`: Subplex (recommend);
+    - :data:`praxis`: Praxis (recommended, except for high numbers of seeds, where it becomes highly memory-intensive) [#praxis]_ ;
+    - :data:`neldermead`: Nelder-Mead (not recommended);
+    - :data:`cobyla`: Cobyla (not recommended);
+    - :data:`bobyqa`: Bobyqa (not recommended);
+    - :data:`newuoa`: Newuoa (not recommended).
+
+  In several algorithms are provided, the second etc. are used if the previous ones fails.
+
+  **Default value**: :data:`subplex,praxis`.
+
 .. option:: -orioptiini <ori_distrib> (secondary option)
 
   Specify the initial crystal orientations, which can be:

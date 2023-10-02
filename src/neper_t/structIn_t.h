@@ -40,10 +40,11 @@ extern "C"
     char *morphostring;
     char **morpho;
 
-    int optiqty;
+    int optiqty;        // 2
+    char **optitype;    // "morpho", "ori"
 
     // optimization algorithms (-*opti)
-    char *optialgostring;
+    char **optialgostring;
     char ***optialgo;
 
     // optimization / initial state (-*optiini)
