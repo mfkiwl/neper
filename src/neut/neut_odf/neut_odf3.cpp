@@ -11,18 +11,24 @@ neut_odf_comp_elts_all (struct OL_SET *pOSet, double *q, struct ODF *pOdf, int i
 {
   int i, j, n = ol_crysym_qty ((*pOSet).crysym);
   double theta, *qs = ol_q_alloc ();
+  double sigma = (*pOdf).sigma;
 
   if (!(*pOdf).odf)
     (*pOdf).odf = ut_alloc_1d ((*pOdf).odfqty);
 
   for (i = 0; i < (int) (*pOSet).size; i++)
+  {
+    if ((*pOSet).theta)
+      sigma = sqrt (pow ((*pOdf).sigma, 2) + pow ((*pOSet).theta[i], 2));
+
     for (j = 1; j <= n; j++)
     {
       ol_q_crysym ((*pOSet).q[i], (*pOSet).crysym, j, qs);
       ol_q_q_misori_rad (q, qs, &theta);
-      (*pOdf).odf[id] += (*pOSet).weight[i] / sqrt (2 * M_PI * (*pOdf).sigma * (*pOdf).sigma)
-        * exp (-theta * theta / (2 * (*pOdf).sigma * (*pOdf).sigma));
+      (*pOdf).odf[id] += (*pOSet).weight[i] / sqrt (2 * M_PI * sigma * sigma)
+        * exp (-theta * theta / (2 * sigma * sigma));
     }
+  }
 
   ol_q_free (qs);
 
