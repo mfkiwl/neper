@@ -25,39 +25,39 @@ extern "C"
 
     char *morphostring;		        // morphology input string
     char **morpho;			//
-    char *morphooptialgostring;		// opti algorithm
-    char **morphooptialgo;		//
-    char *morphooptiinistring;		// opti algorithm
-    char **morphooptiini;		//
-    char *morphooptialgomaxiterstring;  // max number of iterations without
+    char *optialgostring;		// opti algorithm
+    char **optialgo;		//
+    char *optiinistring;		// opti algorithm
+    char **optiini;		//
+    char *optialgomaxiterstring;  // max number of iterations without
     					// decreasing the objective function
-    char **morphooptialgomaxiter;	//
-    char *morphooptiobjectivestring;	// opti objective function
-    char **morphooptiobjective;		//
-    char *morphooptigridstring;		// grid definition
-    char **morphooptigrid;		//
-    char *morphooptismoothstring;	// smoothing parameter
-    char **morphooptismooth;		//
-    char *morphooptistopstring;		// opti stop criterion
-    char **morphooptistop;		//
-    char *morphooptidofstring;		// opti dofs
-    char **morphooptidof;		//
-    char *morphooptideltamaxstring;		// opti limit distance
-    char **morphooptideltamax;		//
-    char *morphooptiinistepstring;	// opti ini step
-    char **morphooptiinistep;		//
-    char *morphooptilogtimestring;      // time log
-    char **morphooptilogtime;		//
-    char *morphooptilogvarstring;       // variable log
-    char **morphooptilogvar;		//
-    char *morphooptilogdisstring;       // distribution log
-    char **morphooptilogdis;		//
-    char *morphooptilogtesrstring;      // tesr control points log
-    char **morphooptilogtesr;		//
-    char *morphooptilogvalstring;       // value log
-    char **morphooptilogval;		//
-    char *morphooptimultiseedstring;	// opti multiseed
-    char **morphooptimultiseed;		//
+    char **optialgomaxiter;	//
+    char *optiobjectivestring;	// opti objective function
+    char **optiobjective;		//
+    char *optigridstring;		// grid definition
+    char **optigrid;		//
+    char *optismoothstring;	// smoothing parameter
+    char **optismooth;		//
+    char *optistopstring;		// opti stop criterion
+    char **optistop;		//
+    char *optidofstring;		// opti dofs
+    char **optidof;		//
+    char *optideltamaxstring;		// opti limit distance
+    char **optideltamax;		//
+    char *optiinistepstring;	// opti ini step
+    char **optiinistep;		//
+    char *optilogtimestring;      // time log
+    char **optilogtime;		//
+    char *optilogvarstring;       // variable log
+    char **optilogvar;		//
+    char *optilogdisstring;       // distribution log
+    char **optilogdis;		//
+    char *optilogtesrstring;      // tesr control points log
+    char **optilogtesr;		//
+    char *optilogvalstring;       // value log
+    char **optilogval;		//
+    char *optimultiseedstring;	// opti multiseed
+    char **optimultiseed;		//
 
     char *oristring;		        // ori input string
     char **ori;                         // orientation distribution

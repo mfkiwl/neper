@@ -42,7 +42,7 @@ net_tess_opt_init_parms_algo (struct IN_T In, int level, struct MTESS MTess,
   char *optialgo = NULL;
 
   net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
-                                           In.morphooptialgo[level],
+                                           In.optialgo[level],
                                            &optialgo);
   ut_list_break (optialgo, NEUT_SEP_NODEP, &(*pTOpt).algoname,
                  &(*pTOpt).algoqty);
@@ -95,7 +95,7 @@ net_tess_opt_init_parms_algomaxiter (struct IN_T In, int level,
   vals[0] = qty;
 
   for (i = 0; i < (*pTOpt).algoqty; i++)
-    ut_math_eval_int (In.morphooptialgomaxiter[level], varqty, vars, vals,
+    ut_math_eval_int (In.optialgomaxiter[level], varqty, vars, vals,
                       (*pTOpt).algomaxiter + i);
 
   ut_free_2d_char (&vars, varqty);
@@ -105,15 +105,15 @@ net_tess_opt_init_parms_algomaxiter (struct IN_T In, int level,
 }
 
 void
-net_tess_opt_init_parms_objective (char *morphooptiobjective,
+net_tess_opt_init_parms_objective (char *optiobjective,
                                    struct TOPT *pTOpt)
 {
   int i, j, PartQty1, *PartQty2 = NULL;
   char ***parts = NULL;
 
-  ut_string_fnrs (morphooptiobjective, "circularity", "sphericity", INT_MAX);
+  ut_string_fnrs (optiobjective, "circularity", "sphericity", INT_MAX);
 
-  ut_list_break2 (morphooptiobjective, NEUT_SEP_NODEP, NEUT_SEP_DEP, &parts,
+  ut_list_break2 (optiobjective, NEUT_SEP_NODEP, NEUT_SEP_DEP, &parts,
                   &PartQty2, &PartQty1);
 
   for (i = 0; i < PartQty1; i++)
@@ -293,7 +293,7 @@ net_tess_opt_init_target_grid (struct IN_T In, int level, struct MTESS MTess,
   char *string = NULL;
 
   net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
-                                           In.morphooptigrid[level], &string);
+                                           In.optigrid[level], &string);
 
   ut_string_fnrs (string, "circularity", "sphericity", INT_MAX);
 
@@ -332,7 +332,7 @@ net_tess_opt_init_target_cvl (struct IN_T In, int level, struct MTESS MTess,
   ut_string_string ("numerical", &(*pTOpt).cvlmethod);
 
   net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
-                                           In.morphooptismooth[level],
+                                           In.optismooth[level],
                                            &string);
 
   ut_string_fnrs (string, "circularity", "sphericity", INT_MAX);

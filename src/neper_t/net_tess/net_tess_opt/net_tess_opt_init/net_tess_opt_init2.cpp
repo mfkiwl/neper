@@ -17,7 +17,7 @@ net_tess_opt_init_general (struct IN_T In, int level, struct MTESS MTess,
   neut_tess_poly_tess (Tess[dtess], dcell, &((*pTOpt).Dom0));
 
   net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
-                                           In.morphooptidof[level],
+                                           In.optidof[level],
                                            &(*pTOpt).dof);
 
   if (ut_list_testelt ((*pTOpt).dof, NEUT_SEP_NODEP, "w")
@@ -647,7 +647,7 @@ net_tess_opt_init_parms (struct IN_T In, int level, struct MTESS MTess,
   (*pTOpt).iter = 0;
 
   net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
-                                           In.morphooptidof[level],
+                                           In.optidof[level],
                                            &(*pTOpt).dof);
 
   // if activedim defined, disabling corresponding dofs
@@ -664,7 +664,7 @@ net_tess_opt_init_parms (struct IN_T In, int level, struct MTESS MTess,
   }
 
   net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
-                                           In.morphooptistop[level], &string);
+                                           In.optistop[level], &string);
 
   ut_list_break2 (string, NEUT_SEP_NODEP, "=", &parts, &qty2, &qty1);
   for (i = 0; i < qty1; i++)
@@ -692,12 +692,12 @@ net_tess_opt_init_parms (struct IN_T In, int level, struct MTESS MTess,
       ut_print_message (1, 4, "Unknown stop criterion `%s'.  Skipping...\n",
                         parts[i][0]);
 
-  if (!strcmp (In.morphooptideltamax[level], "HUGE_VAL"))
+  if (!strcmp (In.optideltamax[level], "HUGE_VAL"))
     (*pTOpt).dist = HUGE_VAL;
   else
   {
     net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
-                                             In.morphooptideltamax[level],
+                                             In.optideltamax[level],
                                              &string);
     sscanf (string, "%lf", &((*pTOpt).dist));
   }
@@ -711,7 +711,7 @@ net_tess_opt_init_parms (struct IN_T In, int level, struct MTESS MTess,
   strcpy (vars[0], "avdiameq");
   vals[0] = diameq;
   net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
-                                           In.morphooptiinistep[level],
+                                           In.optiinistep[level],
                                            &string);
 
   if (!strcmp ((*pTOpt).optitype, "morpho"))
@@ -747,25 +747,25 @@ net_tess_opt_init_parms (struct IN_T In, int level, struct MTESS MTess,
   ut_free_1d (&vals);
 
   net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
-                                           In.morphooptiobjective[level],
+                                           In.optiobjective[level],
                                            &string);
   net_tess_opt_init_parms_objective (string, pTOpt);
 
   net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
-                                           In.morphooptilogtime[level],
+                                           In.optilogtime[level],
                                            &(*pTOpt).TDyn.logtime);
   net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
-                                           In.morphooptilogvar[level],
+                                           In.optilogvar[level],
                                            &(*pTOpt).TDyn.logvar);
   net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
-                                           In.morphooptilogdis[level],
+                                           In.optilogdis[level],
                                            &(*pTOpt).TDyn.logdis);
   (*pTOpt).TDyn.logdis_qty = (*pTOpt).tarqty;
   net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
-                                           In.morphooptilogval[level],
+                                           In.optilogval[level],
                                            &(*pTOpt).TDyn.logval);
   net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
-                                           In.morphooptilogtesr[level],
+                                           In.optilogtesr[level],
                                            &(*pTOpt).TDyn.logtesr);
 
   ut_string_string (In.body, &((*pTOpt).TDyn.body));
@@ -806,14 +806,14 @@ net_tess_opt_init_crystal (struct IN_T In, int level, struct TOPT *pTOpt)
   if ((*pTOpt).tarqty > 0)
     ut_print_message (0, 3, "Setting crystal... ");
 
-  if (!strcmp (In.morphooptiini[level], "default"))
+  if (!strcmp (In.optiini[level], "default"))
     ut_array_1d_set ((*pTOpt).Crys.C, 3, 1.);
-  else if (strncmp (In.morphooptiini[level], "crystal:", 8))
+  else if (strncmp (In.optiini[level], "crystal:", 8))
     ut_print_message (2, 2,
                       "-morphooptiini must be 'crystal:file(filename)'.\n");
   else
   {
-    ut_string_string (In.morphooptiini[level] + 8, &filename);
+    ut_string_string (In.optiini[level] + 8, &filename);
 
     fp = ut_file_open (filename, "r");
     ut_array_1d_fscanf (fp, (*pTOpt).Crys.C, 3);

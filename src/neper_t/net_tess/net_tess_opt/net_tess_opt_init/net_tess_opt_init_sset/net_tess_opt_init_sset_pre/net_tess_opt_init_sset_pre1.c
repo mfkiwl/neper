@@ -17,7 +17,8 @@ net_tess_opt_init_sset_general (struct IN_T In, struct MTESS MTess,
 
   net_tess_opt_init_sset_pre_type (pSSet);
 
-  (*pSSet).N = (*pTOpt).CellQty;
+  if (pTOpt)
+    (*pSSet).N = (*pTOpt).CellQty;
 
   net_tess_opt_init_sset_pre_size (Tess, dtess, dcell, pTOpt, pSSet);
 
@@ -48,7 +49,7 @@ net_tess_opt_init_sset_pre (struct IN_T In, int level, struct MTESS MTess,
   ut_free_1d_char (pcooexpr);
 
   net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, domtess,
-                                           domcell, In.morphooptiini[level],
+                                           domcell, In.optiini[level],
                                            &string);
 
   (*ppos) = -1;
@@ -83,11 +84,11 @@ net_tess_opt_init_sset_pre (struct IN_T In, int level, struct MTESS MTess,
     net_tess_opt_init_sset_pre_default_weight (*pTOpt, *pvar, pweightexpr);
   }
 
-  else if (ut_file_exist (In.morphooptiini[level])
-           && ut_file_testformat (In.morphooptiini[level], "tess"))
+  else if (ut_file_exist (In.optiini[level])
+           && ut_file_testformat (In.optiini[level], "tess"))
   {
-    ut_string_string (In.morphooptiini[level], pcooexpr);
-    ut_string_string (In.morphooptiini[level], pweightexpr);
+    ut_string_string (In.optiini[level], pcooexpr);
+    ut_string_string (In.optiini[level], pweightexpr);
   }
 
   else

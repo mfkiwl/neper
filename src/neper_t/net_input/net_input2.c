@@ -58,143 +58,143 @@ net_input_treatargs (int fargc, char **fargv, int argc, char **argv,
         ut_print_message (2, 2, "`-morpho %s' requires `-n from_morpho'.\n",
                           (*pIn).morpho[i]);
 
-    // morphooptialgo
+    // optialgo
     net_input_treatargs_multiscale ("-morphooptialgo",
-                                    &(*pIn).morphooptialgostring,
+                                    &(*pIn).optialgostring,
                                     (*pIn).levelqty,
-                                    &((*pIn).morphooptialgo));
+                                    &((*pIn).optialgo));
     for (i = 1; i <= (*pIn).levelqty; i++)
-      if (!strcmp ((*pIn).morphooptialgo[i], "default"))
+      if (!strcmp ((*pIn).optialgo[i], "default"))
       {
         if (!strcmp ((*pIn).morpho[i], "centroid:seed"))
-          ut_string_string ("lloyd(1.9)", &((*pIn).morphooptialgo[i]));
+          ut_string_string ("lloyd(1.9)", &((*pIn).optialgo[i]));
         else
-          ut_string_string ("subplex,praxis", &((*pIn).morphooptialgo[i]));
+          ut_string_string ("subplex,praxis", &((*pIn).optialgo[i]));
       }
 
-    // morphooptiini
+    // optiini
     net_input_treatargs_multiscale ("-morphooptiini",
-                                    &(*pIn).morphooptiinistring,
-                                    (*pIn).levelqty, &((*pIn).morphooptiini));
+                                    &(*pIn).optiinistring,
+                                    (*pIn).levelqty, &((*pIn).optiini));
 
-    // morphooptialgomaxiter
+    // optialgomaxiter
     net_input_treatargs_multiscale ("-morphooptialgomaxiter",
-                                    &(*pIn).morphooptialgomaxiterstring,
+                                    &(*pIn).optialgomaxiterstring,
                                     (*pIn).levelqty,
-                                    &((*pIn).morphooptialgomaxiter));
+                                    &((*pIn).optialgomaxiter));
 
-    // morphooptiobjective
+    // optiobjective
     net_input_treatargs_multiscale ("-morphooptiobjective",
-                                    &(*pIn).morphooptiobjectivestring,
+                                    &(*pIn).optiobjectivestring,
                                     (*pIn).levelqty,
-                                    &((*pIn).morphooptiobjective));
+                                    &((*pIn).optiobjective));
 
-    // morphooptigrid
+    // optigrid
     net_input_treatargs_multiscale ("-morphooptigrid",
-                                    &(*pIn).morphooptigridstring,
+                                    &(*pIn).optigridstring,
                                     (*pIn).levelqty,
-                                    &((*pIn).morphooptigrid));
+                                    &((*pIn).optigrid));
     for (i = 1; i <= (*pIn).levelqty; i++)
-      if (!strcmp ((*pIn).morphooptigrid[i], "default"))
+      if (!strcmp ((*pIn).optigrid[i], "default"))
         ut_string_string
           ("diameq:regular(-1,10,1100),size:regular(-1,10,1100),sphericity:regular(-0.1,1.1,1200),1-sphericity:regular(-0.1,1.1,1200),ori:odf",
-           (*pIn).morphooptigrid + i);
+           (*pIn).optigrid + i);
 
-    // morphooptismooth
+    // optismooth
     net_input_treatargs_multiscale ("-morphooptismooth",
-                                    &(*pIn).morphooptismoothstring,
+                                    &(*pIn).optismoothstring,
                                     (*pIn).levelqty,
-                                    &((*pIn).morphooptismooth));
+                                    &((*pIn).optismooth));
     for (i = 1; i <= (*pIn).levelqty; i++)
-      if (!strcmp ((*pIn).morphooptismooth[i], "default"))
+      if (!strcmp ((*pIn).optismooth[i], "default"))
         ut_string_string
           ("diameq:0.05,size:0.05,sphericity:0.005,1-sphericity:0.005",
-           (*pIn).morphooptismooth + i);
+           (*pIn).optismooth + i);
 
-    // morphooptistop
+    // optistop
     net_input_treatargs_multiscale ("-morphooptistop",
-                                    &(*pIn).morphooptistopstring,
+                                    &(*pIn).optistopstring,
                                     (*pIn).levelqty,
-                                    &((*pIn).morphooptistop));
+                                    &((*pIn).optistop));
     for (i = 1; i <= (*pIn).levelqty; i++)
-      if (!strcmp ((*pIn).morphooptistop[i], "default"))
+      if (!strcmp ((*pIn).optistop[i], "default"))
       {
-        if (!strncmp ((*pIn).morphooptialgo[i], "lloyd", 5))
+        if (!strncmp ((*pIn).optialgo[i], "lloyd", 5))
           ut_string_string ("val=1e-4,itermax=10000",
-                            (*pIn).morphooptistop + i);
+                            (*pIn).optistop + i);
         else
-          ut_string_string ("eps=1e-6", (*pIn).morphooptistop + i);
+          ut_string_string ("eps=1e-6", (*pIn).optistop + i);
       }
 
-    // morphooptidof
+    // optidof
     net_input_treatargs_multiscale ("-morphooptidof",
-                                    &(*pIn).morphooptidofstring,
-                                    (*pIn).levelqty, &((*pIn).morphooptidof));
+                                    &(*pIn).optidofstring,
+                                    (*pIn).levelqty, &((*pIn).optidof));
     for (i = 1; i <= (*pIn).levelqty; i++)
     {
-      if (!strcmp ((*pIn).morphooptidof[i], "default"))
+      if (!strcmp ((*pIn).optidof[i], "default"))
       {
         if ((*pIn).dim == 2)
-          ut_string_string ("x,y,w", (*pIn).morphooptidof + i);
+          ut_string_string ("x,y,w", (*pIn).optidof + i);
         else if ((*pIn).dim == 3)
-          ut_string_string ("x,y,z,w", (*pIn).morphooptidof + i);
+          ut_string_string ("x,y,z,w", (*pIn).optidof + i);
       }
       else if ((*pIn).dim == 2)
       {
-        if (strstr ((*pIn).morphooptidof[i], "z"))
+        if (strstr ((*pIn).optidof[i], "z"))
           ut_print_message (1, 2,
                             "`-morphooptidof': `z' removed from dofs.\n");
-        ut_string_fnrs ((*pIn).morphooptidof[i], "z", "", INT_MAX);
+        ut_string_fnrs ((*pIn).optidof[i], "z", "", INT_MAX);
       }
     }
 
-    // morphooptideltamax
+    // optideltamax
     net_input_treatargs_multiscale ("-morphooptideltamax",
-                                    &(*pIn).morphooptideltamaxstring,
+                                    &(*pIn).optideltamaxstring,
                                     (*pIn).levelqty,
-                                    &((*pIn).morphooptideltamax));
+                                    &((*pIn).optideltamax));
 
-    // morphooptiinistep
+    // optiinistep
     net_input_treatargs_multiscale ("-morphooptiinistep",
-                                    &(*pIn).morphooptiinistepstring,
+                                    &(*pIn).optiinistepstring,
                                     (*pIn).levelqty,
-                                    &((*pIn).morphooptiinistep));
+                                    &((*pIn).optiinistep));
 
-    // morphooptilogtime
+    // optilogtime
     net_input_treatargs_multiscale ("-morphooptilogtime",
-                                    &(*pIn).morphooptilogtimestring,
+                                    &(*pIn).optilogtimestring,
                                     (*pIn).levelqty,
-                                    &((*pIn).morphooptilogtime));
+                                    &((*pIn).optilogtime));
 
-    // morphooptilogvar
+    // optilogvar
     net_input_treatargs_multiscale ("-morphooptilogvar",
-                                    &(*pIn).morphooptilogvarstring,
+                                    &(*pIn).optilogvarstring,
                                     (*pIn).levelqty,
-                                    &((*pIn).morphooptilogvar));
+                                    &((*pIn).optilogvar));
 
-    // morphooptilogdis
+    // optilogdis
     net_input_treatargs_multiscale ("-morphooptilogdis",
-                                    &(*pIn).morphooptilogdisstring,
+                                    &(*pIn).optilogdisstring,
                                     (*pIn).levelqty,
-                                    &((*pIn).morphooptilogdis));
+                                    &((*pIn).optilogdis));
 
-    // morphooptilogtesr
+    // optilogtesr
     net_input_treatargs_multiscale ("-morphooptilogtesr",
-                                    &(*pIn).morphooptilogtesrstring,
+                                    &(*pIn).optilogtesrstring,
                                     (*pIn).levelqty,
-                                    &((*pIn).morphooptilogtesr));
+                                    &((*pIn).optilogtesr));
 
-    // morphooptilogval
+    // optilogval
     net_input_treatargs_multiscale ("-morphooptilogval",
-                                    &(*pIn).morphooptilogvalstring,
+                                    &(*pIn).optilogvalstring,
                                     (*pIn).levelqty,
-                                    &((*pIn).morphooptilogval));
+                                    &((*pIn).optilogval));
 
-    // morphooptimultiseed
+    // optimultiseed
     net_input_treatargs_multiscale ("-morphooptimultiseed",
-                                    &(*pIn).morphooptimultiseedstring,
+                                    &(*pIn).optimultiseedstring,
                                     (*pIn).levelqty,
-                                    &((*pIn).morphooptimultiseed));
+                                    &((*pIn).optimultiseed));
 
     // ori
     net_input_treatargs_multiscale ("-ori", &(*pIn).oristring,
