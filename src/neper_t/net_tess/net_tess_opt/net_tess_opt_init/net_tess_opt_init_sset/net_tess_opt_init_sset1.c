@@ -30,7 +30,8 @@ net_tess_opt_init_sset (struct IN_T In, int level, struct MTESS MTess,
   net_tess_opt_init_sset_coo (MTess, Tess, dtess, dcell, pTOpt, var, pos,
                               cooexpr, rad, qty);
 
-  net_tess_opt_init_sset_ori (In, level, MTess, Tess, dtess, dcell, SSet, pTOpt);
+  if (!strcmp ((*pTOpt).optitype, "ori"))
+    net_tess_opt_init_sset_ori (pTOpt);
 
   net_tess_opt_init_sset_post (In, level, Tess[dtess], dcell, pTOpt);
 
