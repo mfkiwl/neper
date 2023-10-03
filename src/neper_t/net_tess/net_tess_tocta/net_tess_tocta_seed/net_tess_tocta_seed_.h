@@ -13,7 +13,6 @@
 #include"net_ori/net_ori.h"
 
 #include"net_tess_tocta_seed.h"
-#include"net_tess/net_tess_opt/net_tess_opt_init/net_tess_opt_init_sset/net_tess_opt_init_sset_pre/net_tess_opt_init_sset_pre.h"
 
 extern int net_tess_tocta_seed_readargs (char *morpho, int *pn);
 

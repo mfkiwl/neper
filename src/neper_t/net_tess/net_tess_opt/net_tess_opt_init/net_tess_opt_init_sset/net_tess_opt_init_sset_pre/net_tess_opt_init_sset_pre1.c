@@ -7,24 +7,18 @@
 void
 net_tess_opt_init_sset_general (struct IN_T In, struct MTESS MTess,
                                 struct TESS *Tess, int dtess, int dcell,
-                                struct SEEDSET *SSet, struct SEEDSET *pSSet,
+                                struct SEEDSET *SSet,
                                 int CellQty, struct TOPT *pTOpt)
 {
-  neut_seedset_set_zero (pSSet);
+  (*pTOpt).SSet.Dim = (*pTOpt).Dim;
+  ut_string_string ("standard", &(*pTOpt).SSet.Type);
+  (*pTOpt).SSet.N = (*pTOpt).CellQty;
 
-  if (pTOpt)
-    net_tess_opt_init_sset_pre_dim (*pTOpt, pSSet);
+  net_tess_opt_init_sset_pre_size (Tess, dtess, dcell, pTOpt);
 
-  net_tess_opt_init_sset_pre_type (pSSet);
+  net_ori_mtess_id (In, MTess, Tess, dtess, dcell, &((*pTOpt).SSet));
 
-  if (pTOpt)
-    (*pSSet).N = (*pTOpt).CellQty;
-
-  net_tess_opt_init_sset_pre_size (Tess, dtess, dcell, pTOpt, pSSet);
-
-  net_ori_mtess_id (In, MTess, Tess, dtess, dcell, pSSet);
-
-  net_ori_mtess_randseed (MTess, Tess, dtess, dcell, SSet, CellQty, pSSet);
+  net_ori_mtess_randseed (MTess, Tess, dtess, dcell, SSet, CellQty, &((*pTOpt).SSet));
 
   if (pTOpt)
   {

@@ -19,8 +19,7 @@ net_tess_opt (struct IN_T In, int level, char *morpho, struct TESS *Tess,
   TOpt.pnf_tree = &nf_tree;
 
   // Initializing optimization
-  net_tess_opt_init (In, level, morpho, *pMTess, Tess, dtess, dcell, SSet,
-                     &TOpt);
+  net_tess_opt_init (In, level, morpho, *pMTess, Tess, dtess, dcell, SSet, &TOpt);
 
   ut_print_message (0, 2, "Running tessellation...\n");
 
@@ -28,8 +27,7 @@ net_tess_opt (struct IN_T In, int level, char *morpho, struct TESS *Tess,
   net_tess_opt_comp (&TOpt);
 
   // Recording tessellation
-  net_tess_opt_post (pMTess, Tess, dtess, dcell, TessId, TOpt.Poly, TOpt,
-                     SSet);
+  net_tess_opt_post (pMTess, Tess, dtess, dcell, TessId, TOpt.Poly, TOpt, SSet);
 
   neut_topt_free (&TOpt);
 

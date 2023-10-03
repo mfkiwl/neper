@@ -46,14 +46,6 @@ net_tess_opt_init_sset_coo (struct MTESS MTess, struct TESS *Tess, int dtess,
           coo[i][j] /= (*pTOpt).aspratio[j];
   }
 
-  else if (!strncmp (cooexpr, "bcc", 3))
-  {
-    (*pTOpt).CellQty =
-      net_tess_opt_init_sset_coo_bcc_expr ((*pTOpt).Dom, cooexpr, &coo);
-    (*pTOpt).SSet.Size = ut_alloc_2d (3, 2);
-    neut_tess_bbox ((*pTOpt).Dom, (*pTOpt).SSet.Size);
-  }
-
   int *id = ut_alloc_1d_int ((*pTOpt).CellQty + 1);
   int multiseed = (ut_array_1d_int_max (qty + 1, (*pTOpt).CellQty) > 1);
 

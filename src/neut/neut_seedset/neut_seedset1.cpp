@@ -513,3 +513,54 @@ neut_seedset_kdtree_update (struct SEEDSET SSet, int *seedmoved,
 
   return;
 }
+
+void
+neut_seedset_bcc (struct TESS Dom, int n, struct SEEDSET *pSSet)
+{
+  int i, x, y, z, nb, N = ut_num_d2ri (pow (n, 3) + pow (n + 1, 3));
+  double step[3], **bbox = ut_alloc_2d (3, 2);
+
+  (*pSSet).SeedCoo = ut_alloc_2d (N + 1, 3);
+
+  neut_tess_bbox (Dom, bbox);
+  for (i = 0; i < 3; i++)
+    step[i] = (bbox[i][1] - bbox[i][0]) / n;
+
+  nb = 0;
+  for (x = 1; x <= n; x++)
+    for (y = 1; y <= n; y++)
+      for (z = 1; z <= n; z++)
+      {
+        nb++;
+        (*pSSet).SeedCoo[nb][0] = bbox[0][0] + (x - 0.5) * step[0];
+        (*pSSet).SeedCoo[nb][1] = bbox[1][0] + (y - 0.5) * step[1];
+        (*pSSet).SeedCoo[nb][2] = bbox[2][0] + (z - 0.5) * step[2];
+      }
+
+  for (x = 0; x <= n; x++)
+    for (y = 0; y <= n; y++)
+      for (z = 0; z <= n; z++)
+      {
+        nb++;
+        (*pSSet).SeedCoo[nb][0] = bbox[0][0] + x * step[0];
+        (*pSSet).SeedCoo[nb][1] = bbox[1][0] + y * step[1];
+        (*pSSet).SeedCoo[nb][2] = bbox[2][0] + z * step[2];
+      }
+
+  ut_free_2d (&bbox, 3);
+  (*pSSet).N = nb;
+
+  return;
+}
+
+void
+neut_seedset_bcc_expr (struct TESS Dom, char *cooexpr, struct SEEDSET *pSSet)
+{
+  int n;
+
+  sscanf (cooexpr, "bcc(%d)", &n);
+
+  neut_seedset_bcc (Dom, n, pSSet);
+
+  return;
+}

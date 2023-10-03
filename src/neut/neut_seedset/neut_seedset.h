@@ -45,4 +45,7 @@ extern void neut_seedset_seed_randomize (struct SEEDSET *pSet, int seed,
 			     double mindist, double maxdist);
 extern void neut_seedset_bbox_size (struct SEEDSET SSet, double *psize);
 
+extern void neut_seedset_bcc (struct TESS Dom, int n, struct SEEDSET *pSSet);
+extern void neut_seedset_bcc_expr (struct TESS Dom, char *cooexpr, struct SEEDSET *pSSet);
+
 #endif /* NEUT_SEEDSET_H */

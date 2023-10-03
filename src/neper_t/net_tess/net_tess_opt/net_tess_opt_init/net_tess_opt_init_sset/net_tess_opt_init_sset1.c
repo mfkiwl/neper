@@ -17,7 +17,7 @@ net_tess_opt_init_sset (struct IN_T In, int level, struct MTESS MTess,
   ut_print_message (0, 2, "Setting seeds... ");
 
   net_tess_opt_init_sset_general (In, MTess, Tess, dtess, dcell, SSet,
-                                  &(*pTOpt).SSet, (*pTOpt).CellQty, pTOpt);
+                                  (*pTOpt).CellQty, pTOpt);
 
   net_tess_opt_init_sset_pre (In, level, MTess, Tess, dtess, dcell, &var,
                               &pos, &weightexpr, &cooexpr, pTOpt);
@@ -32,8 +32,7 @@ net_tess_opt_init_sset (struct IN_T In, int level, struct MTESS MTess,
 
   net_tess_opt_init_sset_ori (In, level, MTess, Tess, dtess, dcell, SSet, pTOpt);
 
-  net_tess_opt_init_sset_post (In, level, Tess[dtess], dcell, (*pTOpt).SSet,
-                               pTOpt);
+  net_tess_opt_init_sset_post (In, level, Tess[dtess], dcell, pTOpt);
 
   ut_free_1d_int (&qty);
   ut_free_1d (&rad);
