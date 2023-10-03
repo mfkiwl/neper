@@ -11,7 +11,6 @@ net_tess (struct IN_T In, int level, struct TESS *Tess, int dtess, int dcell,
   int status = -1, periodic;
   int dim = (In.levelqty > 1 && In.dim == 2) ? 3 : In.dim;
   struct TESS Dom;
-  char *mid = NULL;
   char *morpho = NULL;
 
   if (neut_tess_isreg (Tess[dtess]))
@@ -30,16 +29,7 @@ net_tess (struct IN_T In, int level, struct TESS *Tess, int dtess, int dcell,
 
   // Generating morphology -----------------------------------------------------
 
-  if (ut_string_isfilename (In.morpho[level])
-      && !ut_file_testformat (In.morpho[level], "tess"))
-  {
-    neut_mtess_tess_poly_mid (*pMTess, Tess[dtess], dcell, &mid);
-
-    morpho = ut_alloc_1d_char (1000);
-    net_multiscale_arg_0d_char_fscanf (In.morpho[level], mid, morpho);
-  }
-  else
-    ut_string_string (In.morpho[level], &morpho);
+  neut_mtess_argument_process (*pMTess, Tess, dtess, dcell, In.morpho[level], &morpho);
 
   // initializing domain (do not use net_tess_poly_tess for the
   // non-periodic case as it will loose domain information needed for
@@ -86,7 +76,6 @@ net_tess (struct IN_T In, int level, struct TESS *Tess, int dtess, int dcell,
   }
 
   neut_tess_free (&Dom);
-  ut_free_1d_char (&mid);
   ut_free_1d_char (&morpho);
 
   return status;
