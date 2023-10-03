@@ -6,12 +6,11 @@
 
 void
 net_tess_opt_post (struct MTESS *pMTess, struct TESS *Tess, int dtess,
-                   int dcell, int tessid, struct POLY *Poly, struct TOPT TOpt,
+                   int dcell, int tessid, struct TOPT TOpt,
                    struct SEEDSET *SSet)
 {
   if (!strcmp (TOpt.optitype, "morpho"))
-    net_tess_opt_post_tess (pMTess, Tess, dtess, dcell, tessid, Poly, TOpt,
-                            SSet);
+    net_tess_opt_post_tess (pMTess, Tess, dtess, dcell, tessid, TOpt, SSet);
 
   else if (!strcmp (TOpt.optitype, "ori"))
   {

@@ -52,17 +52,16 @@ net_tess (struct IN_T In, int level, struct TESS *Tess, int dtess, int dcell,
    if (!strncmp (morpho, "cube", 4) || !strncmp (morpho, "square", 6))
       status = net_tess_cube (In, level, morpho, pMTess, Tess, dtess, dcell, TessId, SSet);
 
-   // standard Voronoi/Laguerre tessellation
+   // lamellar tessellation
    else if (!strncmp (morpho, "lamellar", 8))
       status = net_tess_lam (In, level, morpho, pMTess, Tess, dtess, dcell, TessId, SSet);
 
+   // truncated-octahedron tessellation
    else if (!strncmp (morpho, "tocta", 5))
-   // standard Voronoi/Laguerre tessellation
       status = net_tess_tocta (In, level, morpho, pMTess, Tess, dtess, dcell, TessId, SSet);
 
-   // standard Voronoi/Laguerre tessellation
-   else if (ut_string_isfilename (morpho)
-            && ut_file_testformat (morpho, "tess"))
+   // tessellation read from file
+   else if (ut_string_isfilename (morpho) && ut_file_testformat (morpho, "tess"))
       status = net_tess_file (level, morpho, pMTess, Tess, dtess, dcell, TessId, SSet);
 
    // other tessellations

@@ -27,7 +27,7 @@ net_tess_opt (struct IN_T In, int level, char *morpho, struct TESS *Tess,
   net_tess_opt_comp (&TOpt);
 
   // Recording tessellation
-  net_tess_opt_post (pMTess, Tess, dtess, dcell, TessId, TOpt.Poly, TOpt, SSet);
+  net_tess_opt_post (pMTess, Tess, dtess, dcell, TessId, TOpt, SSet);
 
   neut_topt_free (&TOpt);
 

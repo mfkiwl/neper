@@ -4,5 +4,4 @@
 
 extern void net_tess_opt_post (struct MTESS *pMTess, struct TESS *Tess,
 		   int dtess, int dcell, int tessid,
-		   struct POLY *Poly, struct TOPT TOpt,
-		   struct SEEDSET *SSet);
+                   struct TOPT TOpt, struct SEEDSET *SSet);
