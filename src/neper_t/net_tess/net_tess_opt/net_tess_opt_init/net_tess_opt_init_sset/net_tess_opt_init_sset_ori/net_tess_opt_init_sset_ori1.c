@@ -7,23 +7,22 @@
 void
 net_tess_opt_init_sset_ori (struct IN_T In, int level, struct MTESS MTess,
                             struct TESS *Tess, int dtess, int dcell,
-                            struct SEEDSET *SSet, struct SEEDSET *pSSet,
-                            struct TOPT *pTOpt)
+                            struct SEEDSET *SSet, struct TOPT *pTOpt)
 {
   int i;
 
   ut_print_message (0, 2, "Generating crystal orientations...\n");
-  net_ori (In, level, MTess, Tess, SSet, dtess, dcell, pSSet, 3);
+  net_ori (In, level, MTess, Tess, SSet, dtess, dcell, &(*pTOpt).SSet, 3);
 
   if (!strcmp ((*pTOpt).optitype, "ori"))
   {
-    (*pSSet).SeedOriR = ut_alloc_2d ((*pSSet).N + 1, 3);
-    for (i = 1; i <= (*pSSet).N; i++)
-      ol_q_R ((*pSSet).SeedOri[i], (*pSSet).SeedOriR[i]);
+    (*pTOpt).SSet.SeedOriR = ut_alloc_2d ((*pTOpt).SSet.N + 1, 3);
+    for (i = 1; i <= (*pTOpt).SSet.N; i++)
+      ol_q_R ((*pTOpt).SSet.SeedOri[i], (*pTOpt).SSet.SeedOriR[i]);
   }
 
   if (ut_list_testelt ((*pTOpt).dof, NEUT_SEP_NODEP, "rt"))
-    (*pSSet).SeedOriTheta = ut_alloc_1d ((*pSSet).N + 1);
+    (*pTOpt).SSet.SeedOriTheta = ut_alloc_1d ((*pTOpt).SSet.N + 1);
 
   return;
 }
