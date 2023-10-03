@@ -1,4 +1,4 @@
-New in 4.6.2-27-fit_ori (03 Oct 2023):
+New in 4.6.2-28-fit_ori (03 Oct 2023):
 - module -T: added -ori odf, improved -domain rodrigues, added -orioptialgo,
   added option `-orisampling'.
 - module -S: fixed -res... '\<result>` (result overwriting), made minor
