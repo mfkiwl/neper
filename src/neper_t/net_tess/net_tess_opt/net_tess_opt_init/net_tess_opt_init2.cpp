@@ -44,6 +44,55 @@ net_tess_opt_init_general (struct IN_T In, int level, struct MTESS MTess,
 }
 
 void
+net_tess_opt_init_domain (struct IN_T In, struct TESS PTess, int cell,
+                          struct TOPT *pTOpt)
+{
+  neut_tess_poly_tess (PTess, cell, &((*pTOpt).Dom));
+
+  if (ut_array_1d_int_sum (In.periodic, 3))
+    net_tess_perdomain (In, PTess, cell, &((*pTOpt).DomPer));
+
+  if (PTess.Level == 0)
+  {
+    ut_string_string (PTess.DomType, &(*pTOpt).DomType);
+    char *fct = NULL;
+    int i, varqty;
+    char **vars = NULL;
+    char **vals = NULL;
+
+    ut_string_function (In.domain, &fct, &vars, &vals, &varqty);
+
+    (*pTOpt).DomParms = ut_alloc_1d (varqty);
+    for (i = 0; i < varqty; i++)
+      sscanf (vals[i], "%lf", (*pTOpt).DomParms + i);
+
+    ut_free_1d_char (&fct);
+    ut_free_2d_char (&vars, varqty);
+    ut_free_2d_char (&vals, varqty);
+  }
+
+  if (!ut_array_1d_int_sum (In.periodic, 3))
+    net_tess_poly ((*pTOpt).Dom, 1, &(*pTOpt).DomPoly);
+  else
+    net_tess_poly ((*pTOpt).DomPer, 1, &(*pTOpt).DomPoly);
+
+  // if -transform cut, we load the primitives
+
+  int i, partqty;
+  char **parts = NULL;
+
+  ut_list_break (In.transform, NEUT_SEP_NODEP, &parts, &partqty);
+
+  for (i = 0; i < partqty; i++)
+    if (!strncmp (parts[i], "cut", 3))
+      net_transform_tess_cut_pre_prim (parts[i], &(*pTOpt).Prim, &(*pTOpt).PrimQty, 0);
+
+  ut_free_2d_char (&parts, partqty);
+
+  return;
+}
+
+void
 net_tess_opt_init_target (struct IN_T In, struct MTESS MTess,
                           struct TESS *Tess, int dtess, int dcell, int level,
                           char *morpho, struct TOPT *pTOpt)
@@ -130,6 +179,19 @@ net_tess_opt_init_target (struct IN_T In, struct MTESS MTess,
       ut_array_1d_scale ((*pTOpt).aspratio, (*pTOpt).Dim,
                          1. / ut_array_1d_gmean ((*pTOpt).aspratio,
                                                  (*pTOpt).Dim));
+
+      // updating Dom, DomPer and DomPoly
+      neut_tess_scale (&(*pTOpt).Dom, 1 / (*pTOpt).aspratio[0],
+                       1 / (*pTOpt).aspratio[1], 1 / (*pTOpt).aspratio[2]);
+      neut_tess_scale (&(*pTOpt).DomPer, 1 / (*pTOpt).aspratio[0],
+                       1 / (*pTOpt).aspratio[1], 1 / (*pTOpt).aspratio[2]);
+
+      neut_poly_free (&(*pTOpt).DomPoly);
+
+      if (!ut_array_1d_int_sum (In.periodic, 3))
+        net_tess_poly ((*pTOpt).Dom, 1, &(*pTOpt).DomPoly);
+      else
+        net_tess_poly ((*pTOpt).DomPer, 1, &(*pTOpt).DomPoly);
 
       ut_free_2d_char (&vars, qty);
       ut_free_2d_char (&vals, qty);
@@ -560,63 +622,6 @@ net_tess_opt_init_target (struct IN_T In, struct MTESS MTess,
 
   ut_free_1d_char (&morpho2);
   ut_free_2d_char (&tmp, (*pTOpt).tarqty);
-
-  return;
-}
-
-void
-net_tess_opt_init_domain (struct IN_T In, struct TESS PTess, int cell,
-                          struct TOPT *pTOpt)
-{
-  neut_tess_poly_tess (PTess, cell, &((*pTOpt).Dom));
-
-  if (ut_array_1d_int_sum (In.periodic, 3))
-    net_tess_perdomain (In, PTess, cell, &((*pTOpt).DomPer));
-
-  if ((*pTOpt).aspratio)
-  {
-      neut_tess_scale (&(*pTOpt).Dom, 1 / (*pTOpt).aspratio[0],
-                       1 / (*pTOpt).aspratio[1], 1 / (*pTOpt).aspratio[2]);
-      neut_tess_scale (&(*pTOpt).DomPer, 1 / (*pTOpt).aspratio[0],
-                       1 / (*pTOpt).aspratio[1], 1 / (*pTOpt).aspratio[2]);
-  }
-
-  if (PTess.Level == 0)
-  {
-    ut_string_string (PTess.DomType, &(*pTOpt).DomType);
-    char *fct = NULL;
-    int i, varqty;
-    char **vars = NULL;
-    char **vals = NULL;
-
-    ut_string_function (In.domain, &fct, &vars, &vals, &varqty);
-
-    (*pTOpt).DomParms = ut_alloc_1d (varqty);
-    for (i = 0; i < varqty; i++)
-      sscanf (vals[i], "%lf", (*pTOpt).DomParms + i);
-
-    ut_free_1d_char (&fct);
-    ut_free_2d_char (&vars, varqty);
-    ut_free_2d_char (&vals, varqty);
-  }
-
-  if (!ut_array_1d_int_sum (In.periodic, 3))
-    net_tess_poly ((*pTOpt).Dom, 1, &(*pTOpt).DomPoly);
-  else
-    net_tess_poly ((*pTOpt).DomPer, 1, &(*pTOpt).DomPoly);
-
-  // if -transform cut, we load the primitives
-
-  int i, partqty;
-  char **parts = NULL;
-
-  ut_list_break (In.transform, NEUT_SEP_NODEP, &parts, &partqty);
-
-  for (i = 0; i < partqty; i++)
-    if (!strncmp (parts[i], "cut", 3))
-      net_transform_tess_cut_pre_prim (parts[i], &(*pTOpt).Prim, &(*pTOpt).PrimQty, 0);
-
-  ut_free_2d_char (&parts, partqty);
 
   return;
 }
