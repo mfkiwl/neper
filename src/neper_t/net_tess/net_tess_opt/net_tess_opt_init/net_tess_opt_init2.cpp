@@ -570,14 +570,13 @@ net_tess_opt_init_domain (struct IN_T In, struct TESS PTess, int cell,
 {
   neut_tess_poly_tess (PTess, cell, &((*pTOpt).Dom));
 
-  if ((*pTOpt).aspratio)
-    neut_tess_scale (&(*pTOpt).Dom, 1 / (*pTOpt).aspratio[0],
-                     1 / (*pTOpt).aspratio[1], 1 / (*pTOpt).aspratio[2]);
-
   if (ut_array_1d_int_sum (In.periodic, 3))
-  {
     net_tess_perdomain (In, PTess, cell, &((*pTOpt).DomPer));
-    if ((*pTOpt).aspratio)
+
+  if ((*pTOpt).aspratio)
+  {
+      neut_tess_scale (&(*pTOpt).Dom, 1 / (*pTOpt).aspratio[0],
+                       1 / (*pTOpt).aspratio[1], 1 / (*pTOpt).aspratio[2]);
       neut_tess_scale (&(*pTOpt).DomPer, 1 / (*pTOpt).aspratio[0],
                        1 / (*pTOpt).aspratio[1], 1 / (*pTOpt).aspratio[2]);
   }
