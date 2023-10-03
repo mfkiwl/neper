@@ -50,7 +50,7 @@ net_tess (struct IN_T In, int level, struct TESS *Tess, int dtess, int dcell,
 
    // regular tessellations: cube and square
    if (!strncmp (morpho, "cube", 4) || !strncmp (morpho, "square", 6))
-      status = net_tess_cube (In, level, morpho, pMTess, Tess, dtess, dcell, TessId, SSet);
+      status = net_tess_cube (In, level, morpho, Tess, dtess, dcell, TessId, SSet);
 
    // lamellar tessellation
    else if (!strncmp (morpho, "lamellar", 8))
@@ -58,7 +58,7 @@ net_tess (struct IN_T In, int level, struct TESS *Tess, int dtess, int dcell,
 
    // truncated-octahedron tessellation
    else if (!strncmp (morpho, "tocta", 5))
-      status = net_tess_tocta (In, level, morpho, pMTess, Tess, dtess, dcell, TessId, SSet);
+      status = net_tess_tocta (In, morpho, pMTess, Tess, dtess, dcell, TessId, SSet);
 
    // tessellation read from file
    else if (ut_string_isfilename (morpho) && ut_file_testformat (morpho, "tess"))
@@ -67,6 +67,14 @@ net_tess (struct IN_T In, int level, struct TESS *Tess, int dtess, int dcell,
    // other tessellations
    else
       status = net_tess_opt (In, level, morpho, Tess, dtess, dcell, TessId, pMTess, SSet);
+
+   if (!strncmp (morpho, "cube", 4) || !strncmp (morpho, "square", 6)
+    || !strncmp (morpho, "tocta", 5) || !strncmp (morpho, "lamellar", 8))
+   {
+    ut_print_message (0, 2, "Generating crystal orientations...\n");
+    net_ori (In, level, *pMTess, Tess, SSet, dtess, dcell, SSet + TessId, 3);
+    ut_string_string (SSet[TessId].crysym, &(Tess[TessId].CellCrySym));
+   }
 
    // finalizing
    if (!status)

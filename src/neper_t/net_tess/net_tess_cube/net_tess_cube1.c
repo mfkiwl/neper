@@ -5,9 +5,8 @@
 #include "net_tess_cube_.h"
 
 int
-net_tess_cube (struct IN_T In, int level, char *morpho, struct MTESS *pMTess,
-               struct TESS *Tess, int dtess, int dcell, int TessId,
-               struct SEEDSET *SSet)
+net_tess_cube (struct IN_T In, int level, char *morpho, struct TESS *Tess,
+               int dtess, int dcell, int TessId, struct SEEDSET *SSet)
 {
   int status, i, id;
   int *N = ut_alloc_1d_int (3);
@@ -100,11 +99,6 @@ net_tess_cube (struct IN_T In, int level, char *morpho, struct MTESS *pMTess,
     neut_tess_tess (T2, Tess + 1);
     neut_tess_free (&T2);
   }
-
-  ut_print_message (0, 2, "Generating crystal orientations...\n");
-  net_ori (In, 1, *pMTess, Tess, SSet, 0, 1, SSet + 1, 3);
-
-  ut_string_string (SSet[1].crysym, &(Tess[1].CellCrySym));
 
   ut_free_3d_int (&verid, N[0] + 1, N[1] + 1);
   ut_free_4d_int (&edgeid, 3, N[0] + 1, N[1] + 1);

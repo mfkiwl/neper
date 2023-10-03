@@ -16,6 +16,6 @@
 
 extern int net_tess_tocta_seed_readargs (char *morpho, int *pn);
 
-extern int net_tess_tocta_seed_set (struct IN_T In, int level, struct MTESS MTess, struct TESS *Tess, int dtess, int dcell, struct TESS Dom, int n, struct SEEDSET *SSet, struct SEEDSET *pSSet);
+extern int net_tess_tocta_seed_set (struct IN_T In, struct MTESS MTess, struct TESS *Tess, int dtess, int dcell, struct TESS Dom, int n, struct SEEDSET *SSet, struct SEEDSET *pSSet);
 
 extern int net_tess_tocta_seed_set_finalize (struct SEEDSET *pSSet);

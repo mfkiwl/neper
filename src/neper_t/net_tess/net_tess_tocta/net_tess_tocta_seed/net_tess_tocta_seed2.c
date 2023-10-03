@@ -24,7 +24,7 @@ net_tess_tocta_seed_readargs (char *morpho, int *pn)
 }
 
 int
-net_tess_tocta_seed_set (struct IN_T In, int level, struct MTESS MTess,
+net_tess_tocta_seed_set (struct IN_T In, struct MTESS MTess,
                          struct TESS *Tess, int dtess, int dcell,
                          struct TESS Dom, int n, struct SEEDSET *SSet,
                          struct SEEDSET *pSSet)
@@ -49,9 +49,6 @@ net_tess_tocta_seed_set (struct IN_T In, int level, struct MTESS MTess,
   neut_seedset_bcc (Dom, n, pSSet);
 
   net_tess_tocta_seed_set_finalize (pSSet);
-
-  ut_print_message (0, 2, "Generating crystal orientations...\n");
-  net_ori (In, level, MTess, Tess, SSet, dtess, dcell, pSSet, 3);
 
   ut_free_1d_char (&ori);
   ut_free_1d_char (&crysym);
