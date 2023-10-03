@@ -36,12 +36,16 @@ net_tess_opt_init_general (struct IN_T In, int level, struct MTESS MTess,
   else
     abort ();
 
+  net_tess_opt_init_general_cellqty (In, MTess, Tess + dtess, dcell,
+                                    &(*pTOpt).CellQty);
+
+
   return;
 }
 
 void
 net_tess_opt_init_target (struct IN_T In, struct MTESS MTess,
-                          struct TESS *Tess, int dtess, int dpoly, int level,
+                          struct TESS *Tess, int dtess, int dcell, int level,
                           char *morpho, struct TOPT *pTOpt)
 {
   int i, j, k, PartQty, status, diameq_pos[2], isval = 0;
@@ -188,7 +192,7 @@ net_tess_opt_init_target (struct IN_T In, struct MTESS MTess,
 
   if (ut_string_isfilename (morpho2))
   {
-    net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dpoly,
+    net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
                                              morpho2, &string);
     ut_list_break (string, NEUT_SEP_NODEP, &tmp, &((*pTOpt).tarqty));
   }
@@ -197,9 +201,6 @@ net_tess_opt_init_target (struct IN_T In, struct MTESS MTess,
     ut_list_break (morpho2, NEUT_SEP_NODEP, &tmp, &((*pTOpt).tarqty));
 
   ut_array_1d_int_set (diameq_pos, 2, -1);
-
-  net_tess_opt_init_target_cellqty (In, MTess, Tess + dtess, dpoly,
-                                    &(*pTOpt).CellQty);
 
   // allocating/initializing variables
   (*pTOpt).tarvar = ut_alloc_1d_pchar ((*pTOpt).tarqty);
@@ -262,10 +263,10 @@ net_tess_opt_init_target (struct IN_T In, struct MTESS MTess,
     if (!strcmp ((*pTOpt).tartype[i], "stat"))
     {
       // Setting grid
-      net_tess_opt_init_target_grid (In, level, MTess, Tess, dtess, dpoly, i,
+      net_tess_opt_init_target_grid (In, level, MTess, Tess, dtess, dcell, i,
                                      pTOpt);
 
-      net_tess_opt_init_target_cvl (In, level, MTess, Tess, dtess, dpoly, i,
+      net_tess_opt_init_target_cvl (In, level, MTess, Tess, dtess, dcell, i,
                                     pTOpt);
 
       // Setting distributions

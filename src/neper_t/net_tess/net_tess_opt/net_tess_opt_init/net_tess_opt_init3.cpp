@@ -5,8 +5,8 @@
 #include "net_tess_opt_init_.h"
 
 void
-net_tess_opt_init_target_cellqty (struct IN_T In, struct MTESS MTess,
-                                  struct TESS *pTess, int poly, int *pCellQty)
+net_tess_opt_init_general_cellqty (struct IN_T In, struct MTESS MTess,
+                                   struct TESS *pTess, int poly, int *pCellQty)
 {
   int varqty;
   char **vars = NULL;
