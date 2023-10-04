@@ -72,10 +72,15 @@ net_ori (struct IN_T In, int level, struct MTESS MTess, struct TESS *Tess,
       ut_string_string (oricrysym, &(OSets[i].crysym));
     }
 
-    else if (!strncmp (parts[i], "odf", 3))
+    else if (!strncmp (In.orioptiini[level], "file(", 5))
     {
-      net_ori_odf ((*pSSet).Random, parts[i], OSets + i);
+      ol_set_free (OSets[i]);
+      net_ori_file (In.orioptiini[level], OSets + i);
+      ut_string_string (oricrysym, &(OSets[i].crysym));
     }
+
+    else if (!strncmp (parts[i], "odf", 3))
+      net_ori_odf ((*pSSet).Random, parts[i], OSets + i);
 
     else
       net_ori_label (parts[i], SSet, dtess, dcell, OSets + i);
