@@ -11,7 +11,7 @@ net_tess (struct IN_T In, int level, struct TESS *Tess, int dtess, int dcell,
   int status = -1, periodic;
   int dim = (In.levelqty > 1 && In.dim == 2) ? 3 : In.dim;
   struct TESS Dom;
-  char *morpho = NULL;
+  char *morpho = NULL, *ori = NULL;
 
   if (neut_tess_isreg (Tess[dtess]))
   {
@@ -57,13 +57,20 @@ net_tess (struct IN_T In, int level, struct TESS *Tess, int dtess, int dcell,
     status = net_tess_file (level, morpho, pMTess, Tess, dtess, dcell, TessId, SSet);
 
   else
-    status = net_tess_opt (In, level, morpho, Tess, dtess, dcell, TessId, pMTess, SSet);
+    status = net_tess_opt (In, level, "morpho", morpho, Tess, dtess, dcell, TessId, pMTess, SSet);
 
   // Generating cell orientations ----------------------------------------------
 
-  ut_print_message (0, 2, "Generating crystal orientations...\n");
-  net_ori (In, level, *pMTess, Tess, SSet, dtess, dcell, SSet + TessId, 3);
+  // won't take "file(...)" argument
+  // neut_mtess_argument_process (*pMTess, Tess, dtess, dcell, In.ori[level], &ori);
+  ut_string_string (In.ori[level], &ori);
+
+  ut_print_message (0, 1, "Generating crystal orientations...\n");
+  net_ori (In, level, *pMTess, Tess, SSet, dtess, dcell, SSet + TessId, 2);
   ut_string_string (SSet[TessId].crysym, &(Tess[TessId].CellCrySym));
+
+  if (!strncmp (ori, "odf", 3))
+    status = net_tess_opt (In, level, "ori", ut_string_paste ("ori:", ori), Tess, dtess, dcell, TessId, pMTess, SSet);
 
   // Finalizing ----------------------------------------------------------------
 
@@ -77,6 +84,7 @@ net_tess (struct IN_T In, int level, struct TESS *Tess, int dtess, int dcell,
 
   neut_tess_free (&Dom);
   ut_free_1d_char (&morpho);
+  ut_free_1d_char (&ori);
 
   return status;
 }

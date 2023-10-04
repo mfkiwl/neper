@@ -32,21 +32,21 @@ extern "C"
 #include"net_tess_opt_init_tesrobj/net_tess_opt_init_tesrobj.h"
 #include"net_transform/net_transform_tess/net_transform_tess_cut/net_transform_tess_cut.h"
 
-extern void net_tess_opt_init_general (struct IN_T In, int level, struct MTESS
-    MTess, struct TESS *Tess, int dtess, int dcell, struct TOPT *pTOpt);
-
-extern void net_tess_opt_init_domain (struct IN_T In, struct TESS PTess,
-				      int cell, struct TOPT *pTOpt);
+extern void net_tess_opt_init_general (struct IN_T In, int level, char *optitype,
+                                       struct MTESS MTess, struct TESS *Tess,
+                                       int dtess, int dcell, struct TOPT *pTOpt);
 
 extern void net_tess_opt_init_parms (struct IN_T In, int level, struct MTESS MTess,
 				     struct TESS *Tess, int dtess, int dcell, struct TOPT *pTOpt);
 
-extern void net_tess_opt_init_target (struct IN_T In, struct MTESS
-				      MTess, struct TESS *Tess, int domtess,
-				      int dompoly, int level, char *morpho,
-				      struct TOPT *pTOpt);
+extern void net_tess_opt_init_target (struct IN_T In, int level, char *optistring,
+                                      struct MTESS MTess, struct TESS *Tess, int domtess,
+				      int dompoly, struct TOPT *pTOpt);
 
 extern void net_tess_opt_init_crystal (struct IN_T In, int level, struct TOPT *pTOpt);
+
+extern void net_tess_opt_init_general_domain (struct IN_T In, struct TESS PTess,
+				      int cell, struct TOPT *pTOpt);
 
 extern void net_tess_opt_init_general_cellqty (struct IN_T In, struct
                                                MTESS MTess, struct TESS *pTess,

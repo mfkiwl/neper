@@ -136,23 +136,6 @@ net_input_treatargs (int fargc, char **fargv, int argc, char **argv,
     net_input_treatargs_multiscale ("-morphooptidof",
                                     &(*pIn).optidofstring,
                                     (*pIn).levelqty, &((*pIn).optidof));
-    for (i = 1; i <= (*pIn).levelqty; i++)
-    {
-      if (!strcmp ((*pIn).optidof[i], "default"))
-      {
-        if ((*pIn).dim == 2)
-          ut_string_string ("x,y,w", (*pIn).optidof + i);
-        else if ((*pIn).dim == 3)
-          ut_string_string ("x,y,z,w", (*pIn).optidof + i);
-      }
-      else if ((*pIn).dim == 2)
-      {
-        if (strstr ((*pIn).optidof[i], "z"))
-          ut_print_message (1, 2,
-                            "`-morphooptidof': `z' removed from dofs.\n");
-        ut_string_fnrs ((*pIn).optidof[i], "z", "", INT_MAX);
-      }
-    }
 
     // optideltamax
     net_input_treatargs_multiscale ("-morphooptideltamax",

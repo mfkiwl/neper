@@ -5,19 +5,15 @@
 #include "net_tess_opt_init_.h"
 
 void
-net_tess_opt_init (struct IN_T In, int level, char *morpho,
+net_tess_opt_init (struct IN_T In, int level, char *optitype, char *optistring,
                    struct MTESS MTess, struct TESS *Tess, int dtess,
                    int dcell, struct SEEDSET *SSet, struct TOPT *pTOpt)
 {
   // general, dim, domain0
-  net_tess_opt_init_general (In, level, MTess, Tess, dtess, dcell, pTOpt);
-
-  // domain to tessellate
-  net_tess_opt_init_domain (In, Tess[dtess], dcell, pTOpt);
+  net_tess_opt_init_general (In, level, optitype, MTess, Tess, dtess, dcell, pTOpt);
 
   // target properties
-  net_tess_opt_init_target (In, MTess, Tess, dtess, dcell, level, morpho,
-                            pTOpt);
+  net_tess_opt_init_target (In, level, optistring, MTess, Tess, dtess, dcell, pTOpt);
 
   // sset (must come after target)
   if (!strcmp ((*pTOpt).optitype, "morpho") ||!strcmp ((*pTOpt).optitype, "ori"))

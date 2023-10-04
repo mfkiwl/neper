@@ -8,7 +8,7 @@ void
 neut_mtess_argument_process (struct MTESS MTess, struct TESS *Tess, int dtess, int dcell,
                              char *input, char **poutput)
 {
-  char * mid = NULL;
+  char *mid = NULL;
 
   if (ut_string_isfilename (input)
       && !ut_file_testformat (input, "tess"))
