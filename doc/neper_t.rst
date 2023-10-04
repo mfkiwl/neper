@@ -469,7 +469,7 @@ Crystal Orientation Options
 
 .. option:: -ori <ori_distrib>
 
-  Specify the crystal orientation distribution function (ODF).  Given the ODF, orientations are determined according to :option:`-orisampling`.  The ODF can be:
+  Specify the crystal orientation distribution function (ODF).  By default, the crystal orientations are generated randomly, from the distribution function (ODF).  For uniform sampling, see :option:`-orisampling`.  The ODF can be:
 
   - :data:`random`: ODF = 1, i.e. no or "random" texture (standard case);
 
@@ -508,7 +508,9 @@ Crystal Orientation Options
   Specify the type of sampling of the orientation distribution.  It can be:
 
   - :data:`random`: random sampling;
-  - :data:`uniform`: uniform sampling in 3D space (only for :data:`-ori random`, implementation of [JAC2018]_) [#uniform-crysym]_.
+  - :data:`uniform`: uniform sampling [#uniform-crysym]_.
+
+  Uniform sampling is available for :data:`-ori random` (done according to [JAC2018]_) and :data:`-ori "odf(...)"` (general minimization).
 
   **Default value**: :data:`random`.
 

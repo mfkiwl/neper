@@ -253,6 +253,8 @@ net_ori_odf (long random, char *odf, struct OL_SET *pOSet)
 
   ut_string_function (odf, &fct, &vars, &vals, &qty);
 
+  ut_print_message (0, 2, "Crystal symmetry: %s\n", (*pOSet).crysym);
+
   ut_print_message (0, 2, "Reading odf...\n");
 
   for (i = 0; i < qty; i++)

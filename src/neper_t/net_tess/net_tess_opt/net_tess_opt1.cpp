@@ -24,7 +24,7 @@ net_tess_opt (struct IN_T In, int level, char *optitype, char *optistring, struc
   if (!strcmp (TOpt.optitype, "morpho"))
     ut_print_message (0, 2, "Running tessellation...\n");
   else if (!strcmp (TOpt.optitype, "ori"))
-    ut_print_message (0, 2, "Optimizing orientations...\n");
+    ut_print_message (0, 2, "Optimizing orientations (general minimization)...\n");
   else
     abort ();
 
