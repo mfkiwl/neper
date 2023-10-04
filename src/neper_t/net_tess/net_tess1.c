@@ -69,7 +69,7 @@ net_tess (struct IN_T In, int level, struct TESS *Tess, int dtess, int dcell,
   net_ori (In, level, *pMTess, Tess, SSet, dtess, dcell, SSet + TessId, 2);
   ut_string_string (SSet[TessId].crysym, &(Tess[TessId].CellCrySym));
 
-  if (!strncmp (ori, "odf", 3))
+  if (!strncmp (ori, "odf", 3) && !strcmp (In.orisampling[level], "uniform"))
     status = net_tess_opt (In, level, "ori", ut_string_paste ("ori:", ori), Tess, dtess, dcell, TessId, pMTess, SSet);
 
   // Finalizing ----------------------------------------------------------------

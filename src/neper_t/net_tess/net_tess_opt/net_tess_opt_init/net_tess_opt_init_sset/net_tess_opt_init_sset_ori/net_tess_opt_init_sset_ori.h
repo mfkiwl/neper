@@ -4,4 +4,4 @@
 
 #include"structIn_t.h"
 
-extern void net_tess_opt_init_sset_ori (struct TOPT *pTOpt);
+extern void net_tess_opt_init_sset_ori (int TessId, struct SEEDSET *SSet, double *rad, struct TOPT *pTOpt);

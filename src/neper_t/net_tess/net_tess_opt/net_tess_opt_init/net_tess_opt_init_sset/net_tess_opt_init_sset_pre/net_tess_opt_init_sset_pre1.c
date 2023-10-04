@@ -20,6 +20,7 @@ net_tess_opt_init_sset_pre (struct IN_T In, int level, struct MTESS MTess,
   (*pTOpt).SSet.Dim = (*pTOpt).Dim;
   ut_string_string ("standard", &(*pTOpt).SSet.Type);
   (*pTOpt).SSet.N = (*pTOpt).CellQty;
+  (*pTOpt).SSet.Nall = (*pTOpt).SSet.N;
 
   net_ori_mtess_id (In, MTess, Tess, dtess, dcell, &((*pTOpt).SSet));
 

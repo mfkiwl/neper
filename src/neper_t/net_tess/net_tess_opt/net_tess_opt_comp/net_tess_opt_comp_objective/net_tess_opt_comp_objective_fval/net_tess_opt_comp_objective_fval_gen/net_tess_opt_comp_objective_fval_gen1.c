@@ -69,6 +69,7 @@ net_tess_opt_comp_objective_fval_gen (struct TOPT *pTOpt, int var)
 
   if (isnan ((*pTOpt).curval[var]))
   {
+    printf ("(*pTOpt).tartype[%d] = %s\n", var, (*pTOpt).tartype[var]);
     printf ("(*pTOpt).curval[%d] is not-a-number.\n", var);
     ut_print_neperbug ();
   }

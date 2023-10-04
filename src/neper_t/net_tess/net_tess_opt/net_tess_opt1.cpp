@@ -19,9 +19,14 @@ net_tess_opt (struct IN_T In, int level, char *optitype, char *optistring, struc
   TOpt.pnf_tree = &nf_tree;
 
   // Initializing optimization
-  net_tess_opt_init (In, level, optitype, optistring, *pMTess, Tess, dtess, dcell, SSet, &TOpt);
+  net_tess_opt_init (In, level, optitype, optistring, *pMTess, Tess, dtess, dcell, TessId, SSet, &TOpt);
 
-  ut_print_message (0, 2, "Running tessellation...\n");
+  if (!strcmp (TOpt.optitype, "morpho"))
+    ut_print_message (0, 2, "Running tessellation...\n");
+  else if (!strcmp (TOpt.optitype, "ori"))
+    ut_print_message (0, 2, "Optimizing orientations...\n");
+  else
+    abort ();
 
   // Running optimization
   net_tess_opt_comp (&TOpt);

@@ -253,7 +253,7 @@ net_ori_odf (long random, char *odf, struct OL_SET *pOSet)
 
   ut_string_function (odf, &fct, &vars, &vals, &qty);
 
-  ut_print_message (0, 3, "Reading odf...\n");
+  ut_print_message (0, 2, "Reading odf...\n");
 
   for (i = 0; i < qty; i++)
   {
@@ -276,7 +276,7 @@ net_ori_odf (long random, char *odf, struct OL_SET *pOSet)
 
   fmax = ut_array_1d_max (f + 1, Mesh.EltQty);
 
-  ut_print_message (0, 3, "Sampling odf...\n");
+  ut_print_message (0, 2, "Sampling odf...\n");
 
   r = gsl_rng_alloc (gsl_rng_ranlxd2);
   gsl_rng_set (r, random - 1);

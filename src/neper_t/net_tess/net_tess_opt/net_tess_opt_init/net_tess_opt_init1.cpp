@@ -6,8 +6,8 @@
 
 void
 net_tess_opt_init (struct IN_T In, int level, char *optitype, char *optistring,
-                   struct MTESS MTess, struct TESS *Tess, int dtess,
-                   int dcell, struct SEEDSET *SSet, struct TOPT *pTOpt)
+                   struct MTESS MTess, struct TESS *Tess, int dtess, int dcell,
+                   int TessId, struct SEEDSET *SSet, struct TOPT *pTOpt)
 {
   // general, dim, domain0
   net_tess_opt_init_general (In, level, optitype, MTess, Tess, dtess, dcell, pTOpt);
@@ -17,7 +17,7 @@ net_tess_opt_init (struct IN_T In, int level, char *optitype, char *optistring,
 
   // sset (must come after target)
   if (!strcmp ((*pTOpt).optitype, "morpho") ||!strcmp ((*pTOpt).optitype, "ori"))
-    net_tess_opt_init_sset (In, level, MTess, Tess, dtess, dcell, SSet, pTOpt);
+    net_tess_opt_init_sset (In, level, MTess, Tess, dtess, dcell, TessId, SSet, pTOpt);
   else if (!strcmp ((*pTOpt).optitype, "crystal"))
     net_tess_opt_init_crystal (In, level, pTOpt);
   else
