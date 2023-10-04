@@ -529,6 +529,12 @@ Crystal Orientation Options
 
   **Default value**: :data:`subplex,praxis`.
 
+.. option:: -orioptidof <dof1>,<dof2>,... (secondary option)
+
+  Specify the degrees of freedom, which can be :data:`r1`, :data:`r2` and :data:`r3` for the 3 components of the orientation (Rodrigues) vector, :data:`rw` for the weights, and :data:`rt` for the orientation spreads.  Use this option only if you really now what you are doing.
+
+  **Default value**: :data:`r1,r2,r3`.
+
 .. option:: -orioptiini <ori_distrib> (secondary option)
 
   Specify the initial crystal orientations, which can be:

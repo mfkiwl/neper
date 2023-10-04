@@ -23,7 +23,7 @@ net_tess_opt_init_general (struct IN_T In, int level, char *optitype,
     net_tess_opt_init_general_domain (In, Tess[dtess], dcell, pTOpt);
 
   net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
-                                           In.optidof[level],
+                                           In.optidof[neut_topt_typepos (*pTOpt)][level],
                                            &(*pTOpt).dof);
 
   // setting cellqty

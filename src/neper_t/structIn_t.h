@@ -47,6 +47,10 @@ extern "C"
     char **optialgostring;
     char ***optialgo;
 
+    // optimization / degrees of freedom (-*optidof)
+    char **optidofstring;
+    char ***optidof;
+
     // optimization / initial state (-*optiini)
     char *optiinistring;
     char **optiini;
@@ -70,10 +74,6 @@ extern "C"
     // optimization / termination criterion (-*optistop)
     char *optistopstring;
     char **optistop;
-
-    // optimization / degrees of freedom (-*optidof)
-    char *optidofstring;
-    char **optidof;
 
     // optimization / limit distance (-*optideltamax)
     char *optideltamaxstring;

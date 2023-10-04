@@ -64,6 +64,12 @@ net_input_treatargs (int fargc, char **fargv, int argc, char **argv,
                                       (*pIn).optialgostring + i,
                                       (*pIn).levelqty, (*pIn).optialgo + i);
 
+    // optidof
+    for (i = 0; i < (*pIn).optiqty; i++)
+      net_input_treatargs_multiscale (ut_string_paste3 ("-", (*pIn).optitype[i], "optidof"),
+                                      (*pIn).optidofstring + i,
+                                      (*pIn).levelqty, (*pIn).optidof + i);
+
     // replacing "default" by its value, for morpho and ori
     for (i = 1; i <= (*pIn).levelqty; i++)
       if (!strcmp ((*pIn).optialgo[0][i], "default"))
@@ -131,11 +137,6 @@ net_input_treatargs (int fargc, char **fargv, int argc, char **argv,
         else
           ut_string_string ("eps=1e-6", (*pIn).optistop + i);
       }
-
-    // optidof
-    net_input_treatargs_multiscale ("-morphooptidof",
-                                    &(*pIn).optidofstring,
-                                    (*pIn).levelqty, &((*pIn).optidof));
 
     // optideltamax
     net_input_treatargs_multiscale ("-morphooptideltamax",

@@ -17,8 +17,12 @@ net_in_set_zero (struct IN_T *pIn)
   (*pIn).morpho = NULL;
   (*pIn).optiinistring = NULL;
   (*pIn).optiini = NULL;
+
   (*pIn).optialgostring = NULL;
   (*pIn).optialgo = NULL;
+  (*pIn).optidofstring = NULL;
+  (*pIn).optidof = NULL;
+
   (*pIn).optialgomaxiterstring = NULL;
   (*pIn).optialgomaxiter = NULL;
   (*pIn).optiobjectivestring = NULL;
@@ -51,8 +55,6 @@ net_in_set_zero (struct IN_T *pIn)
   (*pIn).optilogtesr = NULL;
   (*pIn).optilogvalstring = NULL;
   (*pIn).optilogval = NULL;
-  (*pIn).optidofstring = NULL;
-  (*pIn).optidof = NULL;
   (*pIn).optideltamaxstring = NULL;
   (*pIn).optideltamax = NULL;
   (*pIn).optimultiseedstring = NULL;
@@ -182,6 +184,8 @@ net_in_free (struct IN_T *pIn)
   ut_free_2d_char (&(*pIn).morpho, (*pIn).levelqty + 1);
   ut_free_2d_char (&(*pIn).optialgostring, (*pIn).optiqty);
   // ut_free_3d_char (&(*pIn).optialgo, (*pIn).optiqty, (*pIn).levelqty + 1);
+  ut_free_2d_char (&(*pIn).optidofstring, (*pIn).optiqty);
+  // ut_free_3d_char (&(*pIn).optidof, (*pIn).optiqty, (*pIn).levelqty + 1);
   ut_free_1d_char (&(*pIn).optiobjectivestring);
   ut_free_2d_char (&(*pIn).optiobjective, (*pIn).levelqty + 1);
   ut_free_1d_char (&(*pIn).optismoothstring);
@@ -196,8 +200,6 @@ net_in_free (struct IN_T *pIn)
   ut_free_2d_char (&(*pIn).optilogtime, (*pIn).levelqty + 1);
   ut_free_1d_char (&(*pIn).optilogvarstring);
   ut_free_2d_char (&(*pIn).optilogvar, (*pIn).levelqty + 1);
-  ut_free_1d_char (&(*pIn).optidofstring);
-  ut_free_2d_char (&(*pIn).optidof, (*pIn).levelqty + 1);
   ut_free_1d_char (&(*pIn).optideltamaxstring);
   ut_free_2d_char (&(*pIn).optideltamax, (*pIn).levelqty + 1);
   ut_free_1d_char (&(*pIn).optimultiseedstring);
