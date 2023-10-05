@@ -45,7 +45,7 @@ net_input_options_default (struct IN_T *pIn)
   ut_string_string ("none", &(*pIn).optilogvalstring);
   ut_string_string ("1", &(*pIn).optimultiseedstring);
   ut_string_string ("HUGE_VAL", &(*pIn).optideltamaxstring);
-  ut_string_string ("avdiameq/10", &(*pIn).optiinistepstring);
+  ut_string_string ("default", &(*pIn).optiinistepstring);
 
   (*pIn).reg = 0;
   (*pIn).fmax = 20;
