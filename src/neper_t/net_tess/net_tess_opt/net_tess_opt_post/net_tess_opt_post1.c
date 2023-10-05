@@ -20,6 +20,13 @@ net_tess_opt_post (struct MTESS *pMTess, struct TESS *Tess, int dtess,
     Tess[tessid].CellOri = ut_alloc_2d (Tess[tessid].CellQty + 1, 4);
     ut_array_2d_memcpy (SSet[tessid].SeedOri + 1, Tess[tessid].CellQty, 4,
                         Tess[tessid].CellOri + 1);
+
+    if (ut_list_testelt (TOpt.dof, NEUT_SEP_NODEP, "rw"))
+    {
+      Tess[tessid].CellWeight = ut_alloc_1d (Tess[tessid].CellQty + 1);
+      ut_array_1d_memcpy (SSet[tessid].SeedWeight + 1, Tess[tessid].CellQty,
+                          Tess[tessid].CellWeight + 1);
+    }
   }
 
   return;

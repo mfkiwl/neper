@@ -278,6 +278,8 @@ neut_tess_var_val (struct TESS *pTess,
       (*pvals)[0] = (*pTess).CellLamId ? (*pTess).CellLamId[id] : -1;
       ut_string_string ("%d", &typetmp);
     }
+    else if (!strcmp (var2, "weight"))
+      (*pvals)[0] = (*pTess).CellWeight ? (*pTess).CellWeight[id] : -1;
     else if (!strcmp (var2, "group"))
     {
       (*pvals)[0] = (*pTess).CellGroup ? (*pTess).CellGroup[id] : -1;
