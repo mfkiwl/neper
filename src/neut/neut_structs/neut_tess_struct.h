@@ -55,6 +55,8 @@ extern "C"
 
     double *CellWeight;
 
+    double *CellTheta; // degrees
+
     // Crystal orientation spreads of the cells
     // [1...CellQty], NULL if uninitialized
     char **CellOriDistrib;

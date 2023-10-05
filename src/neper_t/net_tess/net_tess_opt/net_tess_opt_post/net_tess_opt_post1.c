@@ -26,6 +26,16 @@ net_tess_opt_post (struct MTESS *pMTess, struct TESS *Tess, int dtess,
       Tess[tessid].CellWeight = ut_alloc_1d (Tess[tessid].CellQty + 1);
       ut_array_1d_memcpy (SSet[tessid].SeedWeight + 1, Tess[tessid].CellQty,
                           Tess[tessid].CellWeight + 1);
+      ut_array_1d_scale (Tess[tessid].CellWeight + 1, Tess[tessid].CellQty,
+                         1. / ut_array_1d_mean (Tess[tessid].CellWeight + 1, Tess[tessid].CellQty));
+    }
+
+    if (ut_list_testelt (TOpt.dof, NEUT_SEP_NODEP, "rt"))
+    {
+      Tess[tessid].CellTheta = ut_alloc_1d (Tess[tessid].CellQty + 1);
+      ut_array_1d_memcpy (SSet[tessid].SeedOriTheta + 1, Tess[tessid].CellQty,
+                          Tess[tessid].CellTheta + 1);
+      ut_array_1d_scale (Tess[tessid].CellTheta + 1, Tess[tessid].CellQty, 180. / M_PI);
     }
   }
 

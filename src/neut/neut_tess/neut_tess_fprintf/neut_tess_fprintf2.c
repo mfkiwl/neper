@@ -103,6 +103,13 @@ neut_tess_fprintf_cell (struct TESS Tess, FILE * file)
       fprintf (file, "   %s\n", Tess.CellOriDistrib[i]);
   }
 
+  if (Tess.CellTheta)
+  {
+    fprintf (file, "  *orispreadtheta\n");
+    for (i = 1; i <= Tess.CellQty; i++)
+      fprintf (file, "   " REAL_PRINT_FORMAT "\n", Tess.CellTheta[i]);
+  }
+
   if (Tess.CellWeight)
   {
     fprintf (file, "  *weight\n");
