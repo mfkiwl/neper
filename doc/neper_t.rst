@@ -473,7 +473,7 @@ Crystal Orientation Options
 
   - :data:`random`: ODF = 1, i.e. no or "random" texture (standard case);
 
-  - :data:`odf(mesh=file(<mesh_file>),val=file(<value_file>))`: ODF described by :data:`<mesh_file>` (a mesh of the fundamental region of orientation space) and :data:`<value_file>` (a :ref:`data_file` containing the ODF values at the mesh elements);
+  - :data:`odf(mesh=file(<mesh_file>),val=file(<value_file>)[,theta=<theta>)`: ODF described by :data:`<mesh_file>` (a mesh of the fundamental region of orientation space), :data:`<value_file>` (a :ref:`data_file` containing the ODF values at the mesh elements) and :data:`<theta>` is the size of the kernel used to general the ODF (1-D standard deviation expressed in degrees, if any).
 
   - :data:`<orientation>[:<distribution>]`: a continuous distribution about a :ref:`discrete orientation <rotations_and_orientations>` (the distribution itself is optional, see below);
 

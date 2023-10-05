@@ -241,15 +241,13 @@ net_ori_odf (long random, char *odf, struct OL_SET *pOSet)
   gsl_rng *r = NULL;
   gsl_rng *r2 = NULL;
   double n1, n2, n3;
-  int qty, tmp, elt, status;
+  int qty, elt, status;
   char *fct = NULL, **vars = NULL, **vals = NULL;
-  struct NODES Nodes;
-  struct MESH Mesh;
-  double *f = NULL, fmax, t;
+  struct ODF Odf;
+  double fmax, t;
   double *R = ol_R_alloc ();
 
-  neut_mesh_set_zero (&Mesh);
-  neut_nodes_set_zero (&Nodes);
+  neut_odf_set_zero (&Odf);
 
   ut_string_function (odf, &fct, &vars, &vals, &qty);
 
@@ -257,26 +255,13 @@ net_ori_odf (long random, char *odf, struct OL_SET *pOSet)
 
   ut_print_message (0, 2, "Reading odf...\n");
 
-  for (i = 0; i < qty; i++)
-  {
-    if (!strcmp (vars[i], "mesh"))
-      neut_mesh_fnscanf_msh (vals[i], &Nodes, NULL, NULL, NULL, &Mesh, NULL, 0, "R");
-    else if (!strcmp (vars[i], "val"))
-    {
-      tmp = ut_file_nbwords (vals[i]);
-      if (tmp != Mesh.EltQty)
-        ut_print_message (2, 0, "Number of data and elements do not match (%d != %d, file = %s).\n", tmp, Mesh.EltQty, vals[i]);
+  neut_odf_fnscanf (odf, &Odf, "r");
 
-      f = ut_alloc_1d (Mesh.EltQty + 1);
-      ut_array_1d_fnscanf (vals[i], f + 1, Mesh.EltQty, "R");
-    }
-  }
-
-  if (!strstr (Mesh.Domain, (*pOSet).crysym))
+  if (!strstr (Odf.gridtype, (*pOSet).crysym))
     ut_print_message (2, 0, "Crystal symmetry (%s) and orientation space (%s) conflict.\n",
-                      (*pOSet).crysym, Mesh.Domain);
+                      (*pOSet).crysym, Odf.gridtype);
 
-  fmax = ut_array_1d_max (f + 1, Mesh.EltQty);
+  fmax = ut_array_1d_max (Odf.odf, Odf.odfqty);
 
   ut_print_message (0, 2, "Sampling odf...\n");
 
@@ -297,13 +282,13 @@ net_ori_odf (long random, char *odf, struct OL_SET *pOSet)
     ol_e_R (e, R);
     ol_R_Rcrysym (R, (*pOSet).crysym, R);
 
-    status = neut_mesh_point_elt (Nodes, Mesh, R, &elt);
+    status = neut_mesh_point_elt (Odf.Nodes, Odf.Mesh[3], R, &elt);
     if (status)
       ut_print_message (2, 0, "Failed to find element for orientation = (%f,%f,%f)\n", R[0], R[1], R[2]);
 
     t = gsl_rng_uniform (r);
 
-    if (t < f[elt] / fmax)
+    if (t < Odf.odf[elt - 1] / fmax)
       ol_e_q (e, (*pOSet).q[i]);
     else
       i--;
@@ -315,11 +300,7 @@ net_ori_odf (long random, char *odf, struct OL_SET *pOSet)
   ut_free_1d_char (&fct);
   ut_free_2d_char (&vars, qty);
   ut_free_2d_char (&vals, qty);
-  ut_free_1d (&f);
   ol_R_free (R);
-
-  neut_nodes_free (&Nodes);
-  neut_mesh_free (&Mesh);
 
   return;
 }

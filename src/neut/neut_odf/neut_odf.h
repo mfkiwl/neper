@@ -12,6 +12,7 @@ extern "C"
 
 
 extern void neut_odf_set_zero (struct ODF *pOdf);
+extern void neut_odf_fnscanf (char *filename, struct ODF *pOdf, char *mode);
 extern void neut_odf_space_fnscanf (char *filename, struct ODF *pOdf, char *mode);
 extern void neut_odf_setsigma (struct ODF *pOdf, char *expr, int qty, char *crysym);
 extern void neut_odf_comp (char *mode, char *neigh, struct OL_SET *pOSet, struct ODF *pOdf, int verbosity);

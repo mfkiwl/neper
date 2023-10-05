@@ -133,3 +133,55 @@ neut_odf_orides (struct ODF Odf, char **porides)
 
   return;
 }
+
+void
+neut_odf_fnscanf (char *filename, struct ODF *pOdf, char *mode)
+{
+  int i, qty, tmp;
+  char *fct = NULL, **vars = NULL, **vals = NULL;
+
+  ut_string_function (filename, &fct, &vars, &vals, &qty);
+
+  neut_odf_set_zero (pOdf);
+
+  for (i = 0; i < qty; i++)
+  {
+    if (!strcmp (vars[i], "mesh"))
+      neut_odf_space_fnscanf (vals[i], pOdf, mode);
+    else if (!strcmp (vars[i], "val"))
+    {
+      (*pOdf).odfqty = (*pOdf).Mesh[3].EltQty;
+
+      tmp = ut_file_nbwords (vals[i]);
+      if (tmp != (*pOdf).odfqty)
+        ut_print_message (2, 0, "Number of data and elements do not match (%d != %d, file = %s).\n", tmp, (*pOdf).Mesh[3].EltQty, vals[i]);
+
+      (*pOdf).odf = ut_alloc_1d ((*pOdf).odfqty);
+      ut_array_1d_fnscanf (vals[i], (*pOdf).odf, (*pOdf).odfqty, mode);
+    }
+    else if (!strcmp (vars[i], "valn"))
+    {
+      (*pOdf).odfnqty = (*pOdf).Nodes.NodeQty;
+
+      tmp = ut_file_nbwords (vals[i]);
+      if (tmp != (*pOdf).odfnqty)
+        ut_print_message (2, 0, "Number of data and elements do not match (%d != %d, file = %s).\n", tmp, (*pOdf).Mesh[3].EltQty, vals[i]);
+
+      (*pOdf).odfn = ut_alloc_1d ((*pOdf).odfnqty);
+      ut_array_1d_fnscanf (vals[i], (*pOdf).odfn, (*pOdf).odfnqty, mode);
+    }
+    else if (!strcmp (vars[i], "theta") || !strcmp (vars[i], "sigma"))
+    {
+      sscanf (vals[i], "%lf", &(*pOdf).sigma);
+      (*pOdf).sigma *= M_PI / 180;
+    }
+    else
+      ut_print_message (2, 0, "Failed to process `%s'.\n", vars[i]);
+  }
+
+  ut_free_1d_char (&fct);
+  ut_free_2d_char (&vars, qty);
+  ut_free_2d_char (&vals, qty);
+
+  return;
+}
