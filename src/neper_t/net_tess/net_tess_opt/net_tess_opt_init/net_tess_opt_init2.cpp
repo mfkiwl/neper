@@ -66,7 +66,7 @@ net_tess_opt_init_target (struct IN_T In, int level, char *optistring,
                           struct MTESS MTess, struct TESS *Tess, int dtess,
                           int dcell, struct TOPT *pTOpt)
 {
-  int i, j, k, PartQty, status, diameq_pos[2], isval = 0;
+  int i, j, PartQty, status, diameq_pos[2], isval = 0;
   double mean = 1;
   double sum;
   char **tmp = NULL;
@@ -400,40 +400,7 @@ net_tess_opt_init_target (struct IN_T In, int level, char *optistring,
     }
 
     else if (!strcmp ((*pTOpt).tartype[i], "odf"))
-    {
-      char *fct = NULL, **vars = NULL, **vals = NULL;
-      int tmp2, qty;
-      ut_string_function ((*pTOpt).tarexpr[i], &fct, &vars, &vals, &qty);
-
-      for (k = 0; k < qty; k++)
-      {
-        if (!strcmp (vars[k], "mesh"))
-          neut_odf_space_fnscanf (vals[k], &((*pTOpt).Odf), (char *) "R");
-        else if (!strcmp (vars[k], "val"))
-        {
-          tmp2 = ut_file_nbwords (vals[k]);
-          if (tmp2 != (*pTOpt).Odf.Mesh[3].EltQty)
-            ut_print_message (2, 0, "Number of data and elements do not match (%d != %d, file = %s).\n", tmp2,
-                              (*pTOpt).Odf.Mesh[3].EltQty, vals[k]);
-
-          (*pTOpt).Odf.odfqty = (*pTOpt).Odf.Mesh[3].EltQty;
-
-          (*pTOpt).Odf.odf = ut_alloc_1d ((*pTOpt).Odf.odfqty);
-          ut_array_1d_fnscanf (vals[k], (*pTOpt).Odf.odf, (*pTOpt).Odf.odfqty, (char *) "R");
-        }
-        else if (!strcmp (vars[k], "sigma"))
-        {
-          sscanf (vals[k], "%lf", &(*pTOpt).Odf.sigma);
-          (*pTOpt).Odf.sigma *= M_PI / 180;
-        }
-        else
-          ut_print_message (2, 0, "Failed to process `%s'.\n", vars[k]);
-      }
-
-      ut_free_1d_char (&fct);
-      ut_free_2d_char (&vars, qty);
-      ut_free_2d_char (&vals, qty);
-    }
+      neut_odf_fnscanf ((*pTOpt).tarexpr[i], &((*pTOpt).Odf), (char *) "R");
 
     // Recording tarcellvalqty, tarcellval or tartesr
     else
