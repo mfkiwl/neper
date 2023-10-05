@@ -14,10 +14,12 @@ extern void neut_odf_comp_nodes_neigh (double *q, double cut_fact, QCLOUD qcloud
 
 double
 neut_odf_comp_elts (char *neigh, struct OL_SET *pOSet, QCLOUD nano_cloud,
-                    my_kd_tree_t *nano_index, struct ODF *pOdf)
+                    my_kd_tree_t *nano_index, struct ODF *pOdf, int verbosity)
 {
   int i, dim = neut_mesh_array_dim ((*pOdf).Mesh);
   double avradeq;
+  char *prev = ut_alloc_1d_char (100);
+
   neut_ori_n_avradeq (NULL, (*pOSet).size, (*pOSet).crysym, &avradeq);
 
   if (!(*pOdf).EltWeight)
@@ -30,6 +32,9 @@ neut_odf_comp_elts (char *neigh, struct OL_SET *pOSet, QCLOUD nano_cloud,
   {
     double *q = ol_q_alloc ();
     double *coo = ut_alloc_1d (3);
+
+    if (verbosity > 0)
+      ut_print_progress (stdout, i, (*pOdf).Mesh[dim].EltQty - 1, "%3.0f%%", prev);
 
     if (dim == 3)
       neut_mesh_elt_volume ((*pOdf).Nodes, (*pOdf).Mesh[dim], i + 1, (*pOdf).EltWeight + i);
@@ -83,15 +88,18 @@ neut_odf_comp_elts (char *neigh, struct OL_SET *pOSet, QCLOUD nano_cloud,
   (*pOdf).odfmin = ut_array_1d_min ((*pOdf).odf, (*pOdf).odfqty);
   (*pOdf).odfmax = ut_array_1d_max ((*pOdf).odf, (*pOdf).odfqty);
 
+  ut_free_1d_char (&prev);
+
   return 1;
 }
 
 void
 neut_odf_comp_nodes (char *neigh, struct OL_SET *pOSet, QCLOUD nano_cloud,
-                     my_kd_tree_t *nano_index, struct ODF *pOdf)
+                     my_kd_tree_t *nano_index, struct ODF *pOdf, int verbosity)
 {
   int i;
   double mean;
+  char *prev = ut_alloc_1d_char (1000);
 
   ut_array_1d_zero ((*pOdf).odfn, (*pOdf).odfnqty);
 
@@ -101,6 +109,9 @@ neut_odf_comp_nodes (char *neigh, struct OL_SET *pOSet, QCLOUD nano_cloud,
   {
     double *q = ol_q_alloc ();
     double *qs = ol_q_alloc ();
+
+    if (verbosity > 0)
+      ut_print_progress (stdout, i, (*pOdf).odfnqty - 1, "%3.0f%%", prev);
 
     if (!strncmp ((*pOdf).gridtype, "rodrigues", 9))
       ol_R_q ((*pOdf).Nodes.NodeCoo[i + 1], q);
@@ -138,6 +149,8 @@ neut_odf_comp_nodes (char *neigh, struct OL_SET *pOSet, QCLOUD nano_cloud,
 #pragma omp parallel for
   for (i = 0; i < (*pOdf).odfnqty; i++)
     (*pOdf).odfn[i] /= mean;
+
+  ut_free_1d_char (&prev);
 
   return;
 }
