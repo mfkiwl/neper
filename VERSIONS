@@ -1,5 +1,5 @@
-New in 4.6.2-11-devel (26 Sep 2023):
-- module -T: added -ori odf, improved -domain rodrigues.
+New in 4.6.2-13-devel (09 Oct 2023):
+- module -T: added -statcell scale.
 - module -S: fixed -res... '\<result>` (result overwriting).
 - general: improved installation instructions, added developer documentation.
 
