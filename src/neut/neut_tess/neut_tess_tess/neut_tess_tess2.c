@@ -55,14 +55,6 @@ neut_tess_tess_cell (struct TESS TessA, struct TESS *pTessB)
                             (*pTessB).CellWeight + 1);
   }
 
-  if (TessA.CellTheta)
-  {
-    (*pTessB).CellTheta = ut_alloc_1d (TessA.CellQty + 1);
-    ut_array_1d_memcpy (TessA.CellTheta + 1, TessA.CellQty,
-                            (*pTessB).CellTheta + 1);
-  }
-
-
   if (TessA.CellOri)
   {
     (*pTessB).CellOri = ut_alloc_2d (TessA.CellQty + 1, 4);

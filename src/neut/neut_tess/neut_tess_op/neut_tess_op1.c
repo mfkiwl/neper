@@ -56,7 +56,6 @@ neut_tess_set_zero (struct TESS *pTess)
   (*pTess).CellOri = NULL;
   (*pTess).CellOriDistrib = NULL;
   (*pTess).CellWeight = NULL;
-  (*pTess).CellTheta = NULL;
   (*pTess).CellOriDes = ut_alloc_1d_char (100); // must be sufficiently allocated
   sprintf ((*pTess).CellOriDes, NEUT_DEFAULT_ORIDESFULL);
   (*pTess).CellCrySym = NULL;
@@ -236,7 +235,6 @@ neut_tess_free (struct TESS *pTess)
   ut_free_2d (&(*pTess).CellOri, (*pTess).CellQty + 1);
   ut_free_2d_char (&(*pTess).CellOriDistrib, (*pTess).CellQty + 1);
   ut_free_1d (&(*pTess).CellWeight);
-  ut_free_1d (&(*pTess).CellTheta);
   ut_free_1d_char (&(*pTess).CellOriDes);
   ut_free_1d_char (&(*pTess).CellCrySym);
 

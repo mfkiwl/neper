@@ -281,7 +281,22 @@ neut_tess_var_val (struct TESS *pTess,
     else if (!strcmp (var2, "weight"))
       (*pvals)[0] = (*pTess).CellWeight ? (*pTess).CellWeight[id] : -1;
     else if (!strcmp (var2, "theta"))
-      (*pvals)[0] = (*pTess).CellTheta ? (*pTess).CellTheta[id] : -1;
+    {
+      int qty = 0;
+      char *fct = NULL, **vars = NULL, **vals = NULL;
+
+      if ((*pTess).CellOriDistrib)
+      {
+        ut_string_function ((*pTess).CellOriDistrib[id], &fct, &vars, &vals, &qty);
+        sscanf (vals[0], "%lf", *pvals);
+      }
+      else
+        (*pvals)[0] = -1;
+
+      ut_free_2d_char (&vars, qty);
+      ut_free_2d_char (&vals, qty);
+      ut_free_1d_char (&fct);
+    }
     else if (!strcmp (var2, "group"))
     {
       (*pvals)[0] = (*pTess).CellGroup ? (*pTess).CellGroup[id] : -1;
