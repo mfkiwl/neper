@@ -362,6 +362,7 @@ nes_pproc_entity_builtin_cells_odf (struct SIM *pSim, struct TESS *pTess, struct
   char *input = NULL;
   char *weight = NULL;
   char *cutoff = NULL;
+  char **array = NULL;
   struct SIMRES SimRes2;
 
   neut_simres_set_zero (&SimRes2);
@@ -443,6 +444,19 @@ nes_pproc_entity_builtin_cells_odf (struct SIM *pSim, struct TESS *pTess, struct
       for (i = 1; i <= CellQty; i++)
         neut_tesr_expr_val_one (Tesr, "cell", i, weight, OSet.weight + i - 1,
                                NULL);
+
+    if ((!strcmp (input, "tess") && (*pTess).CellOriDistrib)
+     || (!strcmp (input, "tesr") && Tesr.CellOriDistrib))
+    {
+      OSet.theta = ut_alloc_1d (OSet.size);
+
+      array = !strcmp (input, "tess") ? (*pTess).CellOriDistrib : Tesr.CellOriDistrib;
+
+      for (i = 0; i < (int) OSet.size; i++)
+        sscanf (array[i + 1], "normal(%lf)", OSet.theta + i);
+
+      ut_array_1d_scale (OSet.theta, OSet.size, M_PI / 180);
+    }
 
     if (!strcmp (fct, "odf"))
       neut_odf_comp ("m", cutoff, &OSet, &Odf, 1);
