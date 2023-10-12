@@ -5,7 +5,7 @@
 #include "net_tess_opt_init_sset_ori_.h"
 
 void
-net_tess_opt_init_sset_ori (int TessId, struct SEEDSET *SSet, double *rad, struct TOPT *pTOpt)
+net_tess_opt_init_sset_ori (int TessId, struct SEEDSET *SSet, struct TOPT *pTOpt)
 {
   int i;
 
@@ -15,10 +15,15 @@ net_tess_opt_init_sset_ori (int TessId, struct SEEDSET *SSet, double *rad, struc
   for (i = 1; i <= (*pTOpt).SSet.N; i++)
     ol_q_R ((*pTOpt).SSet.SeedOri[i], (*pTOpt).SSet.SeedOriR[i]);
 
-  if (ut_list_testelt ((*pTOpt).dof, NEUT_SEP_NODEP, "rt"))
+  if (SSet[TessId].SeedOriTheta || strstr ((*pTOpt).dof, "rt"))
+  {
     (*pTOpt).SSet.SeedOriTheta = ut_alloc_1d ((*pTOpt).SSet.N + 1);
+    if (SSet[TessId].SeedOriTheta)
+      ut_array_1d_memcpy (SSet[TessId].SeedOriTheta + 1, (*pTOpt).SSet.N, (*pTOpt).SSet.SeedOriTheta + 1);
+  }
 
-  ut_array_1d_memcpy (rad + 1, (*pTOpt).SSet.N, (*pTOpt).SSet.SeedWeight + 1);
+  if (SSet[TessId].SeedWeight)
+    ut_array_1d_memcpy (SSet[TessId].SeedWeight + 1, (*pTOpt).SSet.N, (*pTOpt).SSet.SeedWeight + 1);
 
   return;
 }

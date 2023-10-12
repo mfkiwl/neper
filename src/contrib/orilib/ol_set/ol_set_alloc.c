@@ -292,6 +292,12 @@ ol_set_cat (struct OL_SET* OSets, int SetQty, struct OL_SET *pOSet)
     size += OSets[i].size;
 
   (*pOSet) = ol_set_alloc (size, OSets[0].crysym);
+  for (i = 0; i < SetQty; i++)
+    if (OSets[i].theta)
+    {
+      (*pOSet).theta = ut_alloc_1d (size);
+      break;
+    }
 
   id = 0;
   for (i = 0; i < SetQty; i++)
@@ -299,6 +305,8 @@ ol_set_cat (struct OL_SET* OSets, int SetQty, struct OL_SET *pOSet)
     {
       ut_array_1d_memcpy (OSets[i].q[j], 4, (*pOSet).q[id]);
       (*pOSet).weight[id] = OSets[i].weight[j];
+      if (OSets[i].theta)
+        (*pOSet).theta[id] = OSets[i].theta[j];
       (*pOSet).id[id] = OSets[i].id[j];
       id++;
     }

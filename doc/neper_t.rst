@@ -332,24 +332,24 @@ These options can be used to set the cell morphology.
 
   **Default value**: :data:`x,y,z,w`.
 
-.. option:: -morphooptistop <var1>=<val1>,<var2>=<val2>,... (secondary option)
+.. option:: -morphooptistop <stopping_criterion> (secondary option)
 
-  Specify the stopping criteria of the optimization process, which can be:
+  Specify the stopping criterion of the optimization process, as a logical expression of the form :data:`<var1>=<val1>||<var2>=<val2>||...` (where :data:`||` represents the logical OR) and based on the following variables:
 
   - :data:`eps`: absolute error on the value of the objective function evaluated on a number of degrees of freedom basis (:data:`nlopt_eps` or :data:`nlopt_reps` are the NLopt iteration-based values);
   - :data:`reps`: relative error on the value of the objective function evaluated on a number of degrees of freedom basis (:data:`nlopt_eps` or :data:`nlopt_reps` are the NLopt iteration-based values);
   - :data:`xeps`: absolute error on the components of the solution vector;
   - :data:`xreps`: relative error on the components of the solution vector;
   - :data:`val`: value of the objective function;
-  - :data:`itermax`: a maximum number of iterations;
+  - :data:`iter`: number of iterations;
   - :data:`time`: maximum computation time;
-  - :data:`loopmax`: maximum number of iteration loops (see option :option:`-morphooptialgomaxiter`).
+  - :data:`loop`: number of iteration loops (see option :option:`-morphooptialgomaxiter`).
 
   Optimization stops as soon as one stopping criterion is verified.
 
   Optimization can also be stopped anytime using the :command:`Ctrl+C` command.
 
-  **Default value**: :data:`eps=1e-6` (:data:`val=1e-4,iter=10000` for :data:`-morpho centroidal`).
+  **Default value**: :data:`eps<1e-6` (:data:`val<1e-4||iter>=10000` for :data:`-morpho centroidal`).
 
 .. option:: -morphooptialgo <algorithm1>,<algorithm2>,... (secondary option)
 
@@ -535,9 +535,9 @@ Crystal Orientation Options
 
   **Default value**: :data:`r1,r2,r3`.
 
-.. option:: -orioptiini <ori_distrib> (secondary option)
+.. option:: -orioptiini <ori_attributes> (secondary option)
 
-  Specify the initial crystal orientations, which can be:
+  Specify the initial crystal orientations and/or their weights and distributions (theta parameter).
 
   - :data:`random`: random orientations;
   - :data:`file(<file_name>[,des=<descriptor>])`: orientations to be read from a :ref:`data_file` written using a specific descriptor (see :ref:`rotations_and_orientations`, default :data:`rodrigues`).
@@ -555,12 +555,28 @@ Crystal Orientation Options
 
 .. option:: -orioptistop <stopping_criterion> (secondary option)
 
-  Specify the stopping criterion of the optimization process, as a logical expression based on the following variables:
+  Specify the stopping criterion of the optimization process, as a logical expression based on the following variables.
+  Depending on the problem (and on the algorithm to solve it), different criteria are available.
+
+  For :data:`-ori random -orisampling uniform`, the Thomson problem is solved using gradient descent, and the following criteria are available:
 
   - :data:`reps`: relative error on the forces at orientations;
   - :data:`iter`: iteration number.
 
-  **Default value**: :data:`"reps<1e-3||iter>=1e3"`.
+  In other situations, general minimization operates, and the following criteria are available:
+
+  - :data:`eps`: absolute error on the value of the objective function evaluated on a number of degrees of freedom basis (:data:`nlopt_eps` or :data:`nlopt_reps` are the NLopt iteration-based values);
+  - :data:`reps`: relative error on the value of the objective function evaluated on a number of degrees of freedom basis (:data:`nlopt_eps` or :data:`nlopt_reps` are the NLopt iteration-based values);
+  - :data:`xeps`: absolute error on the components of the solution vector;
+  - :data:`xreps`: relative error on the components of the solution vector;
+  - :data:`val`: value of the objective function;
+  - :data:`iter`: number of iterations;
+  - :data:`time`: maximum computation time;
+  - :data:`loop`: number of iteration loops.
+
+  Different criteria can be defined for the different algorithms (either :data:`Thomson` or :data:`general`) using the syntax :data:`<algorithm1>:<criterion1>,<algorithm2>:<criterion2>,...`.  The algorithm may be omitted in the case of a universal criterion (or when only one algorithm is used).
+
+  **Default value**: :data:`"thomson:reps<1e-3||iter>=1e3,general:eps<1e-6"`.
 
 .. option:: -orioptineigh <neighborhood_radius> (secondary option)
 

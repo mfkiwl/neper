@@ -132,7 +132,7 @@ net_input_treatargs (int fargc, char **fargv, int argc, char **argv,
       if (!strcmp ((*pIn).optistop[i], "default"))
       {
         if (!strncmp ((*pIn).optialgo[0][i], "lloyd", 5))
-          ut_string_string ("val=1e-4,itermax=10000",
+          ut_string_string ("val=1e-4||iter=10000",
                             (*pIn).optistop + i);
         else
           ut_string_string ("eps=1e-6", (*pIn).optistop + i);

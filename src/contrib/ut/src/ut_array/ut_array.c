@@ -303,6 +303,22 @@ ut_array_1d_fprintf (FILE * file, double *array, int size, const char *format)
 }
 
 int
+ut_array_1d_fnprintf (char * filename, double *array, int size, const char *format, const char *mode)
+{
+  int status;
+
+  FILE *file = ut_file_open (filename, mode);
+
+  ut_array_1d_fprintf_nonl (file, array, size, format);
+
+  status = fprintf (file, "\n");
+
+  ut_file_close (file, filename, mode);
+
+  return status;
+}
+
+int
 ut_array_1d_fprintf_column (FILE * file, double *array, int size, const char *format)
 {
   int i, status = -1;

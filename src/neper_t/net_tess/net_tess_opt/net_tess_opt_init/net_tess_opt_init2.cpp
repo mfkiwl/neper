@@ -600,34 +600,67 @@ net_tess_opt_init_parms (struct IN_T In, int level, struct MTESS MTess,
     ut_free_1d_char (&rm);
   }
 
-  net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
-                                           In.optistop[level], &string);
+  if (!strcmp ((*pTOpt).optitype, "morpho"))
+    net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
+                                             In.optistop[level], &string);
+  else if (!strcmp ((*pTOpt).optitype, "ori"))
+  {
+    if (!strstr (In.orioptistop[level], "general"))
+      net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
+                                               In.orioptistop[level], &string);
+    else
+    {
+      char ***parts = NULL;
+      int qty, *qty1 = NULL;
 
-  ut_list_break2 (string, NEUT_SEP_NODEP, "=", &parts, &qty2, &qty1);
+      ut_list_break2 (In.orioptistop[level], NEUT_SEP_NODEP, NEUT_SEP_DEP, &parts, &qty1, &qty);
+      for (i = 0; i < qty; i++)
+        if (!strcmp (parts[i][0], "general"))
+          net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
+                                                   parts[i][1], &string);
+
+      // free memory
+    }
+  }
+  else
+    abort ();
+
+  ut_string_fnrs (string, "itermax", "iter", INT_MAX);
+  ut_string_fnrs (string, "loopmax", "loop", INT_MAX);
+  ut_string_fnrs (string, ",", "||", INT_MAX);
+  ut_string_fnrs (string, "==", "=", INT_MAX);
+  ut_string_fnrs (string, ">=", "=", INT_MAX);
+  ut_string_fnrs (string, "<=", "=", INT_MAX);
+  ut_string_fnrs (string, ">", "=", INT_MAX);
+  ut_string_fnrs (string, "<", "=", INT_MAX);
+
+  ut_list_break2 (string, "||", "=", &parts, &qty2, &qty1);
   for (i = 0; i < qty1; i++)
+  {
     if (!strcmp (parts[i][0], "eps"))
-      sscanf (parts[i][1], "%lf", &((*pTOpt).eps));
+      ut_math_eval (parts[i][1], 0, NULL, NULL, &((*pTOpt).eps));
     else if (!strcmp (parts[i][0], "reps"))
-      sscanf (parts[i][1], "%lf", &((*pTOpt).reps));
-    else if (!strcmp (parts[i][0], "loopmax"))
-      sscanf (parts[i][1], "%lf", &((*pTOpt).loopmax));
+      ut_math_eval (parts[i][1], 0, NULL, NULL, &((*pTOpt).reps));
+    else if (!strcmp (parts[i][0], "loop"))
+      ut_math_eval (parts[i][1], 0, NULL, NULL, &((*pTOpt).loopmax));
     else if (!strcmp (parts[i][0], "nlopt_eps"))
-      sscanf (parts[i][1], "%lf", &((*pTOpt).nlopt_eps));
+      ut_math_eval (parts[i][1], 0, NULL, NULL, &((*pTOpt).nlopt_eps));
     else if (!strcmp (parts[i][0], "nlopt_reps"))
-      sscanf (parts[i][1], "%lf", &((*pTOpt).nlopt_reps));
+      ut_math_eval (parts[i][1], 0, NULL, NULL, &((*pTOpt).nlopt_reps));
     else if (!strcmp (parts[i][0], "xeps"))
-      sscanf (parts[i][1], "%lf", &((*pTOpt).xeps));
+      ut_math_eval (parts[i][1], 0, NULL, NULL, &((*pTOpt).xeps));
     else if (!strcmp (parts[i][0], "xreps"))
-      sscanf (parts[i][1], "%lf", &((*pTOpt).xreps));
-    else if (!strcmp (parts[i][0], "itermax"))
-      sscanf (parts[i][1], "%d", &((*pTOpt).itermax));
+      ut_math_eval (parts[i][1], 0, NULL, NULL, &((*pTOpt).xreps));
+    else if (!strcmp (parts[i][0], "iter"))
+      ut_math_eval_int (parts[i][1], 0, NULL, NULL, &((*pTOpt).itermax));
     else if (!strcmp (parts[i][0], "val"))
-      sscanf (parts[i][1], "%lf", &((*pTOpt).val));
+      ut_math_eval (parts[i][1], 0, NULL, NULL, &((*pTOpt).val));
     else if (!strcmp (parts[i][0], "time"))
-      sscanf (parts[i][1], "%lf", &((*pTOpt).time));
+      ut_math_eval (parts[i][1], 0, NULL, NULL, &((*pTOpt).time));
     else
       ut_print_message (1, 4, "Unknown stop criterion `%s'.  Skipping...\n",
                         parts[i][0]);
+  }
 
   if (!strcmp (In.optideltamax[level], "HUGE_VAL"))
     (*pTOpt).dist = HUGE_VAL;

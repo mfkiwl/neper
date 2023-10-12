@@ -168,6 +168,9 @@ net_ori_file (char *filename_in, struct OL_SET *pOSet)
       abort ();
   }
 
+  if ((*pOSet).size > 0)
+    ol_set_free (*pOSet);
+
   (*pOSet) = ol_set_alloc (ut_file_nbwords (filename) / ol_des_size (des), NULL);
 
   fp = ut_file_open (filename, "r");
@@ -475,6 +478,18 @@ net_ori_memcpy (struct OL_SET OSet, struct SEEDSET *pSSet)
 {
   (*pSSet).SeedOri = ut_alloc_2d ((*pSSet).N + 1, 4);
   ut_array_2d_memcpy (OSet.q, OSet.size, 4, (*pSSet).SeedOri + 1);
+
+  if (OSet.weight)
+  {
+    (*pSSet).SeedWeight = ut_alloc_1d ((*pSSet).N + 1);
+    ut_array_1d_memcpy (OSet.weight, OSet.size, (*pSSet).SeedWeight + 1);
+  }
+
+  if (OSet.theta)
+  {
+    (*pSSet).SeedOriTheta = ut_alloc_1d ((*pSSet).N + 1);
+    ut_array_1d_memcpy (OSet.theta, OSet.size, (*pSSet).SeedOriTheta + 1);
+  }
 
   ut_string_string (OSet.crysym, &(*pSSet).crysym);
 

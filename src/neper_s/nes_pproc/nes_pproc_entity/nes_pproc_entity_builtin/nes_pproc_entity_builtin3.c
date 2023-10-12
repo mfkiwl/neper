@@ -458,6 +458,15 @@ nes_pproc_entity_builtin_cells_odf (struct SIM *pSim, struct TESS *pTess, struct
       ut_array_1d_scale (OSet.theta, OSet.size, M_PI / 180);
     }
 
+    if ((!strcmp (input, "tess") && (*pTess).CellWeight))
+     // || (!strcmp (input, "tesr") && Tesr.CellWeight))
+    {
+      // array = !strcmp (input, "tess") ? (*pTess).CellWeight : Tesr.CellWeight;
+
+      for (i = 0; i < (int) OSet.size; i++)
+        OSet.weight[i] *= (*pTess).CellWeight[i + 1];
+    }
+
     if (!strcmp (fct, "odf"))
       neut_odf_comp ("m", cutoff, &OSet, &Odf, 1);
     else if (!strcmp (fct, "odfn"))

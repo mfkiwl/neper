@@ -26,7 +26,7 @@ neut_odf_comp_elts_all (struct OL_SET *pOSet, double *q, struct ODF *pOdf, int i
       ol_q_crysym ((*pOSet).q[i], (*pOSet).crysym, j, qs);
       ol_q_q_misori_rad (q, qs, &theta);
       (*pOdf).odf[id] += (*pOSet).weight[i] / sqrt (2 * M_PI * sigma * sigma)
-        * exp (-theta * theta / (2 * sigma * sigma));
+        * exp (-theta * theta / (2 * sigma * sigma)) * (((*pOdf).sigma * (*pOdf).sigma) / (sigma * sigma));
     }
   }
 

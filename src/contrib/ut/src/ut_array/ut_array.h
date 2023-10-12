@@ -1829,6 +1829,18 @@ extern "C"
                                         int size1, int size2, char *wcard, char *mode);
 
 /// \brief Write a 1D array of \c double
+/// \param filename: file name
+/// \param array: array
+/// \param size: size of the array
+/// \param format: format (usually "%f")
+/// \param mode: opening mode ("w" or "W" or "a" or "A")
+/// \return 1 on success, undefined otherwise
+/// \note A newline is written at the end.
+/// \note \c format can be %d, in which case values rounded to the nearest integers are written.
+  extern int ut_array_1d_fnprintf (char* filename, double *array, int size,
+                                  const char *format, const char *mode);
+
+/// \brief Write a 1D array of \c double
 /// \param file: file pointer
 /// \param array: array
 /// \param size: size of the array
