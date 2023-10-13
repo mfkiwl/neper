@@ -5,8 +5,8 @@
 #include "neut_odf_.h"
 #include "neut/neut_oset/neut_oset.hpp"
 
-extern double neut_odf_comp_elts (char *neigh, struct OL_SET *pOSet, QCLOUD nanocloud, my_kd_tree_t *nano_index, struct ODF *pOdf);
-extern double neut_odf_comp_nodes (char *neigh, struct OL_SET *pOSet, QCLOUD nano_cloud, my_kd_tree_t *nano_index, struct ODF *pOdf);
+extern double neut_odf_comp_elts (char *neigh, struct OL_SET *pOSet, QCLOUD nanocloud, my_kd_tree_t *nano_index, struct ODF *pOdf, int verbosity);
+extern double neut_odf_comp_nodes (char *neigh, struct OL_SET *pOSet, QCLOUD nano_cloud, my_kd_tree_t *nano_index, struct ODF *pOdf, int verbosity);
 
 void
 neut_odf_set_zero (struct ODF *pOdf)
@@ -25,6 +25,8 @@ neut_odf_set_zero (struct ODF *pOdf)
   (*pOdf).odf = NULL;
   (*pOdf).odfnqty = 0;
   (*pOdf).odfn = NULL;
+
+  (*pOdf).EltWeight = NULL;
 
   (*pOdf).odfmin = 0;
   (*pOdf).odfmax = 0;
@@ -105,7 +107,7 @@ neut_odf_setsigma (struct ODF *pOdf, char *expr, int qty, char *crysym)
 }
 
 void
-neut_odf_comp (char *mode, char *neigh, struct OL_SET *pOSet, struct ODF *pOdf)
+neut_odf_comp (char *mode, char *neigh, struct OL_SET *pOSet, struct ODF *pOdf, int verbosity)
 {
   my_kd_tree_t *nano_index = nullptr;
   nanoflann::SearchParams params;
@@ -114,10 +116,10 @@ neut_odf_comp (char *mode, char *neigh, struct OL_SET *pOSet, struct ODF *pOdf)
   neut_oset_kdtree (pOSet, &nano_cloud, &nano_index);
 
   if (strstr (mode, "m") || strstr (mode, "n"))
-    neut_odf_comp_elts (neigh, pOSet, nano_cloud, nano_index, pOdf);
+    neut_odf_comp_elts (neigh, pOSet, nano_cloud, nano_index, pOdf, verbosity);
 
   if (strstr (mode, "n"))
-    neut_odf_comp_nodes (neigh, pOSet, nano_cloud, nano_index, pOdf);
+    neut_odf_comp_nodes (neigh, pOSet, nano_cloud, nano_index, pOdf, verbosity);
 
   delete nano_index;
 
@@ -128,6 +130,58 @@ void
 neut_odf_orides (struct ODF Odf, char **porides)
 {
   ut_string_function (Odf.gridtype, porides, NULL, NULL, NULL);
+
+  return;
+}
+
+void
+neut_odf_fnscanf (char *filename, struct ODF *pOdf, char *mode)
+{
+  int i, qty, tmp;
+  char *fct = NULL, **vars = NULL, **vals = NULL;
+
+  ut_string_function (filename, &fct, &vars, &vals, &qty);
+
+  neut_odf_set_zero (pOdf);
+
+  for (i = 0; i < qty; i++)
+  {
+    if (!strcmp (vars[i], "mesh"))
+      neut_odf_space_fnscanf (vals[i], pOdf, mode);
+    else if (!strcmp (vars[i], "val"))
+    {
+      (*pOdf).odfqty = (*pOdf).Mesh[3].EltQty;
+
+      tmp = ut_file_nbwords (vals[i]);
+      if (tmp != (*pOdf).odfqty)
+        ut_print_message (2, 0, "Number of data and elements do not match (%d != %d, file = %s).\n", tmp, (*pOdf).Mesh[3].EltQty, vals[i]);
+
+      (*pOdf).odf = ut_alloc_1d ((*pOdf).odfqty);
+      ut_array_1d_fnscanf (vals[i], (*pOdf).odf, (*pOdf).odfqty, mode);
+    }
+    else if (!strcmp (vars[i], "valn"))
+    {
+      (*pOdf).odfnqty = (*pOdf).Nodes.NodeQty;
+
+      tmp = ut_file_nbwords (vals[i]);
+      if (tmp != (*pOdf).odfnqty)
+        ut_print_message (2, 0, "Number of data and elements do not match (%d != %d, file = %s).\n", tmp, (*pOdf).Mesh[3].EltQty, vals[i]);
+
+      (*pOdf).odfn = ut_alloc_1d ((*pOdf).odfnqty);
+      ut_array_1d_fnscanf (vals[i], (*pOdf).odfn, (*pOdf).odfnqty, mode);
+    }
+    else if (!strcmp (vars[i], "theta") || !strcmp (vars[i], "sigma"))
+    {
+      sscanf (vals[i], "%lf", &(*pOdf).sigma);
+      (*pOdf).sigma *= M_PI / 180;
+    }
+    else
+      ut_print_message (2, 0, "Failed to process `%s'.\n", vars[i]);
+  }
+
+  ut_free_1d_char (&fct);
+  ut_free_2d_char (&vars, qty);
+  ut_free_2d_char (&vals, qty);
 
   return;
 }

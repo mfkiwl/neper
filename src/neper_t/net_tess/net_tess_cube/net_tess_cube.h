@@ -7,7 +7,7 @@ extern "C"
 {
 #endif
 
-  extern int net_tess_cube (struct IN_T In, int level, char *morpho, struct MTESS *pMTess,
+  extern int net_tess_cube (struct IN_T In, int level, char *morpho,
                             struct TESS *Tess, int dtess, int dcell,
                             int TessId, struct SEEDSET *SSet);
 

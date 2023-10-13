@@ -1,7 +1,12 @@
-New in 4.6.2-13-devel (09 Oct 2023):
-- module -T: added -statcell scale.
-- module -S: fixed -res... '\<result>` (result overwriting).
+New in 4.6.2-57-devel (13 Oct 2023):
+- module -T: added -ori odf, improved -domain rodrigues, added options
+  -orioptialgo, -orioptidof and -orisampling, added -statcell scale, cleaned code.
+- module -S: fixed -res... '\<result>` (result overwriting), made minor
+  improvements to the simulation directory.
 - general: improved installation instructions, added developer documentation.
+
+* Incompatible changes:  In -T, now use `-orisampling uniform' in place of
+* `-ori uniform'.
 
 New in 4.6.1 (12 Sep 2023):
 - module -T: fixed -domain cylinder and circle, fixed tesr reading, made minor

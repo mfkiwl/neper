@@ -352,7 +352,6 @@ nes_pproc_entity_builtin_cells_odf (struct SIM *pSim, struct TESS *pTess, struct
                                     char *entity, char *res, struct SIMRES *pSimRes)
 {
   int i, step, varqty;
-  char *prev = ut_alloc_1d_char (1000);
   char *filename = NULL;
   struct OL_SET OSet;
   struct ODF Odf;
@@ -363,6 +362,7 @@ nes_pproc_entity_builtin_cells_odf (struct SIM *pSim, struct TESS *pTess, struct
   char *input = NULL;
   char *weight = NULL;
   char *cutoff = NULL;
+  char **array = NULL;
   struct SIMRES SimRes2;
 
   neut_simres_set_zero (&SimRes2);
@@ -403,15 +403,17 @@ nes_pproc_entity_builtin_cells_odf (struct SIM *pSim, struct TESS *pTess, struct
       ut_string_string (vals[i], &cutoff);
   }
 
-  ut_print_progress (stdout, 0, (*pSim).StepQty + 1, "%3.0f%%", prev);
-  printf ("\n");
-  ut_print_message (0, 5, "(theta = %4.1f°) ................................     ", Odf.sigma * 180 / M_PI);
-
   // Allocating OSet
   OSet = ol_set_alloc (CellQty, crysym);
 
   for (step = 0; step <= (*pSim).StepQty; step++)
   {
+    printf ("\n");
+    ut_print_message (0, 5, "(theta = %4.1f°) ", Odf.sigma * 180 / M_PI);
+    for (i = 0; i < 27 - ut_num_tenlen (step + 1) + ut_num_tenlen ((*pSim).StepQty + 1); i++)
+      printf (".");
+    printf (" %d/%d: ", step + 1, (*pSim).StepQty + 1);
+
     neut_sim_setstep (pSim, step);
     neut_sim_simres (*pSim, "cells", "ori", &SimRes2);
 
@@ -443,19 +445,41 @@ nes_pproc_entity_builtin_cells_odf (struct SIM *pSim, struct TESS *pTess, struct
         neut_tesr_expr_val_one (Tesr, "cell", i, weight, OSet.weight + i - 1,
                                NULL);
 
+    if ((!strcmp (input, "tess") && (*pTess).CellOriDistrib)
+     || (!strcmp (input, "tesr") && Tesr.CellOriDistrib))
+    {
+      OSet.theta = ut_alloc_1d (OSet.size);
+
+      array = !strcmp (input, "tess") ? (*pTess).CellOriDistrib : Tesr.CellOriDistrib;
+
+      for (i = 0; i < (int) OSet.size; i++)
+        sscanf (array[i + 1], "normal(%lf)", OSet.theta + i);
+
+      ut_array_1d_scale (OSet.theta, OSet.size, M_PI / 180);
+    }
+
+    if ((!strcmp (input, "tess") && (*pTess).CellWeight))
+     // || (!strcmp (input, "tesr") && Tesr.CellWeight))
+    {
+      // array = !strcmp (input, "tess") ? (*pTess).CellWeight : Tesr.CellWeight;
+
+      for (i = 0; i < (int) OSet.size; i++)
+        OSet.weight[i] *= (*pTess).CellWeight[i + 1];
+    }
+
     if (!strcmp (fct, "odf"))
-      neut_odf_comp ("m", cutoff, &OSet, &Odf);
+      neut_odf_comp ("m", cutoff, &OSet, &Odf, 1);
     else if (!strcmp (fct, "odfn"))
-      neut_odf_comp ("n", cutoff, &OSet, &Odf);
+      neut_odf_comp ("n", cutoff, &OSet, &Odf, 1);
 
     // Writing results
     if (!strcmp (fct, "odf"))
       ut_array_1d_fnprintf_column ((*pSimRes).file, Odf.odf, Odf.odfqty, REAL_PRINT_FORMAT, "W");
     else if (!strcmp (fct, "odfn"))
       ut_array_1d_fnprintf_column ((*pSimRes).file, Odf.odfn, Odf.odfnqty, REAL_PRINT_FORMAT, "W");
-
-    ut_print_progress (stdout, step + 1, (*pSim).StepQty + 1, "%3.0f%%", prev);
   }
+
+  nes_pproc_entity_builtin_odf_writeconfig (pSimRes, fct, Odf);
 
   ol_set_free (OSet);
 
@@ -466,7 +490,6 @@ nes_pproc_entity_builtin_cells_odf (struct SIM *pSim, struct TESS *pTess, struct
   // neut_odf_free (&Odf);
   ut_free_1d_char (&crysym);
   ut_free_1d_char (&filename);
-  ut_free_1d_char (&prev);
   ut_free_2d_char (&vars, varqty);
   ut_free_2d_char (&vals, varqty);
   ut_free_1d_char (&input);
@@ -668,13 +691,13 @@ nes_pproc_entity_builtin_elsets_odf (struct SIM *pSim, struct TESS *pTess,
 
     if (!strcmp (fct, "odf"))
     {
-      neut_odf_comp ("m", !strcmp (weight, "1") ? "5" : "all", &OSet, &Odf);
+      neut_odf_comp ("m", !strcmp (weight, "1") ? "5" : "all", &OSet, &Odf, 0);
       for (i = 0; i < Odf.odfqty; i++)
         fprintf (file, REAL_PRINT_FORMAT "\n", Odf.odf[i]);
     }
     else if (!strcmp (fct, "odfn"))
     {
-      neut_odf_comp ("n", !strcmp (weight, "1") ? "5" : "all", &OSet, &Odf);
+      neut_odf_comp ("n", !strcmp (weight, "1") ? "5" : "all", &OSet, &Odf, 0);
       for (i = 0; i < Odf.odfnqty; i++)
         fprintf (file, REAL_PRINT_FORMAT "\n", Odf.odfn[i]);
     }
@@ -683,6 +706,8 @@ nes_pproc_entity_builtin_elsets_odf (struct SIM *pSim, struct TESS *pTess,
 
     ut_print_progress (stdout, step + 1, (*pSim).StepQty + 1, "%3.0f%%", prev);
   }
+
+  nes_pproc_entity_builtin_odf_writeconfig (pSimRes, fct, Odf);
 
   neut_sim_setstep (pSim, 0);
   neut_sim_addres (pSim, entity, res, NULL);

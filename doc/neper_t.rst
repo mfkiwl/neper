@@ -332,24 +332,24 @@ These options can be used to set the cell morphology.
 
   **Default value**: :data:`x,y,z,w`.
 
-.. option:: -morphooptistop <var1>=<val1>,<var2>=<val2>,... (secondary option)
+.. option:: -morphooptistop <stopping_criterion> (secondary option)
 
-  Specify the stopping criteria of the optimization process, which can be:
+  Specify the stopping criterion of the optimization process, as a logical expression of the form :data:`<var1>=<val1>||<var2>=<val2>||...` (where :data:`||` represents the logical OR) and based on the following variables:
 
   - :data:`eps`: absolute error on the value of the objective function evaluated on a number of degrees of freedom basis (:data:`nlopt_eps` or :data:`nlopt_reps` are the NLopt iteration-based values);
   - :data:`reps`: relative error on the value of the objective function evaluated on a number of degrees of freedom basis (:data:`nlopt_eps` or :data:`nlopt_reps` are the NLopt iteration-based values);
   - :data:`xeps`: absolute error on the components of the solution vector;
   - :data:`xreps`: relative error on the components of the solution vector;
   - :data:`val`: value of the objective function;
-  - :data:`itermax`: a maximum number of iterations;
+  - :data:`iter`: number of iterations;
   - :data:`time`: maximum computation time;
-  - :data:`loopmax`: maximum number of iteration loops (see option :option:`-morphooptialgomaxiter`).
+  - :data:`loop`: number of iteration loops (see option :option:`-morphooptialgomaxiter`).
 
   Optimization stops as soon as one stopping criterion is verified.
 
   Optimization can also be stopped anytime using the :command:`Ctrl+C` command.
 
-  **Default value**: :data:`eps=1e-6` (:data:`val=1e-4,iter=10000` for :data:`-morpho centroidal`).
+  **Default value**: :data:`eps<1e-6` (:data:`val<1e-4||iter>=10000` for :data:`-morpho centroidal`).
 
 .. option:: -morphooptialgo <algorithm1>,<algorithm2>,... (secondary option)
 
@@ -463,27 +463,25 @@ Crystal Orientation Options
 
   Specify the :ref:`Crystal Symmetry <crystal_symmetries>`.
 
-  .. note :: It is used by option :data:`-ori uniform`, to reduce the domain of definition of the orientation descriptors and by the :ref:`neper_v`.
+  .. note :: It is used by option :data:`-orisampling uniform`, to reduce the domain of definition of the orientation descriptors and by the :ref:`neper_v`.
 
   **Default value**: :data:`triclinic`.
 
 .. option:: -ori <ori_distrib>
 
-  Specify the type of crystal orientation distribution. It can be:
+  Specify the crystal orientation distribution function (ODF).  By default, the crystal orientations are generated randomly, from the distribution function (ODF).  For uniform sampling, see :option:`-orisampling`.  The ODF can be:
 
-  - :data:`random`: randomly-distributed orientations in 3D space (no or "random" texture, ODF = 1);
+  - :data:`random`: ODF = 1, i.e. no or "random" texture (standard case);
 
-  - :data:`odf(mesh=file(<mesh_file>),val=file(<value_file>))`: randomly-distributed orientations in 3D space following the ODF described by :data:`<mesh_file>` (a mesh of the fundamental region of orientation space) and :data:`<value_file>` (a :ref:`data_file` containing the ODF values at the mesh elements);
+  - :data:`odf(mesh=file(<mesh_file>),val=file(<value_file>)[,theta=<theta>)`: ODF described by :data:`<mesh_file>` (a mesh of the fundamental region of orientation space), :data:`<value_file>` (a :ref:`data_file` containing the ODF values at the mesh elements) and :data:`<theta>` is the size of the kernel used to general the ODF (1-D standard deviation expressed in degrees, if any).
 
-  - :data:`uniform`: uniformly-distributed orientations in 3D space [#uniform-crysym]_;
+  - :data:`<orientation>[:<distribution>]`: a continuous distribution about a :ref:`discrete orientation <rotations_and_orientations>` (the distribution itself is optional, see below);
 
-  - :data:`<orientation>[:<distribution>]`: a :ref:`discrete orientation <rotations_and_orientations>`, with an optional disorientation distribution (see below);
+  - :data:`fiber(<dirc_x>,<dirc_y>,<dirc_z>,<dirs_x>,<dirs_y>,<dirs_z>)[:normal(<var>=<val>)]`: orientations along a fiber (see :ref:`orientation_fibers`), with an optional continuous distribution about the fiber (see below);
 
-  - :data:`fiber(<dirc_x>,<dirc_y>,<dirc_z>,<dirs_x>,<dirs_y>,<dirs_z>)[:normal(<var>=<val>)]`: randomly-distributed orientations along the fiber, see :ref:`orientation_fibers`, with an optional disorientation distribution (see below);
+  - :data:`parent[:<distribution>]`: orientations inherited from the ones of the parent cells, with an optional continuous distribution about the nominal orientations (see below);
 
-  - :data:`parent[:normal(<var>=<val>)]`: orientations inherited from the ones of the parent cells, with an optional disorientation distribution (see below);
-
-  - :data:`file(<file_name>[,des=<descriptor>])`: orientations to be read from a :ref:`data_file` written using a specific descriptor (see :ref:`rotations_and_orientations`, default :data:`rodrigues`).
+  - :data:`file(<file_name>[,des=<descriptor>])`: discrete orientations to be read from a :ref:`data_file` written using a specific descriptor (see :ref:`rotations_and_orientations`, default :data:`rodrigues`).
 
   The optional distributions are:
 
@@ -505,19 +503,41 @@ Crystal Orientation Options
 
   **Default value**: :data:`random`.
 
-.. option:: -orispread <spread>
+.. option:: -orisampling <sampling>
 
-  Specify the type of (in-cell) orientation spreads.  It can be:
+  Specify the type of sampling of the orientation distribution.  It can be:
 
-  - :data:`normal(<thetam>)`: a 3-variate normal distribution corresponding to an average misorientation angle (with respect to the average orientation) of :data:`<thetam>` (expressed in degree), to be applied to all cells.
-  - :data:`file(<file_name>)`: different cell distributions (of the type :data:`normal...`), to load from a :ref:`data_file`.
-  - :data:`none`: none.
+  - :data:`random`: random sampling;
+  - :data:`uniform`: uniform sampling [#uniform-crysym]_.
 
-  **Default value**: :data:`none`.
+  Uniform sampling is available for :data:`-ori random` (done according to [JAC2018]_) and :data:`-ori "odf(...)"` (general minimization).
 
-.. option:: -orioptiini <ori_distrib> (secondary option)
+  **Default value**: :data:`random`.
 
-  Specify the initial crystal orientations, which can be:
+.. option:: -orioptialgo <algorithm1>,<algorithm2>,... (secondary option)
+
+  Specify the optimization algorithm, which can be:
+
+    - :data:`subplex`: Subplex (recommend);
+    - :data:`praxis`: Praxis (recommended, except for high numbers of seeds, where it becomes highly memory-intensive) [#praxis]_ ;
+    - :data:`neldermead`: Nelder-Mead (not recommended);
+    - :data:`cobyla`: Cobyla (not recommended);
+    - :data:`bobyqa`: Bobyqa (not recommended);
+    - :data:`newuoa`: Newuoa (not recommended).
+
+  In several algorithms are provided, the second etc. are used if the previous ones fails.
+
+  **Default value**: :data:`subplex,praxis`.
+
+.. option:: -orioptidof <dof1>,<dof2>,... (secondary option)
+
+  Specify the degrees of freedom, which can be :data:`r1`, :data:`r2` and :data:`r3` for the 3 components of the orientation (Rodrigues) vector, :data:`rw` for the weights, and :data:`rt` for the orientation spreads.  Use this option only if you really now what you are doing.
+
+  **Default value**: :data:`r1,r2,r3`.
+
+.. option:: -orioptiini <ori_attributes> (secondary option)
+
+  Specify the initial crystal orientations and/or their weights and distributions (theta parameter).
 
   - :data:`random`: random orientations;
   - :data:`file(<file_name>[,des=<descriptor>])`: orientations to be read from a :ref:`data_file` written using a specific descriptor (see :ref:`rotations_and_orientations`, default :data:`rodrigues`).
@@ -535,16 +555,32 @@ Crystal Orientation Options
 
 .. option:: -orioptistop <stopping_criterion> (secondary option)
 
-  Specify the stopping criterion of the optimization process, as a logical expression based on the following variables:
+  Specify the stopping criterion of the optimization process, as a logical expression based on the following variables.
+  Depending on the problem (and on the algorithm to solve it), different criteria are available.
+
+  For :data:`-ori random -orisampling uniform`, the Thomson problem is solved using gradient descent, and the following criteria are available:
 
   - :data:`reps`: relative error on the forces at orientations;
   - :data:`iter`: iteration number.
 
-  **Default value**: :data:`"reps<1e-3||iter>=1e3"`.
+  In other situations, general minimization operates, and the following criteria are available:
+
+  - :data:`eps`: absolute error on the value of the objective function evaluated on a number of degrees of freedom basis (:data:`nlopt_eps` or :data:`nlopt_reps` are the NLopt iteration-based values);
+  - :data:`reps`: relative error on the value of the objective function evaluated on a number of degrees of freedom basis (:data:`nlopt_eps` or :data:`nlopt_reps` are the NLopt iteration-based values);
+  - :data:`xeps`: absolute error on the components of the solution vector;
+  - :data:`xreps`: relative error on the components of the solution vector;
+  - :data:`val`: value of the objective function;
+  - :data:`iter`: number of iterations;
+  - :data:`time`: maximum computation time;
+  - :data:`loop`: number of iteration loops.
+
+  Different criteria can be defined for the different algorithms (either :data:`Thomson` or :data:`general`) using the syntax :data:`<algorithm1>:<criterion1>,<algorithm2>:<criterion2>,...`.  The algorithm may be omitted in the case of a universal criterion (or when only one algorithm is used).
+
+  **Default value**: :data:`"thomson:reps<1e-3||iter>=1e3,general:eps<1e-6"`.
 
 .. option:: -orioptineigh <neighborhood_radius> (secondary option)
 
-  Specify the radius of the neighborhood of orientations to be used to compute their forces (for :data:`-ori uniform`), which can be any mathematical or logical expression based on:
+  Specify the radius of the neighborhood of orientations to be used to compute their forces (for :data:`-orisampling uniform`), which can be any mathematical or logical expression based on:
 
   - :data:`dr`: average radius of an orientation;
   - :data:`Nstar`: grand number of orientations (i.e., taking crystal symmetry into account).
@@ -558,6 +594,16 @@ Crystal Orientation Options
   **Default value**: -.
 
   **File extension**: :file:`.logorivar`.
+
+.. option:: -orispread <spread>
+
+  Specify the type of (in-cell) orientation spreads.  It can be:
+
+  - :data:`normal(<thetam>)`: a 3-variate normal distribution corresponding to an average misorientation angle (with respect to the average orientation) of :data:`<thetam>` (expressed in degree), to be applied to all cells.
+  - :data:`file(<file_name>)`: different cell distributions (of the type :data:`normal...`), to load from a :ref:`data_file`.
+  - :data:`none`: none.
+
+  **Default value**: :data:`none`.
 
 Transformation Options
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -1099,13 +1145,13 @@ Below are some examples of use of neper -T.
 
   .. code-block:: console
 
-    $ neper -T -n 100 -oricrysym cubic -ori uniform
+    $ neper -T -n 100 -crysym cubic -orisampling uniform
 
 - Generate 100 uniformly distributed crystal orientations with cubic crystal symmetry (no tessellation):
 
   .. code-block:: console
 
-    $ neper -T -n 100 -oricrysym cubic -ori uniform -for ori
+    $ neper -T -n 100 -crysym cubic -orisampling uniform -for ori
 
 References
 ----------
@@ -1130,7 +1176,7 @@ References
 
 .. [#endianness] Endianness is both written in the tesr file and tested on the system when reading the tesr file, so that the user normally does not have to care about it (even when transferring files across systems).
 
-.. [#uniform-crysym] The crystal symmetry must be specified using :option:`-oricrysym`.
+.. [#uniform-crysym] The crystal symmetry must be specified using :option:`-crysym`.
 
 .. [#rotate] Cell orientations are rotated accordingly.
 

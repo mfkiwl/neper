@@ -61,8 +61,11 @@ extern "C"
 
     /// Orientations (quaternion)
     double **SeedOri;
+    /// Orientations (Rodrigues vector)
+    double **SeedOriR;
 
     char **SeedOriDistrib;
+    double *SeedOriTheta; // radian
 
     // Crystal symmetry
     char *crysym;

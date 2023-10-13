@@ -13,6 +13,7 @@
 
 #include"ut.h"
 #include"neut_t.h"
+#include"net_ori/net_ori.h"
 
 #include"neper_config.h"
 

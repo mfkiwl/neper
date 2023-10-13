@@ -12,6 +12,7 @@ ol_set_alloc (size_t size, char *crysym)
   Set.q = ut_alloc_2d (size, 4);
   Set.weight = ut_alloc_1d (size);
   ut_array_1d_set (Set.weight, size, 1);
+  Set.theta = NULL;
   Set.id = ut_alloc_1d_int (size);
   ut_array_1d_int_set (Set.id, size, 1);
   Set.label = ut_alloc_1d_pchar (size);
@@ -37,6 +38,7 @@ ol_set_free (struct OL_SET Set)
 {
   ut_free_2d (&Set.q, Set.size);
   ut_free_1d (&Set.weight);
+  ut_free_1d (&Set.theta);
   ut_free_1d_int (&Set.id);
   ut_free_2d_char (&Set.label, Set.size);
   ut_free_1d_char (&Set.crysym);
@@ -290,6 +292,12 @@ ol_set_cat (struct OL_SET* OSets, int SetQty, struct OL_SET *pOSet)
     size += OSets[i].size;
 
   (*pOSet) = ol_set_alloc (size, OSets[0].crysym);
+  for (i = 0; i < SetQty; i++)
+    if (OSets[i].theta)
+    {
+      (*pOSet).theta = ut_alloc_1d (size);
+      break;
+    }
 
   id = 0;
   for (i = 0; i < SetQty; i++)
@@ -297,6 +305,8 @@ ol_set_cat (struct OL_SET* OSets, int SetQty, struct OL_SET *pOSet)
     {
       ut_array_1d_memcpy (OSets[i].q[j], 4, (*pOSet).q[id]);
       (*pOSet).weight[id] = OSets[i].weight[j];
+      if (OSets[i].theta)
+        (*pOSet).theta[id] = OSets[i].theta[j];
       (*pOSet).id[id] = OSets[i].id[j];
       id++;
     }
