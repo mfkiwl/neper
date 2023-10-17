@@ -64,6 +64,8 @@ extern "C"
     /// Orientations (Rodrigues vector)
     double **SeedOriR;
 
+    double *SeedOriWeight; // radian
+
     char **SeedOriDistrib;
     double *SeedOriTheta; // radian
 

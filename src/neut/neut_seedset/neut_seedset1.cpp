@@ -33,6 +33,7 @@ neut_seedset_set_zero (struct SEEDSET *pSSet)
   (*pSSet).SeedCoo = NULL;
   (*pSSet).SeedWeight = NULL;
   (*pSSet).SeedOriTheta = NULL;
+  (*pSSet).SeedOriWeight = NULL;
   (*pSSet).LamEq = NULL;
   (*pSSet).LamWidth = NULL;
   (*pSSet).LamWidthId = NULL;
@@ -67,6 +68,7 @@ neut_seedset_free (struct SEEDSET *pSSet)
   ut_free_2d (&(*pSSet).SeedCoo, (*pSSet).Nall + 1);
   ut_free_1d (&(*pSSet).SeedWeight);
   ut_free_1d (&(*pSSet).SeedOriTheta);
+  ut_free_1d (&(*pSSet).SeedOriWeight);
   // UNCOMMENT and DEBUG with
   // neper -T -n from_morpho -morpho "lamellar(w=0.1)" -o new
   // ut_free_2d (&(*pSSet).LamEq, (*pSSet).N + 1);

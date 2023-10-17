@@ -534,7 +534,7 @@ net_tess_opt_init_bounds_ori (struct TOPT *pTOpt)
       {
         (*pTOpt).boundl[k] = 0;
         (*pTOpt).boundu[k] =
-          ((*pTOpt).SSet).SeedWeight[seed] + (*pTOpt).dist;
+          ((*pTOpt).SSet).SeedOriWeight[seed] + (*pTOpt).dist;
         k++;
       }
       else if (!strcmp (parts[i], "rt"))

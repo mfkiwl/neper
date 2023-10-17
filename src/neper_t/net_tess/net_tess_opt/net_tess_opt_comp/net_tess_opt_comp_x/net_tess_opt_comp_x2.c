@@ -107,8 +107,8 @@ net_tess_opt_comp_x_ori (struct TOPT *pTOpt, double **px)
       {
         (*pTOpt).x_seed[k] = seed;
         (*pTOpt).x_var[k] = (*pTOpt).SSet.Dim;
-        (*pTOpt).x_pvar[k] = &((*pTOpt).SSet.SeedWeight[seed]);
-        (*px)[k] = (*pTOpt).SSet.SeedWeight[seed];
+        (*pTOpt).x_pvar[k] = &((*pTOpt).SSet.SeedOriWeight[seed]);
+        (*px)[k] = (*pTOpt).SSet.SeedOriWeight[seed];
         (*pTOpt).seedvar_x[seed][(*pTOpt).SSet.Dim] = k;
       }
       else if (!strcmp (parts[i], "rt"))
