@@ -24,6 +24,7 @@ net_input_options_default (struct IN_T *pIn)
   ut_string_string ("1", &(*pIn).idstring);
   ut_string_string ("voronoi", &(*pIn).morphostring);
 
+  // new -----------------
   (*pIn).optialgostring = ut_alloc_1d_pchar (2);
   for (i = 0; i < (*pIn).optiqty; i++)
     ut_string_string ("default", (*pIn).optialgostring + i);
@@ -32,12 +33,16 @@ net_input_options_default (struct IN_T *pIn)
   for (i = 0; i < (*pIn).optiqty; i++)
     ut_string_string ("default", (*pIn).optidofstring + i);
 
+  (*pIn).optistopstring = ut_alloc_1d_pchar (2);
+  for (i = 0; i < (*pIn).optiqty; i++)
+    ut_string_string ("default", (*pIn).optistopstring + i);
+  // end new -------------
+
   ut_string_string ("default", &(*pIn).optiinistring);
   ut_string_string ("max(varnb,1000)", &(*pIn).optialgomaxiterstring);
   ut_string_string ("default", &(*pIn).optiobjectivestring);
   ut_string_string ("default", &(*pIn).optigridstring);
   ut_string_string ("default", &(*pIn).optismoothstring);
-  ut_string_string ("default", &(*pIn).optistopstring);
   ut_string_string ("none", &(*pIn).optilogtimestring);
   ut_string_string ("none", &(*pIn).optilogvarstring);
   ut_string_string ("none", &(*pIn).optilogdisstring);
@@ -65,7 +70,6 @@ net_input_options_default (struct IN_T *pIn)
   ut_string_string ("default", &(*pIn).oristring);
   ut_string_string ("random", &(*pIn).orisamplingstring);
   ut_string_string ("none", &(*pIn).orispreadstring);
-  ut_string_string ("default", &(*pIn).orioptistopstring);
   ut_string_string ("default", &(*pIn).orioptineighstring);
   ut_string_string ("default", &(*pIn).orioptiinistring);
   ut_string_string ("default", &(*pIn).orioptifixstring);
@@ -85,6 +89,7 @@ net_input_options_default (struct IN_T *pIn)
   (*pIn).optiini = ut_alloc_1d_pchar (1);
   ut_string_string ((*pIn).optiinistring, (*pIn).optiini);
 
+  // new ------------
   (*pIn).optialgo = ut_alloc_2d_pchar ((*pIn).optiqty, 1);
   for (i = 0; i < (*pIn).optiqty; i++)
     ut_string_string ((*pIn).optialgostring[i], (*pIn).optialgo[i]);
@@ -92,6 +97,11 @@ net_input_options_default (struct IN_T *pIn)
   (*pIn).optidof = ut_alloc_2d_pchar ((*pIn).optiqty, 1);
   for (i = 0; i < (*pIn).optiqty; i++)
     ut_string_string ((*pIn).optidofstring[i], (*pIn).optidof[i]);
+
+  (*pIn).optistop = ut_alloc_2d_pchar ((*pIn).optiqty, 1);
+  for (i = 0; i < (*pIn).optiqty; i++)
+    ut_string_string ((*pIn).optistopstring[i], (*pIn).optistop[i]);
+  // end new --------
 
   (*pIn).optialgomaxiter = ut_alloc_1d_pchar (1);
   ut_string_string ((*pIn).optialgomaxiterstring,
@@ -103,8 +113,6 @@ net_input_options_default (struct IN_T *pIn)
   ut_string_string ((*pIn).optigridstring, (*pIn).optigrid);
   (*pIn).optismooth = ut_alloc_1d_pchar (1);
   ut_string_string ((*pIn).optismoothstring, (*pIn).optismooth);
-  (*pIn).optistop = ut_alloc_1d_pchar (1);
-  ut_string_string ((*pIn).optistopstring, (*pIn).optistop);
   (*pIn).optilogtime = ut_alloc_1d_pchar (1);
   ut_string_string ((*pIn).optilogtimestring, (*pIn).optilogtime);
   (*pIn).optilogvar = ut_alloc_1d_pchar (1);
@@ -130,8 +138,6 @@ net_input_options_default (struct IN_T *pIn)
   ut_string_string ((*pIn).orisamplingstring, (*pIn).orisampling);
   (*pIn).crysym = ut_alloc_1d_pchar (1);
   ut_string_string ((*pIn).crysymstring, (*pIn).crysym);
-  (*pIn).orioptistop = ut_alloc_1d_pchar (1);
-  ut_string_string ((*pIn).oristring, (*pIn).orioptistop);
   (*pIn).orioptineigh = ut_alloc_1d_pchar (1);
   ut_string_string ((*pIn).oristring, (*pIn).orioptineigh);
   (*pIn).orioptiini = ut_alloc_1d_pchar (1);
@@ -307,7 +313,7 @@ net_input_options_set (struct IN_T *pIn, int argc, char **argv)
     else if (!strcmp (Arg, "-morphooptismooth"))
       ut_arg_nextasstring (argv, &i, Arg, &((*pIn).optismoothstring));
     else if (!strcmp (Arg, "-morphooptistop"))
-      ut_arg_nextasstring (argv, &i, Arg, &((*pIn).optistopstring));
+      ut_arg_nextasstring (argv, &i, Arg, (*pIn).optistopstring);
     else if (!strcmp (Arg, "-morphooptilogtime"))
       ut_arg_nextasstring (argv, &i, Arg, &((*pIn).optilogtimestring));
     else if (!strcmp (Arg, "-morphooptilogvar"))
@@ -380,15 +386,17 @@ net_input_options_set (struct IN_T *pIn, int argc, char **argv)
         ut_print_message (2, 3, "`uniform' has been moved to option `-orisampling'.\n");
     }
 
+    // new ----------------------
     else if (!strcmp (Arg, "-orioptialgo"))
       ut_arg_nextasstring (argv, &i, Arg, (*pIn).optialgostring + 1);
     else if (!strcmp (Arg, "-orioptidof"))
       ut_arg_nextasstring (argv, &i, Arg, (*pIn).optidofstring + 1);
+    else if (!strcmp (Arg, "-orioptistop"))
+      ut_arg_nextasstring (argv, &i, Arg, (*pIn).optistopstring + 1);
+    // end new ------------------
 
     else if (!strcmp (Arg, "-orisampling"))
       ut_arg_nextasstring (argv, &i, Arg, &((*pIn).orisamplingstring));
-    else if (!strcmp (Arg, "-orioptistop"))
-      ut_arg_nextasstring (argv, &i, Arg, &((*pIn).orioptistopstring));
     else if (!strcmp (Arg, "-orioptineigh"))
       ut_arg_nextasstring (argv, &i, Arg, &((*pIn).orioptineighstring));
     else if (!strcmp (Arg, "-orioptiini"))

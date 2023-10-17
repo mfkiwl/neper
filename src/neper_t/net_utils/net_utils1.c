@@ -35,8 +35,6 @@ net_in_set_zero (struct IN_T *pIn)
   (*pIn).optistop = NULL;
   (*pIn).crysymstring = NULL;
   (*pIn).crysym = NULL;
-  (*pIn).orioptistopstring = NULL;
-  (*pIn).orioptistop = NULL;
   (*pIn).orioptineighstring = NULL;
   (*pIn).orioptineigh = NULL;
   (*pIn).orioptiinistring = NULL;
@@ -182,20 +180,21 @@ net_in_free (struct IN_T *pIn)
 
   ut_free_1d_char (&(*pIn).morphostring);
   ut_free_2d_char (&(*pIn).morpho, (*pIn).levelqty + 1);
+
+  // new -----------------
   ut_free_2d_char (&(*pIn).optialgostring, (*pIn).optiqty);
   // ut_free_3d_char (&(*pIn).optialgo, (*pIn).optiqty, (*pIn).levelqty + 1);
   ut_free_2d_char (&(*pIn).optidofstring, (*pIn).optiqty);
   // ut_free_3d_char (&(*pIn).optidof, (*pIn).optiqty, (*pIn).levelqty + 1);
+  ut_free_2d_char (&(*pIn).optistopstring, (*pIn).optiqty);
+  // ut_free_3d_char (&(*pIn).optistop, (*pIn).optiqty, (*pIn).levelqty + 1);
+  // end new -------------
   ut_free_1d_char (&(*pIn).optiobjectivestring);
   ut_free_2d_char (&(*pIn).optiobjective, (*pIn).levelqty + 1);
   ut_free_1d_char (&(*pIn).optismoothstring);
   ut_free_2d_char (&(*pIn).optismooth, (*pIn).levelqty + 1);
-  ut_free_1d_char (&(*pIn).optistopstring);
-  ut_free_2d_char (&(*pIn).optistop, (*pIn).levelqty + 1);
   ut_free_1d_char (&(*pIn).crysymstring);
   ut_free_2d_char (&(*pIn).crysym, (*pIn).levelqty + 1);
-  ut_free_1d_char (&(*pIn).orioptistopstring);
-  ut_free_2d_char (&(*pIn).orioptistop, (*pIn).levelqty + 1);
   ut_free_1d_char (&(*pIn).optilogtimestring);
   ut_free_2d_char (&(*pIn).optilogtime, (*pIn).levelqty + 1);
   ut_free_1d_char (&(*pIn).optilogvarstring);

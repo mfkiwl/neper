@@ -3,6 +3,21 @@
 /* see the COPYING file in the top-level directory.*/
 #include "ol_set_alloc.h"
 
+void
+ol_set_zero (struct OL_SET *pOSet)
+{
+  (*pOSet).size = 0;
+  (*pOSet).q = NULL;
+  (*pOSet).weight = NULL;
+  (*pOSet).theta = NULL;
+  (*pOSet).id = NULL;
+  (*pOSet).label = NULL;
+  (*pOSet).crysym = NULL;
+  (*pOSet).nc = 0;
+
+  return;
+}
+
 struct OL_SET
 ol_set_alloc (size_t size, char *crysym)
 {

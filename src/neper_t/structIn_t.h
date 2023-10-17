@@ -72,8 +72,8 @@ extern "C"
     char **optismooth;
 
     // optimization / termination criterion (-*optistop)
-    char *optistopstring;
-    char **optistop;
+    char **optistopstring;
+    char ***optistop;
 
     // optimization / limit distance (-*optideltamax)
     char *optideltamaxstring;
@@ -113,9 +113,6 @@ extern "C"
 
     char *orisamplingstring;            // orientation sampling
     char **orisampling;                 //
-
-    char *orioptistopstring;            // orientation opti / termination criterion
-    char **orioptistop;                 //
 
     char *orioptineighstring;           // orientation opti / neighbor string
     char **orioptineigh;                //
