@@ -1,6 +1,7 @@
-New in 4.6.2-59-fit_ori (17 Oct 2023):
+New in 4.6.2-60-fit_ori (17 Oct 2023):
 - module -T: added -ori odf, improved -domain rodrigues, added options
-  -orioptialgo, -orioptidof and -orisampling, added -statcell scale, cleaned code.
+  -orioptialgo, -orioptidof and -orisampling, added -statcell scale, made
+  minor fixes, cleaned code.
 - module -S: fixed -res... '\<result>` (result overwriting), made minor
   improvements to the simulation directory.
 - general: improved installation instructions, added developer documentation.
