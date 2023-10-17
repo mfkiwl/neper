@@ -41,7 +41,7 @@ net_tess_opt_comp_objective_fval_gen_odf (struct TOPT *pTOpt, int var)
     neut_odf_setsigma (&Odf, "avthetaeq", (*pTOpt).SSet.N, (*pTOpt).SSet.crysym);
   */
 
-  neut_odf_comp ("m", "all", &OSet, &Odf, 0);
+  neut_odf_comp ("m", (OSet.size >= 10000) ? "3" : "all", &OSet, &Odf, 0);
 
   /*
   if ((*pTOpt).cvlsig[var] > 0)
