@@ -92,6 +92,12 @@ neut_seedset_memcpy_seeds (struct SEEDSET SSetA, struct SEEDSET *pSSetB)
     ut_array_1d_memcpy (SSetA.SeedOriTheta + 1, (*pSSetB).N, (*pSSetB).SeedOriTheta + 1);
   }
 
+  if (SSetA.SeedOriWeight)
+  {
+    (*pSSetB).SeedOriWeight = ut_alloc_1d ((*pSSetB).N + 1);
+    ut_array_1d_memcpy (SSetA.SeedOriWeight + 1, (*pSSetB).N, (*pSSetB).SeedOriWeight + 1);
+  }
+
   ut_string_string (SSetA.crysym, &(*pSSetB).crysym);
 
   return;

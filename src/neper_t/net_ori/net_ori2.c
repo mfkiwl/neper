@@ -481,8 +481,8 @@ net_ori_memcpy (struct OL_SET OSet, struct SEEDSET *pSSet)
 
   if (OSet.weight)
   {
-    (*pSSet).SeedWeight = ut_alloc_1d ((*pSSet).N + 1);
-    ut_array_1d_memcpy (OSet.weight, OSet.size, (*pSSet).SeedWeight + 1);
+    (*pSSet).SeedOriWeight = ut_alloc_1d ((*pSSet).N + 1);
+    ut_array_1d_memcpy (OSet.weight, OSet.size, (*pSSet).SeedOriWeight + 1);
   }
 
   if (OSet.theta)

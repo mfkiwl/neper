@@ -132,6 +132,8 @@ nev_load (char *string, struct SIM *pSim, struct TESS *pTess, struct TESR *pTesr
       {
         struct OL_SET OSet;
 
+        ol_set_zero (&OSet);
+
         net_ori_file (file, &OSet);
 
         (*pPoints)[(*pPointQty) - 1].Dim = 4;

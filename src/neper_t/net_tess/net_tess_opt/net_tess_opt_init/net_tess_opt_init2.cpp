@@ -602,18 +602,18 @@ net_tess_opt_init_parms (struct IN_T In, int level, struct MTESS MTess,
 
   if (!strcmp ((*pTOpt).optitype, "morpho"))
     net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
-                                             In.optistop[level], &string);
+                                             In.optistop[0][level], &string);
   else if (!strcmp ((*pTOpt).optitype, "ori"))
   {
-    if (!strstr (In.orioptistop[level], "general"))
+    if (!strstr (In.optistop[1][level], "general"))
       net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,
-                                               In.orioptistop[level], &string);
+                                               In.optistop[1][level], &string);
     else
     {
       char ***parts = NULL;
       int qty, *qty1 = NULL;
 
-      ut_list_break2 (In.orioptistop[level], NEUT_SEP_NODEP, NEUT_SEP_DEP, &parts, &qty1, &qty);
+      ut_list_break2 (In.optistop[1][level], NEUT_SEP_NODEP, NEUT_SEP_DEP, &parts, &qty1, &qty);
       for (i = 0; i < qty; i++)
         if (!strcmp (parts[i][0], "general"))
           net_multiscale_mtess_arg_0d_char_fscanf (level, MTess, Tess, dtess, dcell,

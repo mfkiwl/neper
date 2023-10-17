@@ -22,8 +22,8 @@ net_tess_opt_init_sset_ori (int TessId, struct SEEDSET *SSet, struct TOPT *pTOpt
       ut_array_1d_memcpy (SSet[TessId].SeedOriTheta + 1, (*pTOpt).SSet.N, (*pTOpt).SSet.SeedOriTheta + 1);
   }
 
-  if (SSet[TessId].SeedWeight)
-    ut_array_1d_memcpy (SSet[TessId].SeedWeight + 1, (*pTOpt).SSet.N, (*pTOpt).SSet.SeedWeight + 1);
+  if (SSet[TessId].SeedOriWeight)
+    ut_array_1d_memcpy (SSet[TessId].SeedOriWeight + 1, (*pTOpt).SSet.N, (*pTOpt).SSet.SeedOriWeight + 1);
 
   return;
 }
