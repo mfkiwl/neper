@@ -621,17 +621,15 @@ nes_pproc_entity_builtin_elsets_odf (struct SIM *pSim, struct TESS *pTess,
                                      struct NODES *pNodes, struct MESH *Mesh,
                                      char *entity, char *res, struct SIMRES *pSimRes)
 {
-  int i, step, size, status;
-  double **elsetdata = ut_alloc_2d (Mesh[(*pTess).Dim].ElsetQty + 1, 4);
-  double ***evect = ut_alloc_3d (Mesh[(*pTess).Dim].ElsetQty + 1, 3, 3);
-  double **eval = ut_alloc_2d (Mesh[(*pTess).Dim].ElsetQty + 1, 3);
+  int i, step, size, status, oriqty;
+  double **oris = NULL;
   char *prev = ut_alloc_1d_char (1000);
   char *filename = NULL;
   FILE *file = NULL;
   struct OL_SET OSet;
   struct ODF Odf;
   char *fct = NULL, **vars = NULL, **vals = NULL;
-  char *weight = NULL;
+  char *weight = NULL, *src = NULL;
   char *thetastring = ut_alloc_1d_char (100);
   struct SIMRES SimRes2;
 
@@ -645,48 +643,78 @@ nes_pproc_entity_builtin_elsets_odf (struct SIM *pSim, struct TESS *pTess,
 
   for (step = 0; step <= (*pSim).StepQty; step++)
   {
+    oriqty = 0;
+
+    // Setting defaults and parsing arguments
+    Odf.sigma = -1;
+    ut_string_string ("1", &weight);
+    ut_string_string ("elsets", &src);
+
+    // Parsing arguments
+    for (i = 0; i < size; i++)
+    {
+      if (!strcmp (vars[i], "theta"))
+        Odf.sigma = atof (vals[i]) * M_PI / 180;
+      else if (!strcmp (vars[i], "weight"))
+        ut_string_string (vals[i], &weight);
+      else if (!strcmp (vars[i], "src"))
+        ut_string_string (vals[i], &src);
+      else
+        ut_print_exprbug (vars[i]);
+    }
+
+    ut_string_fnrs (src, "elts", "elt", 1);
+    ut_string_fnrs (src, "elsets", "elset", 1);
+
     neut_sim_setstep (pSim, step);
-    neut_sim_simres (*pSim, "elsets", "ori", &SimRes2);
+    neut_sim_simres (*pSim, src, "ori", &SimRes2);
 
     neut_simres_setstep (pSimRes, step);
     neut_simres_setstep (&SimRes2, step);
 
-    status = neut_mesh_elsetori (Mesh[(*pTess).Dim], elsetdata);
-    if (status)
-      abort ();
+    // Setting orientations
+
+    if (!strcmp (src, "elset"))
+    {
+      oriqty = Mesh[(*pTess).Dim].ElsetQty;
+      oris = ut_alloc_2d (oriqty + 1, 4);
+      status = neut_mesh_elsetori (Mesh[(*pTess).Dim], oris);
+      if (status)
+        abort ();
+
+      neut_mesh_elsets_olset (*pNodes, Mesh[(*pTess).Dim], oris,
+                              NULL, oriqty, &OSet);
+    }
+
+    else if (!strcmp (src, "elt"))
+    {
+      oriqty = Mesh[(*pTess).Dim].EltQty;
+      oris = ut_alloc_2d (oriqty + 1, 4);
+      status = neut_mesh_eltori (Mesh[(*pTess).Dim], oris);
+      if (status)
+        abort ();
+
+      neut_mesh_elts_olset (*pNodes, Mesh[(*pTess).Dim], NULL, oriqty, &OSet);
+    }
+
+    else
+      ut_print_exprbug (src);
 
     file = ut_file_open ((*pSimRes).file, "W");
 
-    neut_mesh_elsets_olset (*pNodes, Mesh[(*pTess).Dim], elsetdata,
-                            NULL, Mesh[(*pTess).Dim].ElsetQty, &OSet);
-    ut_string_string (Mesh[(*pTess).Dim].ElsetCrySym, &(OSet.crysym));
-
-    int user_sigma = 0;
-    ut_string_string ("1", &weight);
-    for (i = 0; i < size; i++)
-    {
-      if (!strcmp (vars[i], "theta"))
-      {
-        Odf.sigma = atof (vals[i]);
-        Odf.sigma *= M_PI / 180;
-        user_sigma = 1;
-      }
-      else if (!strcmp (vars[i], "weight"))
-        ut_string_string (vals[i], &weight);
-    }
-    if (!user_sigma)
+    if (Odf.sigma == -1)
       neut_odf_setsigma (&Odf, "avthetaeq", OSet.size, OSet.crysym);
 
+    // Printing to terminal
     sprintf (thetastring, " (theta = %9.6f°)     ", Odf.sigma * 180 / M_PI);
     ut_print_clearline (stdout, strlen (thetastring) - 1);
     printf ("%s", thetastring);
-
     ut_print_progress (stdout, 0, (*pSim).StepQty + 1, "%3.0f%%", prev);
 
     // Setting weights
     for (i = 1; i <= size; i++)
       neut_mesh_entity_expr_val (*pNodes, Mesh, pTess,
-                                 NULL, NULL, NULL, NULL, "elset", weight,
+                                 NULL, NULL, NULL, NULL, src, weight,
                                  OSet.weight + i - 1, NULL);
 
     if (!strcmp (fct, "odf"))
@@ -705,6 +733,8 @@ nes_pproc_entity_builtin_elsets_odf (struct SIM *pSim, struct TESS *pTess,
     ut_file_close (file, (*pSimRes).file, "W");
 
     ut_print_progress (stdout, step + 1, (*pSim).StepQty + 1, "%3.0f%%", prev);
+
+    ut_free_2d (&oris, oriqty + 1);
   }
 
   nes_pproc_entity_builtin_odf_writeconfig (pSimRes, fct, Odf);
@@ -715,14 +745,13 @@ nes_pproc_entity_builtin_elsets_odf (struct SIM *pSim, struct TESS *pTess,
 
   // neut_odf_free (&Odf);
   ut_free_1d_char (&filename);
-  ut_free_3d (&evect, Mesh[(*pTess).Dim].ElsetQty + 1, 3);
-  ut_free_2d (&eval, Mesh[(*pTess).Dim].ElsetQty + 1);
-  ut_free_2d (&elsetdata, Mesh[(*pTess).Dim].ElsetQty + 1);
   ut_free_1d_char (&prev);
   ut_free_1d_char (&thetastring);
   ut_free_2d_char (&vars, size);
   ut_free_2d_char (&vals, size);
   neut_simres_free (&SimRes2);
+  ut_free_1d_char (&weight);
+  ut_free_1d_char (&src);
 
   return;
 }

@@ -1,10 +1,10 @@
-New in 4.6.2-66-fit_ori (18 Oct 2023):
+New in 4.6.2-67-fit_ori (19 Oct 2023):
 - module -T: added -ori odf, improved -domain rodrigues, added options
   -orioptialgo, -orioptidof and -orisampling, added -statcell scale,
   fixed -transform rmsat, added -statcell voxnb, cleaned code, made minor
   improvements.
-- module -S: fixed -res... '\<result>` (result overwriting), made minor
-  improvements to the simulation directory.
+- module -S: added odf(input=...), fixed -res... '\<result>` (result
+  overwriting), made minor improvements to the simulation directory.
 - general: improved installation instructions, added developer documentation.
 
 * Incompatible changes:  In -T, now use `-orisampling uniform' in place of

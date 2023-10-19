@@ -595,6 +595,7 @@ Available results / keys for elements sets are the following:
 
 The ODF (:data:`odf` or :data:`odfn`) of a tessellation or mesh is computed over orientation space (provided using :option:`-orispace`) from the orientations of the (tessellation) cells or (mesh) elsets.  The (optional) parameters are:
 
+- :data:`input`: the input used for the orientations, either :data:`elsets` or :data:`elts` for a mesh (default :data:`elsets`);
 - :data:`theta`: the standard deviation of the kernel (in degrees);
 - :data:`weight`: the weight of a cell or elset, which can be a real value or an expression based on the :ref:`tessellation_keys` (for cells) or :ref:`mesh_keys` (for elsets) --  by default, the volumes of the cells or elsets are used;
 - :data:`cutoff`: the cut-off factor used to compute the ODF, which can be :data:`all` (for no cut-off) or any positive real value (default :data:`5`).

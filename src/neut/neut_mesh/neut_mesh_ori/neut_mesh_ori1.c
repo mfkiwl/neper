@@ -14,14 +14,14 @@ neut_mesh_elts_olset (struct NODES Nodes, struct MESH Mesh,
 
   for (i = 0; i < eltqty; i++)
   {
-    elt = elts[i];
+    elt = elts ? elts[i] : i + 1;
     neut_mesh_elt_size (Nodes, Mesh, elt, (*pOSet).weight + i);
   }
 
   if (Mesh.SimEltOri)
     for (i = 0; i < eltqty; i++)
     {
-      elt = elts[i];
+      elt = elts ? elts[i] : i + 1;
       ol_q_memcpy (Mesh.SimEltOri[elt], (*pOSet).q[i]);
     }
   else if (Mesh.pSim)
@@ -30,20 +30,20 @@ neut_mesh_elts_olset (struct NODES Nodes, struct MESH Mesh,
 
     for (i = 0; i < eltqty; i++)
     {
-      elt = elts[i];
+      elt = elts ? elts[i] : i + 1;
       ol_q_memcpy (Mesh.SimEltOri[elt], (*pOSet).q[i]);
     }
   }
   else if (Mesh.EltOri)
     for (i = 0; i < eltqty; i++)
     {
-      elt = elts[i];
+      elt = elts ? elts[i] : i + 1;
       ol_q_memcpy (Mesh.EltOri[elt], (*pOSet).q[i]);
     }
   else
     for (i = 0; i < eltqty; i++)
     {
-      elt = elts[i];
+      elt = elts ? elts[i] : i + 1;
       ol_q_memcpy (Mesh.ElsetOri[Mesh.EltElset[elt]], (*pOSet).q[i]);
     }
 
