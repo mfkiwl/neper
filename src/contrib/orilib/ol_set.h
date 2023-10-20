@@ -34,7 +34,7 @@ extern int ol_set_mean_iter_ref (struct OL_SET, double *, double *);
 
 extern void ol_set_zero (struct OL_SET*);
 extern struct OL_SET ol_set_alloc (size_t, char*);
-extern void ol_set_free (struct OL_SET);
+extern void ol_set_free (struct OL_SET*);
 extern int ol_set_fscanf (FILE *, struct OL_SET *, char*);
 extern int ol_set_fscanf_sample (FILE *, double, struct OL_SET *, char*);
 extern int ol_set_fscanf_sample_nb (FILE *, int, struct OL_SET *, char*);

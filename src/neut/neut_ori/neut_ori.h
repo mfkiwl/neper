@@ -56,6 +56,8 @@ extern "C"
 
   extern int neut_ori_des_ori (double *q0, char *des, double *ori);
 
+  extern void neut_ori_clustering (struct OL_SET OSet, struct ODF Odf, struct OL_SET *pOSet);
+
 #ifdef __cplusplus
 }
 #endif

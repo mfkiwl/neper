@@ -67,7 +67,7 @@ net_tess_opt_comp_objective_fval_gen_odf (struct TOPT *pTOpt, int var)
 
   net_tess_opt_comp_objective_fval_gen_odf_evaluate (pTOpt, Odf, var);
 
-  ol_set_free (OSet);
+  ol_set_free (&OSet);
 
   // neut_odf_free (&Odf);
 

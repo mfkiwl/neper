@@ -169,7 +169,7 @@ net_ori_file (char *filename_in, struct OL_SET *pOSet)
   }
 
   if ((*pOSet).size > 0)
-    ol_set_free (*pOSet);
+    ol_set_free (pOSet);
 
   (*pOSet) = ol_set_alloc (ut_file_nbwords (filename) / ol_des_size (des), NULL);
 

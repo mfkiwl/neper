@@ -599,6 +599,7 @@ The ODF (:data:`odf` or :data:`odfn`) of a tessellation or mesh is computed over
 - :data:`theta`: the standard deviation of the kernel (in degrees);
 - :data:`weight`: the weight of a cell or elset, which can be a real value or an expression based on the :ref:`tessellation_keys` (for cells) or :ref:`mesh_keys` (for elsets) --  by default, the volumes of the cells or elsets are used;
 - :data:`cutoff`: the cut-off factor used to compute the ODF, which can be :data:`all` (for no cut-off) or any positive real value (default :data:`5`).
+- :data:`clustering`: a logical value controlling orientation clustering, which can be :data:`0` (for no clustering) or :data:`1` (for clustering). The default is :data:`0` for elsets and :data:`1` for elements.
 
 
 For a cell, element or elset, :data:`odf` returns the value of the ODF of the tessellation or mesh at the corresponding orientation (and simulation step).

@@ -125,7 +125,7 @@ net_ori (struct IN_T In, int level, struct MTESS MTess, struct TESS *Tess,
       ol_set_shuf (&OSet, (*pSSet).Random);
 
   for (i = 0; i < partqty; i++)
-    ol_set_free (OSets[i]);
+    ol_set_free (OSets + i);
   free (OSets);
 
   net_ori_oricrysym (&OSet);
@@ -141,7 +141,7 @@ net_ori (struct IN_T In, int level, struct MTESS MTess, struct TESS *Tess,
   ut_free_1d_char (&orisampling);
   ut_free_1d_char (&orispread);
   ut_free_1d_char (&oricrysym);
-  ol_set_free (OSet);
+  ol_set_free (&OSet);
 
   return;
 }

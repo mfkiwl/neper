@@ -49,14 +49,15 @@ ol_set_alloc (size_t size, char *crysym)
 }
 
 void
-ol_set_free (struct OL_SET Set)
+ol_set_free (struct OL_SET *pOSet)
 {
-  ut_free_2d (&Set.q, Set.size);
-  ut_free_1d (&Set.weight);
-  ut_free_1d (&Set.theta);
-  ut_free_1d_int (&Set.id);
-  ut_free_2d_char (&Set.label, Set.size);
-  ut_free_1d_char (&Set.crysym);
+  ut_free_2d (&(*pOSet).q, (*pOSet).size);
+  ut_free_1d (&(*pOSet).weight);
+  ut_free_1d (&(*pOSet).theta);
+  ut_free_1d_int (&(*pOSet).id);
+  ut_free_2d_char (&(*pOSet).label, (*pOSet).size);
+  ut_free_1d_char (&(*pOSet).crysym);
+  (*pOSet).size = 0;
 
   return;
 }
@@ -71,7 +72,7 @@ ol_set_fscanf (FILE * file, struct OL_SET *pSet, char *format)
   char *format2 = ut_alloc_1d_char (100);
 
   // checking the number of string on the first line
-  // can be 1, 3 or 4. 
+  // can be 1, 3 or 4.
   ut_file_nextlinenbwords (file, &firstline_nbw);
   whole_nbw = ut_file_nbwords_pointer (file);
 
@@ -160,7 +161,7 @@ ol_set_fscanf_sample (FILE * file, double factor, struct OL_SET *pSet,
 
   ol_set_fscanf (file, &Setb, format);
   ol_set_sample (Setb, factor, pSet);
-  ol_set_free (Setb);
+  ol_set_free (&Setb);
 
   return 1;
 }
@@ -174,7 +175,7 @@ ol_set_fscanf_sample_nb (FILE * file, int nb, struct OL_SET *pSet,
 
   ol_set_fscanf (file, &Setb, format);
   ol_set_sample_nb (Setb, nb, pSet);
-  ol_set_free (Setb);
+  ol_set_free (&Setb);
 
   return 1;
 }
@@ -357,7 +358,7 @@ ol_set_shuf (struct OL_SET *pOSet, int random)
 
   gsl_rng_free (r);
   ut_free_1d_int (&id);
-  ol_set_free (OSetCpy);
+  ol_set_free (&OSetCpy);
 
   return;
 }

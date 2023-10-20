@@ -16,7 +16,7 @@ neut_tesr_cell_orianiso (struct TESR Tesr, int cell, double **evect,
 
   ol_set_aniso (Set, evect, eval);
 
-  ol_set_free (Set);
+  ol_set_free (&Set);
 
   return;
 }
@@ -41,7 +41,7 @@ neut_tesr_cell_orianiso_delta (struct TESR Tesr, int cell, double **evect_in,
   if (delta_in)
     ut_array_1d_memcpy (delta, 3, delta_in);
 
-  ol_set_free (Set);
+  ol_set_free (&Set);
   ut_free_2d (&evect, 3);
   ut_free_1d (&eval);
   ut_free_1d (&delta);
