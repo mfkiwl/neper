@@ -369,26 +369,38 @@ nes_pproc_entity_builtin_cells_odf (struct SIM *pSim, struct TESS *pTess, struct
                                     char *entity, char *res, struct SIMRES *pSimRes)
 {
   int i, step, varqty;
+  char *prev = ut_alloc_1d_char (1000);
   char *filename = NULL;
   struct OL_SET OSet;
   struct ODF Odf;
   char *fct = NULL, **vars = NULL, **vals = NULL;
-  int CellQty;
-  double **CellOri = NULL; // pointer only
-  char *crysym = NULL;
-  char *input = NULL;
-  char *weight = NULL;
+  char *weight = NULL, *oriinput = NULL;
+  int clustering;
+  char *thetastring = ut_alloc_1d_char (100);
   char *cutoff = NULL;
-  char **array = NULL;
   struct SIMRES SimRes2;
 
+  // variables defined from tess or tesr
+  char *input = NULL;           // tess or tesr
+  int CellQty;
+  double **CellOri = NULL;      // pointer only
+  char **CellOriDistrib = NULL; // pointer only
+  char *crysym = NULL;          // crysym
+
+  ol_set_zero (&OSet);
+
   neut_simres_set_zero (&SimRes2);
+
+  ut_string_function (res, &fct, &vars, &vals, &varqty);
+
+  neut_sim_orispace (*pSim, &Odf, "R");
 
   if (!neut_tess_isvoid (*pTess))
   {
     ut_string_string ("tess", &input);
     CellQty = (*pTess).CellQty;
     CellOri = (*pTess).CellOri;
+    CellOriDistrib = (*pTess).CellOriDistrib;
     ut_string_string ((*pTess).CellCrySym, &crysym);
   }
   else if (!neut_tesr_isvoid (Tesr))
@@ -396,40 +408,39 @@ nes_pproc_entity_builtin_cells_odf (struct SIM *pSim, struct TESS *pTess, struct
     ut_string_string ("tesr", &input);
     CellQty = Tesr.CellQty;
     CellOri = Tesr.CellOri;
+    CellOriDistrib = Tesr.CellOriDistrib;
     ut_string_string (Tesr.CellCrySym, &crysym);
   }
   else
     abort ();
 
-  // Initializing operation
-  // fct = odf or odfn, vars and vals = arguments
-  ut_string_function (res, &fct, &vars, &vals, &varqty);
-
-  // Initializing orientation / ODF
-  neut_sim_orispace (*pSim, &Odf, "R");
-  neut_odf_setsigma (&Odf, "avthetaeq", CellQty, crysym);
-  ut_string_string ("1", &weight);
-  ut_string_string ("all", &cutoff);
-  for (i = 0; i < varqty; i++)
-  {
-    if (!strcmp (vars[i], "theta"))
-      Odf.sigma =  M_PI / 180 * atof (vals[i]);
-    else if (!strcmp (vars[i], "weight"))
-      ut_string_string (vals[i], &weight);
-    else if (!strcmp (vars[i], "cutoff"))
-      ut_string_string (vals[i], &cutoff);
-  }
-
-  // Allocating OSet
-  OSet = ol_set_alloc (CellQty, crysym);
+  ut_print_progress (stdout, 0, (*pSim).StepQty + 1, "%3.0f%%", prev);
 
   for (step = 0; step <= (*pSim).StepQty; step++)
   {
-    printf ("\n");
-    ut_print_message (0, 5, "(theta = %4.1f°) ", Odf.sigma * 180 / M_PI);
-    for (i = 0; i < 27 - ut_num_tenlen (step + 1) + ut_num_tenlen ((*pSim).StepQty + 1); i++)
-      printf (".");
-    printf (" %d/%d: ", step + 1, (*pSim).StepQty + 1);
+    // Setting defaults and parsing arguments
+    Odf.sigma = -1;
+    ut_string_string ("size", &weight);
+    ut_string_string ("all", &cutoff);
+    ut_string_string ("cells", &oriinput);
+    clustering = -1;
+
+    // Parsing arguments
+    for (i = 0; i < varqty; i++)
+    {
+      if (!strcmp (vars[i], "theta"))
+        Odf.sigma = atof (vals[i]) * M_PI / 180;
+      else if (!strcmp (vars[i], "weight"))
+        ut_string_string (vals[i], &weight);
+      else if (!strcmp (vars[i], "input"))
+        ut_string_string (vals[i], &oriinput);
+      else if (!strcmp (vars[i], "cutoff"))
+        ut_string_string (vals[i], &cutoff);
+      else if (!strcmp (vars[i], "clustering"))
+        clustering = atoi (vals[i]);
+      else
+        ut_print_exprbug (vars[i]);
+    }
 
     neut_sim_setstep (pSim, step);
     neut_sim_simres (*pSim, "cells", "ori", &SimRes2);
@@ -437,51 +448,94 @@ nes_pproc_entity_builtin_cells_odf (struct SIM *pSim, struct TESS *pTess, struct
     neut_simres_setstep (pSimRes, step);
     neut_simres_setstep (&SimRes2, step);
 
-    // Setting OSet
+    ut_string_fnrs (oriinput, "cells", "cell", 1);
+    ut_string_fnrs (oriinput, "pixels", "pixel", 1);
+    ut_string_fnrs (oriinput, "voxels", "voxel", 1);
+    ut_string_fnrs (oriinput, "pixel", "voxel", 1);
 
     // Setting orientations
-    // general case
-    if (ut_file_exist (SimRes2.file))
-      neut_ori_fnscanf (SimRes2.file, (*pSim).OriDes, "ascii", OSet.q,
-                        NULL, CellQty, NULL, "R");
-
-    // only initial state and no ori in results
-    else if (!step)
-      ut_array_2d_memcpy (CellOri + 1, CellQty, 4, OSet.q);
-
-    else
-      abort ();
-
-    // Setting weights
-    if (!strcmp (input, "tess"))
-      for (i = 1; i <= CellQty; i++)
-        neut_tess_expr_val_one (pTess, NULL, NULL, NULL, "cell", i, weight,
-                               OSet.weight + i - 1, NULL);
-    else
-      for (i = 1; i <= CellQty; i++)
-        neut_tesr_expr_val_one (Tesr, "cell", i, weight, OSet.weight + i - 1,
-                               NULL);
-
-    if ((!strcmp (input, "tess") && (*pTess).CellOriDistrib)
-     || (!strcmp (input, "tesr") && Tesr.CellOriDistrib))
+    if (!strcmp (oriinput, "cell"))
     {
-      OSet.theta = ut_alloc_1d (OSet.size);
+      OSet = ol_set_alloc (CellQty, crysym);
 
-      array = !strcmp (input, "tess") ? (*pTess).CellOriDistrib : Tesr.CellOriDistrib;
+      // general case
+      if (ut_file_exist (SimRes2.file))
+        neut_ori_fnscanf (SimRes2.file, (*pSim).OriDes, "ascii", OSet.q,
+                          NULL, CellQty, NULL, "R");
 
-      for (i = 0; i < (int) OSet.size; i++)
-        sscanf (array[i + 1], "normal(%lf)", OSet.theta + i);
+      // only initial state and no ori in results
+      else if (!step)
+        ut_array_2d_memcpy (CellOri + 1, CellQty, 4, OSet.q);
 
-      ut_array_1d_scale (OSet.theta, OSet.size, M_PI / 180);
+      else
+        abort ();
     }
 
-    if ((!strcmp (input, "tess") && (*pTess).CellWeight))
-     // || (!strcmp (input, "tesr") && Tesr.CellWeight))
+    else if (!strcmp (input, "tesr") && !strcmp (oriinput, "voxel"))
+      neut_tesr_voxels_olset (Tesr, &OSet);
+
+    else
+      ut_print_exprbug (oriinput);
+
+    // Managing defaults
+    if (Odf.sigma == -1)
+      neut_odf_setsigma (&Odf, "avthetaeq", OSet.size, OSet.crysym);
+
+    if (clustering == -1)
     {
-      // array = !strcmp (input, "tess") ? (*pTess).CellWeight : Tesr.CellWeight;
+      if (!strcmp (oriinput, "cell"))
+        clustering = 0;
+      else if (!strcmp (oriinput, "voxel"))
+        clustering = 1;
+      else
+        abort ();
+    }
+
+    // Printing to terminal
+    sprintf (thetastring, " (theta = %9.6f°)     ", Odf.sigma * 180 / M_PI);
+    ut_print_clearline (stdout, strlen (thetastring) - 1);
+    printf ("%s", thetastring);
+    ut_print_progress (stdout, 0, (*pSim).StepQty + 1, "%3.0f%%", prev);
+
+    /*
+    printf ("\n");
+    ut_print_message (0, 5, "(theta = %4.1f°) ", Odf.sigma * 180 / M_PI);
+    for (i = 0; i < 27 - ut_num_tenlen (step + 1) + ut_num_tenlen ((*pSim).StepQty + 1); i++)
+      printf (".");
+    printf (" %d/%d: ", step + 1, (*pSim).StepQty + 1);
+    */
+
+    // Computing weights
+    if (!strcmp (oriinput, "cell"))
+    {
+      if (!strcmp (input, "tess"))
+        for (i = 1; i <= CellQty; i++)
+          neut_tess_expr_val_one (pTess, NULL, NULL, NULL, "cell", i, weight,
+                                 OSet.weight + i - 1, NULL);
+      else
+        for (i = 1; i <= CellQty; i++)
+          neut_tesr_expr_val_one (Tesr, "cell", i, weight, OSet.weight + i - 1,
+                                 NULL);
+    }
+
+    for (i = 0; i < CellQty; i++)
+      if (OSet.weight[i] < 0)
+        ut_print_message (2, 2, "Negative weight.\n");
+
+    if (clustering)
+      neut_ori_clustering (OSet, Odf, &OSet);
+
+    if (!strcmp (oriinput, "cell") && CellOriDistrib)
+    {
+      if (clustering)
+        ut_print_message (2, 2, "Clustering and cell with theta are mutually exclusive\n");
+
+      OSet.theta = ut_alloc_1d (OSet.size);
 
       for (i = 0; i < (int) OSet.size; i++)
-        OSet.weight[i] *= (*pTess).CellWeight[i + 1];
+        sscanf (CellOriDistrib[i + 1], "normal(%lf)", OSet.theta + i);
+
+      ut_array_1d_scale (OSet.theta, OSet.size, M_PI / 180);
     }
 
     if (!strcmp (fct, "odf"))
@@ -513,6 +567,7 @@ nes_pproc_entity_builtin_cells_odf (struct SIM *pSim, struct TESS *pTess, struct
   ut_free_1d_char (&weight);
   neut_simres_free (&SimRes2);
   ut_free_1d_char (&cutoff);
+  ut_free_1d_char (&oriinput);
 
   return;
 }
@@ -638,7 +693,7 @@ nes_pproc_entity_builtin_elsets_odf (struct SIM *pSim, struct TESS *pTess,
                                      struct NODES *pNodes, struct MESH *Mesh,
                                      char *entity, char *res, struct SIMRES *pSimRes)
 {
-  int i, step, size, status, oriqty;
+  int i, step, varqty, status, oriqty;
   double **oris = NULL;
   char *prev = ut_alloc_1d_char (1000);
   char *filename = NULL;
@@ -649,13 +704,14 @@ nes_pproc_entity_builtin_elsets_odf (struct SIM *pSim, struct TESS *pTess,
   char *weight = NULL, *oriinput = NULL;
   int clustering;
   char *thetastring = ut_alloc_1d_char (100);
+  char *cutoff = NULL;
   struct SIMRES SimRes2;
 
   ol_set_zero (&OSet);
 
   neut_simres_set_zero (&SimRes2);
 
-  ut_string_function (res, &fct, &vars, &vals, &size);
+  ut_string_function (res, &fct, &vars, &vals, &varqty);
 
   neut_sim_orispace (*pSim, &Odf, "R");
 
@@ -663,16 +719,15 @@ nes_pproc_entity_builtin_elsets_odf (struct SIM *pSim, struct TESS *pTess,
 
   for (step = 0; step <= (*pSim).StepQty; step++)
   {
-    oriqty = 0;
-
     // Setting defaults and parsing arguments
     Odf.sigma = -1;
     ut_string_string ("size", &weight);
+    ut_string_string ("all", &cutoff);
     ut_string_string ("elsets", &oriinput);
     clustering = -1;
 
     // Parsing arguments
-    for (i = 0; i < size; i++)
+    for (i = 0; i < varqty; i++)
     {
       if (!strcmp (vars[i], "theta"))
         Odf.sigma = atof (vals[i]) * M_PI / 180;
@@ -680,6 +735,8 @@ nes_pproc_entity_builtin_elsets_odf (struct SIM *pSim, struct TESS *pTess,
         ut_string_string (vals[i], &weight);
       else if (!strcmp (vars[i], "input"))
         ut_string_string (vals[i], &oriinput);
+      else if (!strcmp (vars[i], "cutoff"))
+        ut_string_string (vals[i], &cutoff);
       else if (!strcmp (vars[i], "clustering"))
         clustering = atoi (vals[i]);
       else
@@ -696,6 +753,7 @@ nes_pproc_entity_builtin_elsets_odf (struct SIM *pSim, struct TESS *pTess,
     ut_string_fnrs (oriinput, "elsets", "elset", 1);
 
     // Setting orientations
+    oriqty = 0;
 
     if (!strcmp (oriinput, "elset"))
     {
@@ -754,17 +812,15 @@ nes_pproc_entity_builtin_elsets_odf (struct SIM *pSim, struct TESS *pTess,
     file = ut_file_open ((*pSimRes).file, "W");
 
     if (!strcmp (fct, "odf"))
-    {
-      neut_odf_comp ("m", "5", &OSet, &Odf, 0);
-      for (i = 0; i < Odf.odfqty; i++)
-        fprintf (file, REAL_PRINT_FORMAT "\n", Odf.odf[i]);
-    }
+      neut_odf_comp ("m", cutoff, &OSet, &Odf, 0);
     else if (!strcmp (fct, "odfn"))
-    {
-      neut_odf_comp ("n", "5", &OSet, &Odf, 0);
-      for (i = 0; i < Odf.odfnqty; i++)
-        fprintf (file, REAL_PRINT_FORMAT "\n", Odf.odfn[i]);
-    }
+      neut_odf_comp ("n", cutoff, &OSet, &Odf, 0);
+
+    // Writing results
+    if (!strcmp (fct, "odf"))
+      ut_array_1d_fnprintf_column ((*pSimRes).file, Odf.odf, Odf.odfqty, REAL_PRINT_FORMAT, "W");
+    else if (!strcmp (fct, "odfn"))
+      ut_array_1d_fnprintf_column ((*pSimRes).file, Odf.odfn, Odf.odfnqty, REAL_PRINT_FORMAT, "W");
 
     ut_file_close (file, (*pSimRes).file, "W");
 
@@ -781,11 +837,12 @@ nes_pproc_entity_builtin_elsets_odf (struct SIM *pSim, struct TESS *pTess,
   ut_free_1d_char (&filename);
   ut_free_1d_char (&prev);
   ut_free_1d_char (&thetastring);
-  ut_free_2d_char (&vars, size);
-  ut_free_2d_char (&vals, size);
+  ut_free_2d_char (&vars, varqty);
+  ut_free_2d_char (&vals, varqty);
   neut_simres_free (&SimRes2);
   ut_free_1d_char (&weight);
   ut_free_1d_char (&oriinput);
+  ut_free_1d_char (&cutoff);
 
   return;
 }

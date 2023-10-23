@@ -69,3 +69,32 @@ neut_tesr_cells_olset (struct TESR Tesr, double **CellOri, char *crysym,
 
   return;
 }
+
+void
+neut_tesr_voxels_olset (struct TESR Tesr, struct OL_SET *pOSet)
+{
+  int i, j, k, qty, pos;
+
+  qty = 0;
+  for (i = 1; i <= Tesr.size[0]; i++)
+    for (j = 1; j <= Tesr.size[1]; j++)
+      for (k = 1; k <= Tesr.size[2]; k++)
+        if (!Tesr.VoxOriDef || Tesr.VoxOriDef[i][j][k])
+          qty++;
+
+  (*pOSet) = ol_set_alloc (qty, Tesr.CellCrySym);
+
+  pos = 0;
+  for (i = 1; i <= Tesr.size[0]; i++)
+    for (j = 1; j <= Tesr.size[1]; j++)
+      for (k = 1; k <= Tesr.size[2]; k++)
+        if (!Tesr.VoxOriDef || Tesr.VoxOriDef[i][j][k])
+        {
+          if (Tesr.VoxOri)
+            ol_q_memcpy (Tesr.VoxOri[i][j][k], (*pOSet).q[pos++]);
+          else
+            ol_q_memcpy (Tesr.CellOri[Tesr.VoxCell[i][j][k]], (*pOSet).q[pos++]);
+        }
+
+  return;
+}
