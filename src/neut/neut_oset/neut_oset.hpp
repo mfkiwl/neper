@@ -4,5 +4,15 @@
 
 #include "neut_qcloud_struct.hpp"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 extern void neut_oset_kdtree (struct OL_SET *pOSet, QCLOUD
                                    *pqcloud, my_kd_tree_t **pqindex);
+extern void neut_oset_clustering (struct OL_SET OSet, struct ODF Odf, struct OL_SET *pOSet);
+
+#ifdef __cplusplus
+}
+#endif
