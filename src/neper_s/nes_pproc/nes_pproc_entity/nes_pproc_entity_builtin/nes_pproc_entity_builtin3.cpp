@@ -524,7 +524,7 @@ nes_pproc_entity_builtin_cells_odf (struct SIM *pSim, struct TESS *pTess, struct
         ut_print_message (2, 2, (char *) "Negative weight.\n");
 
     if (clustering)
-      neut_oset_clustering (OSet, Odf, NULL, &OSet);
+      neut_oset_odf_clustering (OSet, Odf, NULL, &OSet);
 
     if (!strcmp (oriinput, (char *) "cell") && CellOriDistrib)
     {
@@ -808,7 +808,7 @@ nes_pproc_entity_builtin_elsets_odf (struct SIM *pSim, struct TESS *pTess,
                                  OSet.weight - 1, NULL);
 
     if (clustering)
-      neut_oset_clustering (OSet, Odf, NULL, &OSet);
+      neut_oset_odf_clustering (OSet, Odf, NULL, &OSet);
 
     file = ut_file_open ((*pSimRes).file, (char *) "W");
 

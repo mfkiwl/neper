@@ -11,7 +11,7 @@ extern "C"
 
 extern void neut_oset_kdtree (struct OL_SET *pOSet, QCLOUD
                                    *pqcloud, my_kd_tree_t **pqindex);
-extern void neut_oset_clustering (struct OL_SET OSet, struct ODF Odf, char *method, struct OL_SET *pOSet);
+extern void neut_oset_odf_clustering (struct OL_SET OSet, struct ODF Odf, char *method, struct OL_SET *pOSet);
 
 #ifdef __cplusplus
 }

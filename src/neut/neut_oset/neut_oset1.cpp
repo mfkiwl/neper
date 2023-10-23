@@ -15,7 +15,7 @@ neut_oset_kdtree (struct OL_SET *pOSet, struct QCLOUD *pqcloud,
 }
 
 void
-neut_oset_clustering (struct OL_SET OSet, struct ODF Odf, char *method, struct OL_SET *pOSet)
+neut_oset_odf_clustering (struct OL_SET OSet, struct ODF Odf, char *method, struct OL_SET *pOSet)
 {
   int i, id;
   struct OL_SET OSet2;
