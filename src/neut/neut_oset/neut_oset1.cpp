@@ -15,12 +15,9 @@ neut_oset_kdtree (struct OL_SET *pOSet, struct QCLOUD *pqcloud,
 }
 
 void
-neut_oset_odf_clustering (struct OL_SET OSet, struct ODF Odf, char *method, struct OL_SET *pOSet)
+neut_oset_clustering (struct OL_SET OSet, struct OL_SET Grid, char *method, struct OL_SET *pOSet)
 {
   int i, id;
-  struct OL_SET OSet2;
-
-  neut_odf_mesh_olset (Odf, &OSet2);
 
   if (!method || !strcmp (method, "kdtree"))
   {
@@ -28,7 +25,7 @@ neut_oset_odf_clustering (struct OL_SET OSet, struct ODF Odf, char *method, stru
     nanoflann::SearchParams params;
     QCLOUD nano_cloud;
 
-    neut_oset_kdtree (&OSet2, &nano_cloud, &nano_index);
+    neut_oset_kdtree (&Grid, &nano_cloud, &nano_index);
 
     size_t num_results = 1;
     std::vector<long unsigned int> ret_index(num_results);
@@ -38,9 +35,9 @@ neut_oset_odf_clustering (struct OL_SET OSet, struct ODF Odf, char *method, stru
     {
       nano_index->knnSearch (OSet.q[i], num_results, &ret_index[0], &out_dist_sqr[0]);
 
-      id = ret_index[0] % Odf.Mesh[3].EltQty;
+      id = ret_index[0] % Grid.size;
 
-      OSet2.weight[id] += OSet.weight ? OSet.weight[i] : 1;
+      Grid.weight[id] += OSet.weight ? OSet.weight[i] : 1;
     }
 
     delete nano_index;
@@ -55,9 +52,9 @@ neut_oset_odf_clustering (struct OL_SET OSet, struct ODF Odf, char *method, stru
     {
       id = 0;
       mintheta = DBL_MAX;
-      for (j = 0; j < (int) OSet2.size; j++)
+      for (j = 0; j < (int) Grid.size; j++)
       {
-        ol_q_q_disori (OSet.q[i], OSet2.q[j], OSet.crysym, &theta);
+        ol_q_q_disori (OSet.q[i], Grid.q[j], OSet.crysym, &theta);
         if (theta < mintheta)
         {
           mintheta = theta;
@@ -65,26 +62,38 @@ neut_oset_odf_clustering (struct OL_SET OSet, struct ODF Odf, char *method, stru
         }
       }
 
-      OSet2.weight[id] += OSet.weight ? OSet.weight[i] : 1;
+      Grid.weight[id] += OSet.weight ? OSet.weight[i] : 1;
     }
   }
 
   ol_set_free (pOSet);
-  ut_string_string (OSet2.crysym, &(*pOSet).crysym);
-  for (i = 0; i < (int) OSet2.size; i++)
-    if (OSet2.weight[i] > 0)
+  ut_string_string (Grid.crysym, &(*pOSet).crysym);
+  for (i = 0; i < (int) Grid.size; i++)
+    if (Grid.weight[i] > 0)
     {
       (*pOSet).size++;
       (*pOSet).q = ut_realloc_2d_addline ((*pOSet).q, (*pOSet).size, 4);
-      ol_q_memcpy (OSet2.q[i], (*pOSet).q[(*pOSet).size - 1]);
+      ol_q_memcpy (Grid.q[i], (*pOSet).q[(*pOSet).size - 1]);
       (*pOSet).weight = ut_realloc_1d ((*pOSet).weight, (*pOSet).size);
-      (*pOSet).weight[(*pOSet).size - 1] = OSet2.weight[i];
+      (*pOSet).weight[(*pOSet).size - 1] = Grid.weight[i];
     }
 
   if ((*pOSet).size == 0)
     abort ();
 
-  ol_set_free (&OSet2);
+  return;
+}
+
+void
+neut_oset_odf_clustering (struct OL_SET OSet, struct ODF Odf, char *method, struct OL_SET *pOSet)
+{
+  struct OL_SET Grid;
+
+  neut_odf_mesh_olset (Odf, &Grid);
+
+  neut_oset_clustering (OSet, Grid, method, pOSet);
+
+  ol_set_free (&Grid);
 
   return;
 }
