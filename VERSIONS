@@ -1,4 +1,4 @@
-New in 4.6.2-72-fit_ori (23 Oct 2023):
+New in 4.6.2-73-fit_ori (23 Oct 2023):
 - module -T: added -ori odf, improved -domain rodrigues, added options
   -orioptialgo, -orioptidof and -orisampling, added -statcell scale,
   fixed -transform rmsat, added -statcell voxnb, cleaned code, made minor

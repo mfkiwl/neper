@@ -33,6 +33,7 @@ neut_odf_comp_elts (char *neigh, struct OL_SET *pOSet, QCLOUD nano_cloud,
     double *q = ol_q_alloc ();
     double *coo = ut_alloc_1d (3);
 
+#pragma omp critical
     if (verbosity > 0)
       ut_print_progress (stdout, i, (*pOdf).Mesh[dim].EltQty - 1, "%3.0f%%", prev);
 
@@ -110,6 +111,7 @@ neut_odf_comp_nodes (char *neigh, struct OL_SET *pOSet, QCLOUD nano_cloud,
     double *q = ol_q_alloc ();
     double *qs = ol_q_alloc ();
 
+#pragma omp critical
     if (verbosity > 0)
       ut_print_progress (stdout, i, (*pOdf).odfnqty - 1, "%3.0f%%", prev);
 
