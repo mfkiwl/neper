@@ -14,32 +14,59 @@ neut_oset_kdtree (struct OL_SET *pOSet, struct QCLOUD *pqcloud,
   return;
 }
 
-// Could be much more efficient by 1/ making sure that the orientations are in
-// the FR and 2/ looking for the closest point using a kD tree approach.
 void
-neut_oset_clustering (struct OL_SET OSet, struct ODF Odf, struct OL_SET *pOSet)
+neut_oset_clustering (struct OL_SET OSet, struct ODF Odf, char *method, struct OL_SET *pOSet)
 {
-  int i, j, id;
+  int i, id;
   struct OL_SET OSet2;
-  double mintheta, theta;
 
   neut_odf_mesh_olset (Odf, &OSet2);
 
-  for (i = 0; i < (int) OSet.size; i++)
+  if (!method || !strcmp (method, "kdtree"))
   {
-    id = 0;
-    mintheta = DBL_MAX;
-    for (j = 0; j < (int) OSet2.size; j++)
+    my_kd_tree_t *nano_index = nullptr;
+    nanoflann::SearchParams params;
+    QCLOUD nano_cloud;
+
+    neut_oset_kdtree (&OSet2, &nano_cloud, &nano_index);
+
+    size_t num_results = 1;
+    std::vector<long unsigned int> ret_index(num_results);
+    std::vector<double>    out_dist_sqr(num_results);
+
+    for (i = 0; i < (int) OSet.size; i++)
     {
-      ol_q_q_disori (OSet.q[i], OSet2.q[j], OSet.crysym, &theta);
-      if (theta < mintheta)
-      {
-        mintheta = theta;
-        id = j;
-      }
+      nano_index->knnSearch (OSet.q[i], num_results, &ret_index[0], &out_dist_sqr[0]);
+
+      id = ret_index[0] % Odf.Mesh[3].EltQty;
+
+      OSet2.weight[id] += OSet.weight ? OSet.weight[i] : 1;
     }
 
-    OSet2.weight[id] += OSet.weight ? OSet.weight[i] : 1;
+    delete nano_index;
+  }
+
+  else if (!strcmp (method, "direct"))
+  {
+    int j;
+    double mintheta, theta;
+
+    for (i = 0; i < (int) OSet.size; i++)
+    {
+      id = 0;
+      mintheta = DBL_MAX;
+      for (j = 0; j < (int) OSet2.size; j++)
+      {
+        ol_q_q_disori (OSet.q[i], OSet2.q[j], OSet.crysym, &theta);
+        if (theta < mintheta)
+        {
+          mintheta = theta;
+          id = j;
+        }
+      }
+
+      OSet2.weight[id] += OSet.weight ? OSet.weight[i] : 1;
+    }
   }
 
   ol_set_free (pOSet);
