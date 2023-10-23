@@ -21,18 +21,9 @@ neut_oset_clustering (struct OL_SET OSet, struct ODF Odf, struct OL_SET *pOSet)
 {
   int i, j, id;
   struct OL_SET OSet2;
-  double mintheta, theta, *coo = ut_alloc_1d (3);
+  double mintheta, theta;
 
-  ol_set_zero (&OSet2);
-
-  OSet2 = ol_set_alloc (Odf.Mesh[3].EltQty, OSet.crysym);
-  ut_array_1d_zero (OSet2.weight, OSet2.size);
-
-  for (i = 0; i < (int) OSet2.size; i++)
-  {
-    neut_mesh_elt_centre (Odf.Nodes, Odf.Mesh[3], i + 1, coo);
-    ol_R_q (coo, OSet2.q[i]);
-  }
+  neut_odf_mesh_olset (Odf, &OSet2);
 
   for (i = 0; i < (int) OSet.size; i++)
   {
@@ -67,7 +58,6 @@ neut_oset_clustering (struct OL_SET OSet, struct ODF Odf, struct OL_SET *pOSet)
     abort ();
 
   ol_set_free (&OSet2);
-  ut_free_1d (&coo);
 
   return;
 }

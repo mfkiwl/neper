@@ -185,3 +185,29 @@ neut_odf_fnscanf (char *filename, struct ODF *pOdf, char *mode)
 
   return;
 }
+
+void
+neut_odf_mesh_olset (struct ODF Odf, struct OL_SET *pOSet)
+{
+  int i, varqty;
+  double *coo = ut_alloc_1d (3);
+  char *fct = NULL, **vars = NULL, **vals = NULL;
+
+  ut_string_function (Odf.gridtype, &fct, &vars, &vals, &varqty);
+
+  (*pOSet) = ol_set_alloc (Odf.Mesh[3].EltQty, vals[0]);
+  ut_array_1d_zero ((*pOSet).weight, (*pOSet).size);
+
+  for (i = 0; i < (int) (*pOSet).size; i++)
+  {
+    neut_mesh_elt_centre (Odf.Nodes, Odf.Mesh[3], i + 1, coo);
+    ol_R_q (coo, (*pOSet).q[i]);
+  }
+
+  ut_free_1d (&coo);
+  ut_free_1d_char (&fct);
+  ut_free_2d_char (&vars, varqty);
+  ut_free_2d_char (&vals, varqty);
+
+  return;
+}
