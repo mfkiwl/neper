@@ -81,6 +81,8 @@ extern void ol_set_cat (struct OL_SET* Sets, int SetQty, struct OL_SET *pSet);
 extern void ol_set_shuf (struct OL_SET* pSet, int random);
 extern void ol_set_aniso_delta (struct OL_SET Set, double **evect, double *eval, double *delta);
 
+extern void ol_set_clean (struct OL_SET *pOSet);
+
 #endif /* OL_SSET */
 #ifndef OL_SETx
 #define OL_SETx

@@ -19,6 +19,8 @@ neut_oset_clustering (struct OL_SET OSet, struct OL_SET Grid, char *method, stru
 {
   int i, id;
 
+  ut_array_1d_zero (Grid.weight, Grid.size);
+
   if (!method || !strcmp (method, "kdtree"))
   {
     my_kd_tree_t *nano_index = nullptr;
@@ -90,6 +92,7 @@ neut_oset_odf_clustering (struct OL_SET OSet, struct ODF Odf, char *method, stru
   struct OL_SET Grid;
 
   neut_odf_mesh_olset (Odf, &Grid);
+  ut_array_1d_zero (Grid.weight, Grid.size);
 
   neut_oset_clustering (OSet, Grid, method, pOSet);
 

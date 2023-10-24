@@ -27,8 +27,8 @@ struct ODF
   int odfnqty;
   double *odfn; // 0-indexed
 
-  // Weight of each element, in terms of corrected volume
-  double *EltWeight;
+  // Weight of each element, in terms of corrected volume, normalized
+  double *EltWeight; // indexed 0
 
   double odfmin;
   double odfmax;

@@ -19,6 +19,10 @@ extern void neut_odf_comp (char *mode, char *neigh, struct OL_SET *pOSet, struct
 extern void neut_odf_orides (struct ODF Odf, char **porides);
 extern void neut_odf_mesh_olset (struct ODF Odf, struct OL_SET *pOSet);
 
+extern void neut_odf_init_eltweight (struct ODF *pOdf);
+extern void neut_odf_convolve (struct ODF *pOdf, char *kernel);
+extern void neut_odf_deconvolve (struct ODF *pOdf, char *kernel);
+
 #endif /* NEUT_ODF_H */
 
 #ifdef __cplusplus

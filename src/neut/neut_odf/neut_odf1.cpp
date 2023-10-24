@@ -196,7 +196,6 @@ neut_odf_mesh_olset (struct ODF Odf, struct OL_SET *pOSet)
   ut_string_function (Odf.gridtype, &fct, &vars, &vals, &varqty);
 
   (*pOSet) = ol_set_alloc (Odf.Mesh[3].EltQty, vals[0]);
-  ut_array_1d_zero ((*pOSet).weight, (*pOSet).size);
 
   for (i = 0; i < (int) (*pOSet).size; i++)
   {
@@ -204,10 +203,87 @@ neut_odf_mesh_olset (struct ODF Odf, struct OL_SET *pOSet)
     ol_R_q (coo, (*pOSet).q[i]);
   }
 
+  neut_odf_init_eltweight (&Odf);
+
+  ut_array_1d_memcpy (Odf.EltWeight, Odf.Mesh[3].EltQty, (*pOSet).weight);
+
   ut_free_1d (&coo);
   ut_free_1d_char (&fct);
   ut_free_2d_char (&vars, varqty);
   ut_free_2d_char (&vals, varqty);
+
+  return;
+}
+
+void
+neut_odf_convolve (struct ODF *pOdf, char *kernel)
+{
+  int i;
+  double theta;
+  struct OL_SET OSet;
+  double *odf_cpy = ut_alloc_1d ((*pOdf).odfqty);
+
+  ol_set_zero (&OSet);
+  sscanf (kernel, "normal(%lf)", &theta);
+
+  neut_odf_mesh_olset (*pOdf, &OSet);
+
+  for (i = 0; i < (*pOdf).odfqty; i++)
+    OSet.weight[i] *= (*pOdf).odf[i];
+
+  ut_array_1d_scale (OSet.weight, OSet.size, 1. / ut_array_1d_mean (OSet.weight, OSet.size));
+
+  /*
+  for (i = 0; i < (*pOdf).odfqty; i++)
+    if (OSet.weight[i] < 1e-2)
+      OSet.weight[i] = 0;
+  ol_set_clean (&OSet);
+  */
+
+  if (theta > 0)
+  {
+    (*pOdf).sigma = theta * M_PI / 180;
+    neut_odf_comp ((char *) "m", (char *) "5", &OSet, pOdf, 1);
+  }
+
+  else
+  {
+    ut_array_1d_memcpy ((*pOdf).odf, (*pOdf).odfqty, odf_cpy);
+
+    (*pOdf).sigma = theta * M_PI / 180;
+    neut_odf_comp ((char *) "m", (char *) "5", &OSet, pOdf, 1);
+
+    for (i = 0; i < (*pOdf).odfqty; i++)
+      (*pOdf).odf[i] = ut_num_max (2 * odf_cpy[i] - (*pOdf).odf[i], 0);
+  }
+
+  while (ut_array_1d_min ((*pOdf).odf, (*pOdf).odfqty) < 0)
+  {
+    for (i = 0; i < (*pOdf).odfqty; i++)
+      (*pOdf).odf[i] = ut_num_max ((*pOdf).odf[i], 0);
+    (*pOdf).odfmean = ut_array_1d_wmean ((*pOdf).odf, (*pOdf).EltWeight, (*pOdf).odfqty);
+    ut_array_1d_scale ((*pOdf).odf, (*pOdf).odfqty, 1. / (*pOdf).odfmean);
+  }
+
+  ol_set_free (&OSet);
+  ut_free_1d (&odf_cpy);
+
+  return;
+}
+
+void
+neut_odf_deconvolve (struct ODF *pOdf, char *kernel)
+{
+  double theta;
+  char *newkernel = ut_alloc_1d_char (100);
+
+  sscanf (kernel, "normal(%lf)", &theta);
+  theta *= -1;
+  sprintf (newkernel, "normal(%lf)", theta);
+
+  neut_odf_convolve (pOdf, newkernel);
+
+  ut_free_1d_char (&newkernel);
 
   return;
 }
