@@ -8,6 +8,7 @@ Tutorials
 
    tutorials/simple_model.rst
    tutorials/morpho_statistics.rst
+   tutorials/ori_statistics.rst
    tutorials/morpho_tesr_mesh.rst
    tutorials/ebsd_process.rst
    tutorials/visualize_tessellation.rst
